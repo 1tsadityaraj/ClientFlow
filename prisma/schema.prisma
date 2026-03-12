@@ -1,0 +1,115 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Org {
+  id                   String    @id @default(auto()) @map("_id") @db.ObjectId
+  name                 String
+  slug                 String    @unique
+  plan                 String    @default("starter")
+  logoUrl              String?
+  stripeCustomerId     String?   @unique
+  stripeSubscriptionId String?   @unique
+  createdAt            DateTime  @default(now())
+  users                User[]
+  projects             Project[]
+  invites              Invite[]
+  Task                 Task[]
+  File                 File[]
+  Comment              Comment[]
+}
+
+model User {
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  email           String    @unique
+  hashedPassword  String
+  orgId           String    @db.ObjectId
+  org             Org       @relation(fields: [orgId], references: [id])
+  role            String    @default("member")
+  avatar          String?
+  createdAt       DateTime  @default(now())
+  managedProjects Project[] @relation("ProjectManager")
+  clientProjects  Project[] @relation("ProjectClient")
+  uploadedFiles   File[]    @relation("FileUploader")
+  comments        Comment[]
+  Task            Task[]
+}
+
+model Project {
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  orgId        String    @db.ObjectId
+  org          Org       @relation(fields: [orgId], references: [id])
+  name         String
+  description  String?
+  status       String    @default("active")
+  color        String    @default("#6366f1")
+  progress     Int       @default(0)
+  clientUserId String?   @db.ObjectId
+  clientUser   User?     @relation("ProjectClient", fields: [clientUserId], references: [id])
+  managerId    String    @db.ObjectId
+  manager      User      @relation("ProjectManager", fields: [managerId], references: [id])
+  createdAt    DateTime  @default(now())
+  tasks        Task[]
+  files        File[]
+  comments     Comment[]
+}
+
+model Task {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  orgId      String    @db.ObjectId
+  org        Org       @relation(fields: [orgId], references: [id])
+  projectId  String    @db.ObjectId
+  project    Project   @relation(fields: [projectId], references: [id])
+  title      String
+  status     String    @default("TODO")
+  priority   String    @default("MEDIUM")
+  assigneeId String?   @db.ObjectId
+  assignee   User?     @relation(fields: [assigneeId], references: [id])
+  dueDate    DateTime?
+  createdAt  DateTime  @default(now())
+}
+
+model File {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  orgId        String   @db.ObjectId
+  org          Org      @relation(fields: [orgId], references: [id])
+  projectId    String   @db.ObjectId
+  project      Project  @relation(fields: [projectId], references: [id])
+  name         String
+  url          String
+  size         String
+  type         String
+  uploadedById String   @db.ObjectId
+  uploadedBy   User     @relation("FileUploader", fields: [uploadedById], references: [id])
+  createdAt    DateTime @default(now())
+}
+
+model Comment {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  orgId     String   @db.ObjectId
+  org       Org      @relation(fields: [orgId], references: [id])
+  projectId String   @db.ObjectId
+  project   Project  @relation(fields: [projectId], references: [id])
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id])
+  body      String
+  createdAt DateTime @default(now())
+}
+
+model Invite {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  orgId      String    @db.ObjectId
+  org        Org       @relation(fields: [orgId], references: [id])
+  email      String
+  role       String
+  token      String    @unique
+  expiresAt  DateTime
+  acceptedAt DateTime?
+  createdAt  DateTime  @default(now())
+}
