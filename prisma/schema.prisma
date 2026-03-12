@@ -3,12 +3,12 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 model Org {
-  id                   String    @id @default(auto()) @map("_id") @db.ObjectId
+  id                   String    @id @default(cuid())
   name                 String
   slug                 String    @unique
   plan                 String    @default("starter")
@@ -25,11 +25,11 @@ model Org {
 }
 
 model User {
-  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  id              String    @id @default(cuid())
   name            String
   email           String    @unique
   hashedPassword  String
-  orgId           String    @db.ObjectId
+  orgId           String
   org             Org       @relation(fields: [orgId], references: [id])
   role            String    @default("member")
   avatar          String?
@@ -42,17 +42,17 @@ model User {
 }
 
 model Project {
-  id           String    @id @default(auto()) @map("_id") @db.ObjectId
-  orgId        String    @db.ObjectId
+  id           String    @id @default(cuid())
+  orgId        String
   org          Org       @relation(fields: [orgId], references: [id])
   name         String
   description  String?
   status       String    @default("active")
   color        String    @default("#6366f1")
   progress     Int       @default(0)
-  clientUserId String?   @db.ObjectId
+  clientUserId String?
   clientUser   User?     @relation("ProjectClient", fields: [clientUserId], references: [id])
-  managerId    String    @db.ObjectId
+  managerId    String
   manager      User      @relation("ProjectManager", fields: [managerId], references: [id])
   createdAt    DateTime  @default(now())
   tasks        Task[]
@@ -61,50 +61,50 @@ model Project {
 }
 
 model Task {
-  id         String    @id @default(auto()) @map("_id") @db.ObjectId
-  orgId      String    @db.ObjectId
+  id         String    @id @default(cuid())
+  orgId      String
   org        Org       @relation(fields: [orgId], references: [id])
-  projectId  String    @db.ObjectId
+  projectId  String
   project    Project   @relation(fields: [projectId], references: [id])
   title      String
   status     String    @default("TODO")
   priority   String    @default("MEDIUM")
-  assigneeId String?   @db.ObjectId
+  assigneeId String?
   assignee   User?     @relation(fields: [assigneeId], references: [id])
   dueDate    DateTime?
   createdAt  DateTime  @default(now())
 }
 
 model File {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  orgId        String   @db.ObjectId
+  id           String   @id @default(cuid())
+  orgId        String
   org          Org      @relation(fields: [orgId], references: [id])
-  projectId    String   @db.ObjectId
+  projectId    String
   project      Project  @relation(fields: [projectId], references: [id])
   name         String
   url          String
   size         String
   type         String
-  uploadedById String   @db.ObjectId
+  uploadedById String
   uploadedBy   User     @relation("FileUploader", fields: [uploadedById], references: [id])
   createdAt    DateTime @default(now())
 }
 
 model Comment {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  orgId     String   @db.ObjectId
+  id        String   @id @default(cuid())
+  orgId     String
   org       Org      @relation(fields: [orgId], references: [id])
-  projectId String   @db.ObjectId
+  projectId String
   project   Project  @relation(fields: [projectId], references: [id])
-  userId    String   @db.ObjectId
+  userId    String
   user      User     @relation(fields: [userId], references: [id])
   body      String
   createdAt DateTime @default(now())
 }
 
 model Invite {
-  id         String    @id @default(auto()) @map("_id") @db.ObjectId
-  orgId      String    @db.ObjectId
+  id         String    @id @default(cuid())
+  orgId      String
   org        Org       @relation(fields: [orgId], references: [id])
   email      String
   role       String
