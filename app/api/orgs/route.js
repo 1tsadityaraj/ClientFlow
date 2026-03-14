@@ -1,5 +1,4 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "../../../lib/auth.js";
+import { auth } from "../../../lib/auth.js";
 import { prisma } from "../../../lib/prisma.js";
 import { assertPermission } from "../../../lib/permissions.js";
 import { z } from "zod";
@@ -14,7 +13,7 @@ const createOrgSchema = z.object({
 });
 
 export async function POST(request) {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
   if (session) {
     // Already signed in, cannot create another org via this endpoint
     try {

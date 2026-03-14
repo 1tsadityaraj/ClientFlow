@@ -1,5 +1,4 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "../../../../../../lib/auth.js";
+import { auth } from "../../../../../../lib/auth.js";
 import { prisma } from "../../../../../../lib/prisma.js";
 import { assertPermission } from "../../../../../../lib/permissions.js";
 import { generatePresignedUrl } from "../../../../../../lib/s3.js";
@@ -11,7 +10,7 @@ const presignSchema = z.object({
 });
 
 export async function POST(request, { params }) {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
   if (!session) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }

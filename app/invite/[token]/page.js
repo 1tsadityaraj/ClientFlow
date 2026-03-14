@@ -1,7 +1,6 @@
-import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { prisma } from "../../../lib/prisma.js";
-import { authOptions } from "../../../lib/auth.js";
+import { auth } from "../../../lib/auth.js";
 import InviteAcceptForm from "./InviteAcceptForm";
 
 export default async function InvitePage({ params }) {
@@ -27,7 +26,7 @@ export default async function InvitePage({ params }) {
     );
   }
 
-  const session = await getServerSession(authOptions);
+  const session = await auth();
 
   if (session?.user?.email && session.user.email === invite.email) {
     await prisma.$transaction(async (tx) => {
