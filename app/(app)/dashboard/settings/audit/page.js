@@ -36,14 +36,22 @@ export default async function AuditLogsPage() {
           <ArrowLeft className="h-4 w-4" /> Back to settings
         </Link>
         
-        <div className="mt-6 flex flex-col gap-2">
-          <h1 className="text-xl font-semibold text-zinc-100 flex items-center gap-2">
-            <Clock className="h-5 w-5 text-brand-primary" />
-            Audit Logs
-          </h1>
-          <p className="text-sm text-zinc-400">
-            A secure record of actions taken within your organization.
-          </p>
+        <div className="mt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex flex-col gap-2">
+            <h1 className="text-xl font-semibold text-zinc-100 flex items-center gap-2">
+              <Clock className="h-5 w-5 text-brand-primary" />
+              Audit Logs
+            </h1>
+            <p className="text-sm text-zinc-400">
+              A secure record of actions taken within your organization.
+            </p>
+          </div>
+          <a
+            href={`/api/orgs/${session.user.orgId}/audit/export`}
+            className="flex h-fit items-center gap-2 rounded-full border border-zinc-700 bg-zinc-900 px-4 py-2 text-xs font-medium text-zinc-300 hover:bg-zinc-800 transition-colors"
+          >
+            Download CSV
+          </a>
         </div>
 
         <div className="mt-8 rounded-2xl border border-zinc-800 bg-zinc-900/40 overflow-hidden">

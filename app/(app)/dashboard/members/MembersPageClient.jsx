@@ -25,26 +25,33 @@ function TableSkeleton() {
 
 export default function MembersPageClient() {
   const [members, setMembers] = useState([]);
+  const [invites, setInvites] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [inviteOpen, setInviteOpen] = useState(false);
   const [roleUpdating, setRoleUpdating] = useState(null);
   const [removing, setRemoving] = useState(null);
 
-  async function loadMembers() {
-    const res = await fetch("/api/members", { cache: "no-store" });
-    if (!res.ok) {
-      setError("Failed to load members");
+  async function loadData() {
+    const [mRes, iRes] = await Promise.all([
+      fetch("/api/members", { cache: "no-store" }),
+      fetch("/api/invites", { cache: "no-store" }),
+    ]);
+    
+    if (!mRes.ok || !iRes.ok) {
+      setError("Failed to load members or invites");
       return;
     }
-    const data = await res.json();
-    setMembers(Array.isArray(data) ? data : []);
+    
+    const [mList, iList] = await Promise.all([mRes.json(), iRes.json()]);
+    setMembers(Array.isArray(mList) ? mList : []);
+    setInvites(Array.isArray(iList) ? iList : []);
   }
 
   useEffect(() => {
     setLoading(true);
     setError(null);
-    loadMembers().finally(() => setLoading(false));
+    loadData().finally(() => setLoading(false));
   }, []);
 
   async function handleRoleChange(memberId, newRole) {
@@ -55,7 +62,7 @@ export default function MembersPageClient() {
       body: JSON.stringify({ role: newRole }),
     });
     setRoleUpdating(null);
-    if (res.ok) loadMembers();
+    if (res.ok) loadData();
   }
 
   async function handleRemove(memberId) {
@@ -65,7 +72,15 @@ export default function MembersPageClient() {
       method: "DELETE",
     });
     setRemoving(null);
-    if (res.ok) loadMembers();
+    if (res.ok) loadData();
+  }
+
+  async function handleCancelInvite(inviteId) {
+    if (!confirm("Cancel this invitation?")) return;
+    const res = await fetch(`/api/invites/${inviteId}`, {
+      method: "DELETE",
+    });
+    if (res.ok) loadData();
   }
 
   if (loading) {
@@ -110,7 +125,7 @@ export default function MembersPageClient() {
             <button
               type="button"
               onClick={() => setInviteOpen(true)}
-              className="rounded-full bg-indigo-500 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-400"
+              className="rounded-full bg-brand-primary px-4 py-2 text-sm font-medium text-white hover:opacity-90 transition-all shadow-lg shadow-brand-primary/20"
             >
               Invite Member
             </button>
@@ -177,7 +192,37 @@ export default function MembersPageClient() {
                   </td>
                 </tr>
               ))}
-              {members.length === 0 && (
+              {invites.map((i) => (
+                <tr
+                  key={i.id}
+                  className="border-b border-zinc-800/80 last:border-0 bg-zinc-900/30"
+                >
+                  <td className="px-4 py-3 italic text-zinc-500">Pending...</td>
+                  <td className="px-4 py-3 text-zinc-400">
+                    {i.email}
+                    <span className="ml-2 rounded-full bg-amber-500/10 px-1.5 py-0.5 text-[10px] text-amber-500">
+                      Invited
+                    </span>
+                  </td>
+                  <td className="px-4 py-3">
+                    <span className="inline-flex rounded-full bg-zinc-800 px-2 py-0.5 text-[10px] uppercase tracking-wide text-zinc-400">
+                      {i.role}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3">
+                    <Can permission="inviteMembers">
+                      <button
+                        type="button"
+                        onClick={() => handleCancelInvite(i.id)}
+                        className="text-zinc-500 hover:text-zinc-300"
+                      >
+                        Cancel
+                      </button>
+                    </Can>
+                  </td>
+                </tr>
+              ))}
+              {members.length === 0 && invites.length === 0 && (
                 <tr>
                   <td
                     colSpan={4}
@@ -196,7 +241,7 @@ export default function MembersPageClient() {
             onClose={() => setInviteOpen(false)}
             onSuccess={() => {
               setInviteOpen(false);
-              loadMembers();
+              loadData();
             }}
           />
         )}
@@ -241,7 +286,7 @@ function InviteModal({ onClose, onSuccess }) {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-zinc-50 outline-none focus:border-indigo-500"
+              className="mt-1 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-zinc-50 outline-none focus:border-brand-primary"
             />
           </div>
           <div>
@@ -270,7 +315,7 @@ function InviteModal({ onClose, onSuccess }) {
             <button
               type="submit"
               disabled={loading}
-              className="rounded-full bg-indigo-500 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-400 disabled:opacity-60"
+              className="rounded-full bg-brand-primary px-4 py-2 text-sm font-medium text-white hover:opacity-90 transition-all shadow-lg shadow-brand-primary/20 disabled:opacity-60"
             >
               {loading ? "Sending..." : "Send invite"}
             </button>

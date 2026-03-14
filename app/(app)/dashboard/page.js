@@ -184,7 +184,7 @@ export default async function DashboardPage() {
 
           <div className="border-t border-zinc-800/80 px-4 py-4">
             <div className="flex items-center gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 text-xs font-bold">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-primary text-xs font-bold text-white shadow-lg">
                 {(session.user.name || "U").charAt(0).toUpperCase()}
               </div>
               <div className="min-w-0 flex-1">
@@ -486,7 +486,7 @@ export default async function DashboardPage() {
                         key={c.id}
                         className="flex gap-3 rounded-xl border border-zinc-800/50 bg-zinc-900/30 p-3 transition-colors hover:bg-zinc-800/40"
                       >
-                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-500/30 to-indigo-500/30 text-[10px] font-bold text-violet-300">
+                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-primary/10 text-[10px] font-bold text-brand-primary">
                           {(c.user?.name || "?")
                             .charAt(0)
                             .toUpperCase()}

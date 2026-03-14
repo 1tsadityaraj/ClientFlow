@@ -3,6 +3,7 @@ import { prisma } from "../../../lib/prisma.js";
 import { assertPermission } from "../../../lib/permissions.js";
 import { inviteLimiter, checkRateLimit } from "../../../lib/rateLimit.js";
 import { sendInviteEmail } from "../../../lib/email.js";
+import { logAudit, ACTIONS } from "../../../lib/audit.js";
 import { z } from "zod";
 import crypto from "crypto";
 
@@ -73,6 +74,15 @@ export async function POST(request) {
     console.error("[invites] Failed to send invite email:", emailResult.error);
   }
 
+  await logAudit({
+    orgId: session.user.orgId,
+    userId: session.user.id,
+    action: ACTIONS.INVITE_CREATED,
+    entity: "Invite",
+    entityId: invite.id,
+    metadata: { email: data.email, role: data.role },
+  });
+
   return Response.json(
     {
       invite: {
@@ -85,5 +95,22 @@ export async function POST(request) {
     },
     { status: 201 }
   );
+}
+
+export async function GET() {
+  const session = await auth();
+  if (!session) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const invites = await prisma.invite.findMany({
+    where: {
+      orgId: session.user.orgId,
+      expiresAt: { gt: new Date() },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  return Response.json(invites);
 }
 
