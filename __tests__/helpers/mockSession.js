@@ -1,14 +1,16 @@
 import { vi } from "vitest";
 
-vi.mock("next-auth", () => ({
-  getServerSession: vi.fn(),
-}));
+vi.mock("../../lib/auth.js", () => {
+  return {
+    auth: vi.fn(),
+  };
+});
 
-import { getServerSession } from "next-auth";
+import { auth } from "../../lib/auth.js";
 
 /**
  * @param {{ id: string, email?: string, name?: string, role: string, orgId: string }} user
  */
 export function mockSession(user) {
-  getServerSession.mockResolvedValue({ user });
+  auth.mockResolvedValue({ user });
 }
