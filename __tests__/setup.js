@@ -1,8 +1,10 @@
 import { execSync } from "child_process";
 import { beforeAll, afterAll } from "vitest";
 
+process.env.NEXTAUTH_SECRET = process.env.NEXTAUTH_SECRET || "test-secret";
+process.env.NEXTAUTH_URL = process.env.NEXTAUTH_URL || "http://localhost:3000";
 process.env.DATABASE_URL =
-  process.env.TEST_DATABASE_URL || process.env.DATABASE_URL;
+  process.env.TEST_DATABASE_URL || process.env.DATABASE_URL || "postgresql://user:pass@localhost:5432/testdb";
 
 beforeAll(() => {
   execSync("npx prisma db push --force-reset", {
