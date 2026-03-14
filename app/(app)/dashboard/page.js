@@ -14,6 +14,7 @@ import {
   PlusCircle,
   Activity,
   Zap,
+  Home,
 } from "lucide-react";
 
 export default async function DashboardPage() {
@@ -139,6 +140,11 @@ export default async function DashboardPage() {
           </div>
 
           <nav className="flex-1 space-y-1 px-3 py-4">
+            <SidebarLink
+              href="/"
+              icon={<Home className="h-4 w-4" />}
+              label="Home"
+            />
             <SidebarLink
               href="/dashboard"
               icon={<LayoutDashboard className="h-4 w-4" />}
