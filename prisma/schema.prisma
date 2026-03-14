@@ -8,37 +8,40 @@ datasource db {
 }
 
 model Org {
-  id                   String    @id @default(cuid())
+  id                   String     @id @default(cuid())
   name                 String
-  slug                 String    @unique
-  plan                 String    @default("starter")
+  slug                 String     @unique
+  plan                 String     @default("starter")
   logoUrl              String?
-  stripeCustomerId     String?   @unique
-  stripeSubscriptionId String?   @unique
-  createdAt            DateTime  @default(now())
+  primaryColor         String     @default("#6366f1")
+  stripeCustomerId     String?    @unique
+  stripeSubscriptionId String?    @unique
+  createdAt            DateTime   @default(now())
   users                User[]
   projects             Project[]
   invites              Invite[]
-  Task                 Task[]
-  File                 File[]
-  Comment              Comment[]
+  tasks                Task[]
+  files                File[]
+  comments             Comment[]
+  auditLogs            AuditLog[]
 }
 
 model User {
-  id              String    @id @default(cuid())
+  id              String     @id @default(cuid())
   name            String
-  email           String    @unique
+  email           String     @unique
   hashedPassword  String
   orgId           String
-  org             Org       @relation(fields: [orgId], references: [id])
-  role            String    @default("member")
+  org             Org        @relation(fields: [orgId], references: [id])
+  role            String     @default("member")
   avatar          String?
-  createdAt       DateTime  @default(now())
-  managedProjects Project[] @relation("ProjectManager")
-  clientProjects  Project[] @relation("ProjectClient")
-  uploadedFiles   File[]    @relation("FileUploader", fields: [], references: [])
+  createdAt       DateTime   @default(now())
+  managedProjects Project[]  @relation("ProjectManager")
+  clientProjects  Project[]  @relation("ProjectClient")
+  uploadedFiles   File[]     @relation("FileUploader", fields: [], references: [])
   comments        Comment[]
-  Task            Task[]
+  tasks           Task[]
+  auditLogs       AuditLog[]
 }
 
 model Project {
@@ -112,4 +115,17 @@ model Invite {
   expiresAt  DateTime
   acceptedAt DateTime?
   createdAt  DateTime  @default(now())
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  orgId     String
+  org       Org      @relation(fields: [orgId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  action    String
+  entity    String
+  entityId  String?
+  metadata  String?
+  createdAt DateTime @default(now())
 }

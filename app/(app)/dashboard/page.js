@@ -125,14 +125,14 @@ export default async function DashboardPage() {
         {/* Sidebar */}
         <aside className="sticky top-0 hidden h-screen w-64 flex-shrink-0 flex-col border-r border-zinc-800/80 bg-zinc-950 lg:flex">
           <div className="flex items-center gap-3 border-b border-zinc-800/80 px-5 py-5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-xs font-bold shadow-lg shadow-indigo-500/25">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-primary text-xs font-bold text-white shadow-lg">
               CF
             </div>
             <div>
               <p className="text-sm font-semibold text-zinc-50">
                 {org?.name || "ClientFlow"}
               </p>
-              <p className="text-[10px] font-medium uppercase tracking-wider text-indigo-400">
+              <p className="text-[10px] font-medium uppercase tracking-wider text-brand-primary">
                 {org?.plan || "starter"} plan
               </p>
             </div>
@@ -231,8 +231,8 @@ export default async function DashboardPage() {
                 label="Active Projects"
                 value={activeCount}
                 detail={`${completedCount} completed`}
-                gradient="from-indigo-500/20 to-violet-500/20"
-                iconColor="text-indigo-400"
+                gradient="from-brand-primary/20 to-brand-primary/5"
+                iconColor="text-brand-primary"
               />
               <StatCard
                 icon={<CheckCircle2 className="h-5 w-5" />}
@@ -264,7 +264,7 @@ export default async function DashboardPage() {
             <section className="rounded-2xl border border-zinc-800/80 bg-zinc-900/40 p-5">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-sm font-medium text-zinc-200 flex items-center gap-2">
-                  <Activity className="h-4 w-4 text-indigo-400" />
+                  <Activity className="h-4 w-4 text-brand-primary" />
                   Task Progress Overview
                 </h3>
                 <span className="text-xs text-zinc-500">
@@ -325,7 +325,7 @@ export default async function DashboardPage() {
               <section className="space-y-4 xl:col-span-2">
                 <div className="flex items-center justify-between">
                   <h2 className="flex items-center gap-2 text-sm font-semibold text-zinc-200">
-                    <FolderKanban className="h-4 w-4 text-indigo-400" />
+                    <FolderKanban className="h-4 w-4 text-brand-primary" />
                     Projects
                   </h2>
                   <span className="text-xs text-zinc-500">
@@ -518,7 +518,7 @@ export default async function DashboardPage() {
                     </h3>
                     <Link
                       href="/dashboard/members"
-                      className="text-[10px] font-medium text-indigo-400 hover:text-indigo-300"
+                      className="text-[10px] font-medium text-brand-primary hover:text-brand-primary/80"
                     >
                       View all →
                     </Link>
@@ -562,7 +562,7 @@ function SidebarLink({ href, icon, label, active = false }) {
       href={href}
       className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all ${
         active
-          ? "bg-indigo-500/10 text-indigo-400"
+          ? "bg-brand-primary/10 text-brand-primary"
           : "text-zinc-400 hover:bg-zinc-800/60 hover:text-zinc-200"
       }`}
     >

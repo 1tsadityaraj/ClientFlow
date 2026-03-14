@@ -24,6 +24,7 @@ export default async function SettingsPage() {
                 name: org.name,
                 slug: org.slug,
                 plan: org.plan,
+                primaryColor: org.primaryColor,
               }
             : null
         }

@@ -20,6 +20,7 @@ export default function SettingsForm({ org }) {
   const [upgradedToast, setUpgradedToast] = useState(false);
   const [name, setName] = useState(org?.name ?? "");
   const [slug, setSlug] = useState(org?.slug ?? "");
+  const [primaryColor, setPrimaryColor] = useState(org?.primaryColor ?? "#6366f1");
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
   const [deleteConfirm, setDeleteConfirm] = useState("");
@@ -32,6 +33,7 @@ export default function SettingsForm({ org }) {
     if (org) {
       setName(org.name);
       setSlug(org.slug);
+      if (org.primaryColor) setPrimaryColor(org.primaryColor);
     }
   }, [org]);
 
@@ -76,7 +78,7 @@ export default function SettingsForm({ org }) {
     const res = await fetch(`/api/orgs/${org.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, slug }),
+      body: JSON.stringify({ name, slug, primaryColor }),
     });
     const data = await res.json().catch(() => ({}));
     setSaving(false);
@@ -134,11 +136,21 @@ export default function SettingsForm({ org }) {
           </div>
         )}
 
-        <section>
-          <h1 className="text-xl font-semibold">Workspace settings</h1>
-          <p className="mt-1 text-sm text-zinc-400">
-            Organization profile and danger zone.
-          </p>
+        <section className="flex items-center justify-between">
+          <div>
+            <h1 className="text-xl font-semibold">Workspace settings</h1>
+            <p className="mt-1 text-sm text-zinc-400">
+              Organization profile and danger zone.
+            </p>
+          </div>
+          <Can permission="deleteOrg">
+            <a 
+              href="/dashboard/settings/audit" 
+              className="rounded-full border border-zinc-700 bg-zinc-900 px-4 py-2 text-sm font-medium text-zinc-300 hover:bg-zinc-800 transition-colors"
+            >
+              View Audit Logs
+            </a>
+          </Can>
         </section>
 
         <Can permission="updateOrg">
@@ -169,8 +181,28 @@ export default function SettingsForm({ org }) {
                   onChange={(e) =>
                     setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))
                   }
-                  className="mt-1 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-zinc-50 outline-none focus:border-indigo-500"
+                  className="mt-1 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-zinc-50 outline-none focus:border-brand-primary"
                 />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-zinc-300">
+                  Brand Theme Color
+                </label>
+                <div className="mt-1 flex items-center gap-3">
+                  <input
+                    type="color"
+                    value={primaryColor}
+                    onChange={(e) => setPrimaryColor(e.target.value)}
+                    className="h-9 w-9 cursor-pointer rounded-lg border border-zinc-700 bg-zinc-950 p-1 outline-none"
+                  />
+                  <input
+                    type="text"
+                    value={primaryColor}
+                    onChange={(e) => setPrimaryColor(e.target.value)}
+                    pattern="^#[0-9a-fA-F]{6}$"
+                    className="flex-1 rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm uppercase text-zinc-50 outline-none focus:border-brand-primary"
+                  />
+                </div>
               </div>
               {saveError && (
                 <p className="text-xs text-rose-400">{saveError}</p>
@@ -178,9 +210,9 @@ export default function SettingsForm({ org }) {
               <button
                 type="submit"
                 disabled={saving}
-                className="rounded-full bg-indigo-500 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-400 disabled:opacity-60"
+                className="rounded-full bg-brand-primary px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-60"
               >
-                {saving ? "Saving..." : "Save"}
+                {saving ? "Saving..." : "Save Changes"}
               </button>
             </form>
           </section>
@@ -214,7 +246,7 @@ export default function SettingsForm({ org }) {
                         type="button"
                         disabled={billingLoading}
                         onClick={handleBillingCheckout}
-                        className="rounded-full bg-indigo-500 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-400 disabled:opacity-60"
+                        className="rounded-full bg-brand-primary px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-60"
                       >
                         {billingLoading ? "Loading..." : "Upgrade to Pro"}
                       </button>

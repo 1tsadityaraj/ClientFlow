@@ -1,12 +1,8 @@
 import { auth } from "../../../../lib/auth.js";
 import { prisma } from "../../../../lib/prisma.js";
 import { assertPermission } from "../../../../lib/permissions.js";
-import { z } from "zod";
-
-const updateOrgSchema = z.object({
-  name: z.string().min(1).optional(),
-  slug: z.string().min(1).max(50).regex(/^[a-z0-9-]+$/).optional(),
-});
+import { logAudit, ACTIONS } from "../../../../lib/audit.js";
+import { updateOrgSchema, validate } from "../../../../lib/validations.js";
 
 export async function PATCH(request, { params }) {
   const session = await auth();
@@ -33,15 +29,15 @@ export async function PATCH(request, { params }) {
   }
 
   const json = await request.json();
-  const parsed = updateOrgSchema.safeParse(json);
-  if (!parsed.success) {
+  const { data, error } = validate(updateOrgSchema, json);
+  
+  if (error) {
     return Response.json(
-      { error: "Validation failed", issues: parsed.error.issues },
+      { error: "Validation failed", issues: error },
       { status: 422 }
     );
   }
 
-  const data = parsed.data;
   if (data.slug && data.slug !== org.slug) {
     const existing = await prisma.org.findUnique({
       where: { slug: data.slug },
@@ -54,6 +50,15 @@ export async function PATCH(request, { params }) {
   const updated = await prisma.org.update({
     where: { id: params.id },
     data: data || {},
+  });
+
+  await logAudit({
+    orgId: session.user.orgId,
+    userId: session.user.id,
+    action: ACTIONS.ORG_UPDATED,
+    entity: "Org",
+    entityId: updated.id,
+    metadata: { changedFields: Object.keys(data) },
   });
 
   return Response.json(updated);
@@ -92,7 +97,17 @@ export async function DELETE(request, { params }) {
     );
   }
 
+  await logAudit({
+    orgId: session.user.orgId,
+    userId: session.user.id,
+    action: ACTIONS.ORG_DELETED,
+    entity: "Org",
+    entityId: org.id,
+    metadata: { orgName: org.name },
+  });
+
   await prisma.$transaction(async (tx) => {
+    await tx.auditLog.deleteMany({ where: { orgId: org.id } });
     await tx.comment.deleteMany({ where: { orgId: org.id } });
     await tx.file.deleteMany({ where: { orgId: org.id } });
     await tx.task.deleteMany({ where: { orgId: org.id } });

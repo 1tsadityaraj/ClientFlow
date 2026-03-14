@@ -38,7 +38,7 @@ export default function ProjectTabs({ project }) {
               onClick={() => setActiveTab(tab.id)}
               className={`border-b-2 px-4 py-2 text-sm font-medium transition-colors ${
                 activeTab === tab.id
-                  ? "border-indigo-500 text-indigo-400"
+                  ? "border-brand-primary text-brand-primary"
                   : "border-transparent text-zinc-400 hover:text-zinc-200"
               }`}
             >

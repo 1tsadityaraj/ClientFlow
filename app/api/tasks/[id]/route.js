@@ -1,15 +1,8 @@
 import { auth } from "../../../../lib/auth.js";
 import { prisma } from "../../../../lib/prisma.js";
 import { assertPermission } from "../../../../lib/permissions.js";
-import { z } from "zod";
-
-const updateTaskSchema = z.object({
-  title: z.string().min(1).optional(),
-  status: z.string().optional(),
-  priority: z.string().optional(),
-  assigneeId: z.string().nullable().optional(),
-  dueDate: z.string().datetime().nullable().optional(),
-});
+import { logAudit, ACTIONS } from "../../../../lib/audit.js";
+import { updateTaskSchema, validate } from "../../../../lib/validations.js";
 
 export async function PATCH(request, { params }) {
   const session = await auth();
@@ -32,22 +25,34 @@ export async function PATCH(request, { params }) {
   }
 
   const json = await request.json();
-  const parsed = updateTaskSchema.safeParse(json);
+  const { data, error } = validate(updateTaskSchema, json);
 
-  if (!parsed.success) {
-    return Response.json(
-      { error: "Validation failed", issues: parsed.error.issues },
-      { status: 422 }
-    );
+  if (error) {
+    return Response.json({ error }, { status: 422 });
   }
-
-  const data = parsed.data;
 
   const task = await prisma.task.update({
     where: { id: existing.id },
     data: {
       ...data,
       dueDate: data.dueDate ? new Date(data.dueDate) : existing.dueDate,
+    },
+  });
+
+  // Audit log
+  const action = data.status && data.status !== existing.status
+    ? ACTIONS.TASK_STATUS_CHANGED
+    : ACTIONS.TASK_UPDATED;
+
+  await logAudit({
+    orgId: session.user.orgId,
+    userId: session.user.id,
+    action,
+    entity: "Task",
+    entityId: task.id,
+    metadata: {
+      title: task.title,
+      ...(data.status ? { from: existing.status, to: data.status } : {}),
     },
   });
 

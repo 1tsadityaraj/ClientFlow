@@ -1,15 +1,8 @@
 import { auth } from "../../../lib/auth.js";
 import { prisma } from "../../../lib/prisma.js";
 import { assertPermission } from "../../../lib/permissions.js";
-import { z } from "zod";
-
-const createProjectSchema = z.object({
-  name: z.string().min(1),
-  description: z.string().max(2000).optional(),
-  color: z.string().optional(),
-  clientUserId: z.string().nullable().optional(),
-  managerId: z.string().min(1),
-});
+import { logAudit, ACTIONS } from "../../../lib/audit.js";
+import { createProjectSchema, validate } from "../../../lib/validations.js";
 
 export async function GET() {
   const session = await auth();
@@ -44,15 +37,10 @@ export async function POST(request) {
   }
 
   const json = await request.json();
-  const parsed = createProjectSchema.safeParse(json);
-  if (!parsed.success) {
-    return Response.json(
-      { error: "Validation failed", issues: parsed.error.issues },
-      { status: 422 }
-    );
+  const { data, error } = validate(createProjectSchema, json);
+  if (error) {
+    return Response.json({ error }, { status: 422 });
   }
-
-  const data = parsed.data;
 
   const project = await prisma.project.create({
     data: {
@@ -61,10 +49,18 @@ export async function POST(request) {
       description: data.description,
       color: data.color ?? "#6366f1",
       clientUserId: data.clientUserId ?? null,
-      managerId: data.managerId,
+      managerId: session.user.id,
     },
+  });
+
+  await logAudit({
+    orgId: session.user.orgId,
+    userId: session.user.id,
+    action: ACTIONS.PROJECT_CREATED,
+    entity: "Project",
+    entityId: project.id,
+    metadata: { name: project.name },
   });
 
   return Response.json(project, { status: 201 });
 }
-

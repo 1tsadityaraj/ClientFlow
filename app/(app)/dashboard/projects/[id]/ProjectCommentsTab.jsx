@@ -144,7 +144,7 @@ export default function ProjectCommentsTab({ projectId }) {
             onChange={(e) => setBody(e.target.value)}
             placeholder="Add a comment..."
             rows={3}
-            className="w-full resize-none rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-zinc-50 placeholder:text-zinc-500 outline-none focus:border-indigo-500"
+            className="w-full resize-none rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-zinc-50 placeholder:text-zinc-500 outline-none focus:border-brand-primary"
           />
           {submitError && (
             <p className="text-xs text-rose-400">{submitError}</p>
@@ -152,7 +152,7 @@ export default function ProjectCommentsTab({ projectId }) {
           <button
             type="submit"
             disabled={submitting || !body.trim()}
-            className="rounded-full bg-indigo-500 px-4 py-1.5 text-xs font-medium text-white hover:bg-indigo-400 disabled:opacity-60"
+            className="rounded-full bg-brand-primary px-4 py-1.5 text-xs font-medium text-white hover:opacity-90 disabled:opacity-60 transition-opacity"
           >
             {submitting ? "Posting..." : "Post comment"}
           </button>

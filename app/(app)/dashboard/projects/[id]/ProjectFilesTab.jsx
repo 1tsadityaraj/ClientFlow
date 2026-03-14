@@ -122,7 +122,7 @@ export default function ProjectFilesTab({ projectId }) {
       <div className="flex items-center justify-between">
         <h2 className="text-sm font-medium text-zinc-300">Files</h2>
         <Can permission="uploadFiles">
-          <label className="flex cursor-pointer items-center gap-2 rounded-full bg-indigo-500 px-4 py-1.5 text-xs font-medium text-white hover:bg-indigo-400">
+          <label className="flex cursor-pointer items-center gap-2 rounded-full bg-brand-primary px-4 py-1.5 text-xs font-medium text-white transition-opacity hover:opacity-90">
             <Upload className="h-3.5 w-3.5" />
             {uploading ? "Uploading..." : "Upload"}
             <input

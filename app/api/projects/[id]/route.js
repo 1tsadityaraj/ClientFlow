@@ -1,16 +1,8 @@
 import { auth } from "../../../../lib/auth.js";
 import { prisma } from "../../../../lib/prisma.js";
 import { assertPermission } from "../../../../lib/permissions.js";
-import { z } from "zod";
-
-const updateProjectSchema = z.object({
-  name: z.string().min(1).optional(),
-  description: z.string().max(2000).optional(),
-  status: z.enum(["active", "completed", "archived"]).optional(),
-  color: z.string().optional(),
-  clientUserId: z.string().nullable().optional(),
-  managerId: z.string().optional(),
-});
+import { logAudit, ACTIONS } from "../../../../lib/audit.js";
+import { updateProjectSchema, validate } from "../../../../lib/validations.js";
 
 export async function GET(_request, { params }) {
   const session = await auth();
@@ -52,12 +44,9 @@ export async function PATCH(request, { params }) {
   }
 
   const json = await request.json();
-  const parsed = updateProjectSchema.safeParse(json);
-  if (!parsed.success) {
-    return Response.json(
-      { error: "Validation failed", issues: parsed.error.issues },
-      { status: 422 }
-    );
+  const { data, error } = validate(updateProjectSchema, json);
+  if (error) {
+    return Response.json({ error }, { status: 422 });
   }
 
   const existing = await prisma.project.findFirst({
@@ -70,7 +59,16 @@ export async function PATCH(request, { params }) {
 
   const project = await prisma.project.update({
     where: { id: existing.id },
-    data: parsed.data,
+    data,
+  });
+
+  await logAudit({
+    orgId: session.user.orgId,
+    userId: session.user.id,
+    action: ACTIONS.PROJECT_UPDATED,
+    entity: "Project",
+    entityId: project.id,
+    metadata: { name: project.name, changes: Object.keys(data) },
   });
 
   return Response.json(project);
@@ -100,6 +98,14 @@ export async function DELETE(_request, { params }) {
     where: { id: existing.id },
   });
 
+  await logAudit({
+    orgId: session.user.orgId,
+    userId: session.user.id,
+    action: ACTIONS.PROJECT_DELETED,
+    entity: "Project",
+    entityId: existing.id,
+    metadata: { name: existing.name },
+  });
+
   return Response.json({ success: true });
 }
-

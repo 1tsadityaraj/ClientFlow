@@ -1,11 +1,8 @@
 import { auth } from "../../../../../lib/auth.js";
 import { prisma } from "../../../../../lib/prisma.js";
 import { assertPermission } from "../../../../../lib/permissions.js";
-import { z } from "zod";
-
-const createCommentSchema = z.object({
-  body: z.string().min(1).max(5000),
-});
+import { logAudit, ACTIONS } from "../../../../../lib/audit.js";
+import { createCommentSchema, validate } from "../../../../../lib/validations.js";
 
 export async function GET(_request, { params }) {
   const session = await auth();
@@ -68,16 +65,11 @@ export async function POST(request, { params }) {
   }
 
   const json = await request.json();
-  const parsed = createCommentSchema.safeParse(json);
+  const { data, error } = validate(createCommentSchema, json);
 
-  if (!parsed.success) {
-    return Response.json(
-      { error: "Validation failed", issues: parsed.error.issues },
-      { status: 422 }
-    );
+  if (error) {
+    return Response.json({ error }, { status: 422 });
   }
-
-  const data = parsed.data;
 
   const comment = await prisma.comment.create({
     data: {
@@ -86,8 +78,17 @@ export async function POST(request, { params }) {
       userId: session.user.id,
       body: data.body,
     },
+    include: { user: { select: { name: true } } }
+  });
+
+  await logAudit({
+    orgId: session.user.orgId,
+    userId: session.user.id,
+    action: ACTIONS.COMMENT_ADDED,
+    entity: "Comment",
+    entityId: comment.id,
+    metadata: { project: project.name },
   });
 
   return Response.json(comment, { status: 201 });
 }
-

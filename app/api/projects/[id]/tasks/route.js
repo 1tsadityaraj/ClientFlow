@@ -1,15 +1,8 @@
 import { auth } from "../../../../../lib/auth.js";
 import { prisma } from "../../../../../lib/prisma.js";
 import { assertPermission } from "../../../../../lib/permissions.js";
-import { z } from "zod";
-
-const createTaskSchema = z.object({
-  title: z.string().min(1),
-  status: z.string().optional(),
-  priority: z.string().optional(),
-  assigneeId: z.string().nullable().optional(),
-  dueDate: z.string().datetime().nullable().optional(),
-});
+import { logAudit, ACTIONS } from "../../../../../lib/audit.js";
+import { createTaskSchema, validate } from "../../../../../lib/validations.js";
 
 export async function GET(_request, { params }) {
   const session = await auth();
@@ -38,6 +31,9 @@ export async function GET(_request, { params }) {
       projectId: params.id,
     },
     orderBy: { createdAt: "asc" },
+    include: {
+      assignee: { select: { name: true, email: true } },
+    },
   });
 
   return Response.json(tasks);
@@ -64,29 +60,32 @@ export async function POST(request, { params }) {
   }
 
   const json = await request.json();
-  const parsed = createTaskSchema.safeParse(json);
+  const { data, error } = validate(createTaskSchema, json);
 
-  if (!parsed.success) {
-    return Response.json(
-      { error: "Validation failed", issues: parsed.error.issues },
-      { status: 422 }
-    );
+  if (error) {
+    return Response.json({ error }, { status: 422 });
   }
-
-  const data = parsed.data;
 
   const task = await prisma.task.create({
     data: {
       orgId: session.user.orgId,
       projectId: project.id,
       title: data.title,
-      status: data.status ?? "TODO",
+      status: "TODO",
       priority: data.priority ?? "MEDIUM",
       assigneeId: data.assigneeId ?? null,
       dueDate: data.dueDate ? new Date(data.dueDate) : null,
     },
   });
 
+  await logAudit({
+    orgId: session.user.orgId,
+    userId: session.user.id,
+    action: ACTIONS.TASK_CREATED,
+    entity: "Task",
+    entityId: task.id,
+    metadata: { title: task.title, project: project.name },
+  });
+
   return Response.json(task, { status: 201 });
 }
-
