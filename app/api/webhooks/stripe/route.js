@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import Stripe from "stripe";
-import { stripe } from "../../../../lib/stripe.js";
-import { prisma } from "../../../../lib/prisma.js";
+import { stripe } from "../../../lib/stripe.js";
+import { prisma } from "../../../lib/prisma.js";
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 

@@ -1,10 +1,11 @@
+import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
-import { auth } from "../../../../../lib/auth.js";
+import { authOptions } from "../../../../../lib/auth.js";
 import { prisma } from "../../../../../lib/prisma.js";
 import ProjectTabs from "./ProjectTabs";
 
 export default async function ProjectDetailPage({ params }) {
-  const session = await auth();
+  const session = await getServerSession(authOptions);
 
   if (!session) {
     notFound();

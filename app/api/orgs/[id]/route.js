@@ -1,4 +1,5 @@
-import { auth } from "../../../../lib/auth.js";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../../../../lib/auth.js";
 import { prisma } from "../../../../lib/prisma.js";
 import { assertPermission } from "../../../../lib/permissions.js";
 import { z } from "zod";
@@ -9,7 +10,7 @@ const updateOrgSchema = z.object({
 });
 
 export async function PATCH(request, { params }) {
-  const session = await auth();
+  const session = await getServerSession(authOptions);
   if (!session) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -60,7 +61,7 @@ export async function PATCH(request, { params }) {
 }
 
 export async function DELETE(request, { params }) {
-  const session = await auth();
+  const session = await getServerSession(authOptions);
   if (!session) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }

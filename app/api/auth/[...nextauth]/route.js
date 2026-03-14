@@ -1,7 +1,10 @@
-import { handlers } from "../../../../lib/auth.js";
+import NextAuth from "next-auth";
+import { authOptions } from "../../../../lib/auth.js";
 import { authLimiter, checkRateLimit } from "../../../../lib/rateLimit.js";
 
-export const GET = handlers.GET;
+const handler = NextAuth(authOptions);
+
+export { handler as GET };
 
 export async function POST(request, context) {
   const ip =
@@ -12,5 +15,6 @@ export async function POST(request, context) {
   const rateLimitResponse = await checkRateLimit(authLimiter, ip);
   if (rateLimitResponse) return rateLimitResponse;
 
-  return handlers.POST(request, context);
+  return handler(request, context);
 }
+

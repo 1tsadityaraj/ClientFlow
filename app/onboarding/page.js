@@ -1,8 +1,9 @@
+import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import { auth } from "../../lib/auth.js";
+import { authOptions } from "../../lib/auth.js";
 
 export default async function OnboardingPage() {
-  const session = await auth();
+  const session = await getServerSession(authOptions);
 
   if (!session) {
     redirect("/login");

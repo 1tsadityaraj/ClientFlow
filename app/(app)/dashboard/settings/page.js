@@ -1,11 +1,12 @@
 import { Suspense } from "react";
+import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import { auth } from "../../../../lib/auth.js";
+import { authOptions } from "../../../../lib/auth.js";
 import { prisma } from "../../../../lib/prisma.js";
 import SettingsForm from "./SettingsForm";
 
 export default async function SettingsPage() {
-  const session = await auth();
+  const session = await getServerSession(authOptions);
   if (!session) {
     redirect("/login");
   }

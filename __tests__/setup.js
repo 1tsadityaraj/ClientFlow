@@ -5,7 +5,7 @@ process.env.DATABASE_URL =
   process.env.TEST_DATABASE_URL || process.env.DATABASE_URL;
 
 beforeAll(() => {
-  execSync("npx prisma db push --force-reset --accept-data-loss", {
+  execSync("npx prisma db push --force-reset", {
     env: process.env,
     stdio: "inherit",
   });
@@ -13,12 +13,14 @@ beforeAll(() => {
 
 afterAll(async () => {
   const { prisma } = await import("../lib/prisma.js");
-  await prisma.comment.deleteMany({});
-  await prisma.file.deleteMany({});
-  await prisma.task.deleteMany({});
-  await prisma.project.deleteMany({});
-  await prisma.invite.deleteMany({});
-  await prisma.user.deleteMany({});
-  await prisma.org.deleteMany({});
+  await prisma.$transaction(async (tx) => {
+    await tx.comment.deleteMany({});
+    await tx.file.deleteMany({});
+    await tx.task.deleteMany({});
+    await tx.project.deleteMany({});
+    await tx.invite.deleteMany({});
+    await tx.user.deleteMany({});
+    await tx.org.deleteMany({});
+  });
   await prisma.$disconnect();
 });
