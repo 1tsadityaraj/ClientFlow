@@ -1,8 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useOptimistic, startTransition } from "react";
+import { useSession } from "next-auth/react";
 import { Can } from "../../../../../components/Can";
 import { PlusCircle, Calendar, MessageSquare, GripVertical } from "lucide-react";
+import { updateTaskStatus } from "@/actions/task";
 
 /**
  * Optimistic Kanban Board
@@ -16,7 +18,12 @@ const COLUMNS = [
 const PRIORITIES = ["LOW", "MEDIUM", "HIGH"];
 
 export default function ProjectTasksTab({ projectId }) {
+  const { data: session } = useSession();
   const [tasks, setTasks] = useState([]);
+  const [optimisticTasks, setOptimisticTasks] = useOptimistic(
+    tasks,
+    (state, { id, status }) => state.map((t) => (t.id === id ? { ...t, status } : t))
+  );
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -60,31 +67,31 @@ export default function ProjectTasksTab({ projectId }) {
   }, [projectId]);
 
   // Handle Drag & Drop with Optimistic UI Update
-  async function handleDrop(e, targetStatus) {
+  function handleDrop(e, targetStatus) {
     e.preventDefault();
-    if (!draggedTaskId) return;
+    if (!draggedTaskId || !session?.user?.orgId) return;
 
-    const taskToUpdate = tasks.find(t => t.id === draggedTaskId);
+    const taskToUpdate = optimisticTasks.find(t => t.id === draggedTaskId);
     if (!taskToUpdate || taskToUpdate.status === targetStatus) return;
 
-    // Optimistic Update
-    const previousTasks = [...tasks];
-    setTasks((prev) =>
-      prev.map((t) => (t.id === draggedTaskId ? { ...t, status: targetStatus } : t))
-    );
-    setDraggedTaskId(null);
+    startTransition(async () => {
+      // 1. Optimistic Update
+      setOptimisticTasks({ id: draggedTaskId, status: targetStatus });
+      setDraggedTaskId(null);
 
-    // API Call
-    const res = await fetch(`/api/tasks/${draggedTaskId}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status: targetStatus }),
+      // 2. API Call via Server Action
+      const res = await updateTaskStatus(draggedTaskId, targetStatus, session.user.orgId);
+
+      if (res?.success) {
+        // Sync base state so optimistic state isn't reverted
+        setTasks((prev) =>
+          prev.map((t) => (t.id === draggedTaskId ? { ...t, status: targetStatus } : t))
+        );
+      } else {
+        // Optimistic UI automatically reverts when transition completes without base state updates
+        console.error("Failed to update task status:", res?.error);
+      }
     });
-
-    if (!res.ok) {
-      // Revert on failure
-      setTasks(previousTasks);
-    }
   }
 
   async function handleAddTask(e) {
@@ -202,7 +209,7 @@ export default function ProjectTasksTab({ projectId }) {
       {/* Kanban Board Grid */}
       <div className="grid gap-6 md:grid-cols-3 min-h-[500px] overflow-auto pb-4">
         {COLUMNS.map(col => {
-          const columnTasks = tasks.filter(t => t.status === col.id);
+          const columnTasks = optimisticTasks.filter(t => t.status === col.id);
           
           return (
             <div
