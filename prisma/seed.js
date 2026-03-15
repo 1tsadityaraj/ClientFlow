@@ -100,6 +100,26 @@ async function main() {
     },
   });
 
+  const grace = await prisma.user.create({
+    data: {
+      name: "Grace Kim",
+      email: "grace@nova.co",
+      hashedPassword,
+      role: "manager",
+      orgId: novaStudio.id,
+    },
+  });
+
+  const henry = await prisma.user.create({
+    data: {
+      name: "Henry Patel",
+      email: "henry@startup.io",
+      hashedPassword,
+      role: "client",
+      orgId: novaStudio.id,
+    },
+  });
+
   console.log("Created Users.");
 
   // 3. Create Projects for Pixel Agency
@@ -170,15 +190,41 @@ async function main() {
     },
   });
 
-  // Create a project for Nova Studio (for isolation demo)
-  await prisma.project.create({
+  // Create projects for Nova Studio (for isolation demo)
+  const novaProject1 = await prisma.project.create({
     data: {
       orgId: novaStudio.id,
       name: "Nova Internal Tools",
       description: "Internal tooling for Nova Studio operations.",
       managerId: frank.id,
       status: "active",
-      progress: 10,
+      progress: 45,
+      color: "#ec4899",
+    },
+  });
+
+  const novaProject2 = await prisma.project.create({
+    data: {
+      orgId: novaStudio.id,
+      name: "Startup.io Branding",
+      description: "Complete brand identity for Startup.io — logos, guidelines, and marketing collateral.",
+      managerId: grace.id,
+      clientUserId: henry.id,
+      status: "active",
+      progress: 72,
+      color: "#f59e0b",
+    },
+  });
+
+  const novaProject3 = await prisma.project.create({
+    data: {
+      orgId: novaStudio.id,
+      name: "API Gateway Redesign",
+      description: "Modernizing the API gateway with rate limiting and caching layers.",
+      managerId: frank.id,
+      status: "completed",
+      progress: 100,
+      color: "#10b981",
     },
   });
 
@@ -540,12 +586,360 @@ async function main() {
   });
   console.log("Created Invites.");
 
+  // 8. Create Nova Studio Tasks
+  const novaTasksData = [
+    {
+      orgId: novaStudio.id,
+      projectId: novaProject1.id,
+      title: "Setup CI/CD pipeline",
+      status: "DONE",
+      priority: "HIGH",
+      assigneeId: frank.id,
+      dueDate: daysFromNow(-8),
+    },
+    {
+      orgId: novaStudio.id,
+      projectId: novaProject1.id,
+      title: "Build admin dashboard scaffold",
+      status: "IN_PROGRESS",
+      priority: "HIGH",
+      assigneeId: grace.id,
+      dueDate: daysFromNow(3),
+    },
+    {
+      orgId: novaStudio.id,
+      projectId: novaProject1.id,
+      title: "Implement user analytics tracking",
+      status: "TODO",
+      priority: "MEDIUM",
+      assigneeId: frank.id,
+      dueDate: daysFromNow(10),
+    },
+    {
+      orgId: novaStudio.id,
+      projectId: novaProject2.id,
+      title: "Create logo concepts — 3 directions",
+      status: "DONE",
+      priority: "HIGH",
+      assigneeId: grace.id,
+      dueDate: daysFromNow(-12),
+    },
+    {
+      orgId: novaStudio.id,
+      projectId: novaProject2.id,
+      title: "Client review: round 1 feedback",
+      status: "IN_PROGRESS",
+      priority: "HIGH",
+      assigneeId: henry.id,
+      dueDate: daysFromNow(1),
+    },
+    {
+      orgId: novaStudio.id,
+      projectId: novaProject2.id,
+      title: "Finalize typography & color system",
+      status: "TODO",
+      priority: "MEDIUM",
+      assigneeId: grace.id,
+      dueDate: daysFromNow(6),
+    },
+    {
+      orgId: novaStudio.id,
+      projectId: novaProject3.id,
+      title: "Implement JWT auth middleware",
+      status: "DONE",
+      priority: "HIGH",
+      assigneeId: frank.id,
+      dueDate: daysFromNow(-20),
+    },
+    {
+      orgId: novaStudio.id,
+      projectId: novaProject3.id,
+      title: "Add Redis caching layer",
+      status: "DONE",
+      priority: "HIGH",
+      assigneeId: frank.id,
+      dueDate: daysFromNow(-15),
+    },
+  ];
+
+  for (const task of novaTasksData) {
+    await prisma.task.create({ data: task });
+  }
+  console.log("Created Nova Studio Tasks.");
+
+  // 9. Create Nova Studio Comments
+  const novaCommentsData = [
+    {
+      orgId: novaStudio.id,
+      projectId: novaProject1.id,
+      userId: frank.id,
+      body: "CI/CD is live — every push to main auto-deploys to staging. Production requires manual approval.",
+    },
+    {
+      orgId: novaStudio.id,
+      projectId: novaProject1.id,
+      userId: grace.id,
+      body: "Dashboard scaffold is progressing well. Using the same component library as our client projects for consistency.",
+    },
+    {
+      orgId: novaStudio.id,
+      projectId: novaProject2.id,
+      userId: grace.id,
+      body: "Uploaded 3 logo directions. Option B with the geometric mark is my recommendation.",
+    },
+    {
+      orgId: novaStudio.id,
+      projectId: novaProject2.id,
+      userId: henry.id,
+      body: "Love Option B! Can we explore a warmer color palette? Something with terracotta tones.",
+    },
+  ];
+
+  for (const comment of novaCommentsData) {
+    await prisma.comment.create({ data: comment });
+  }
+  console.log("Created Nova Studio Comments.");
+
+  // 10. Create Audit Logs (Pixel Agency)
+  const auditLogsData = [
+    // Org-level actions
+    {
+      orgId: pixelAgency.id,
+      userId: alice.id,
+      action: "org.created",
+      entity: "Org",
+      entityId: pixelAgency.id,
+      metadata: JSON.stringify({ name: "Pixel Agency", plan: "pro" }),
+      createdAt: daysFromNow(-30),
+    },
+    {
+      orgId: pixelAgency.id,
+      userId: alice.id,
+      action: "org.updated",
+      entity: "Org",
+      entityId: pixelAgency.id,
+      metadata: JSON.stringify({ field: "primaryColor", from: "#6366f1", to: "#4f46e5" }),
+      createdAt: daysFromNow(-28),
+    },
+    // Member actions
+    {
+      orgId: pixelAgency.id,
+      userId: alice.id,
+      action: "member.invited",
+      entity: "User",
+      entityId: bob.id,
+      metadata: JSON.stringify({ email: "bob@pixel.co", role: "manager" }),
+      createdAt: daysFromNow(-29),
+    },
+    {
+      orgId: pixelAgency.id,
+      userId: alice.id,
+      action: "member.invited",
+      entity: "User",
+      entityId: carol.id,
+      metadata: JSON.stringify({ email: "carol@pixel.co", role: "member" }),
+      createdAt: daysFromNow(-28),
+    },
+    {
+      orgId: pixelAgency.id,
+      userId: alice.id,
+      action: "member.invited",
+      entity: "User",
+      entityId: emma.id,
+      metadata: JSON.stringify({ email: "emma@pixel.co", role: "member" }),
+      createdAt: daysFromNow(-27),
+    },
+    {
+      orgId: pixelAgency.id,
+      userId: alice.id,
+      action: "member.invited",
+      entity: "User",
+      entityId: dave.id,
+      metadata: JSON.stringify({ email: "dave@acme.com", role: "client" }),
+      createdAt: daysFromNow(-26),
+    },
+    {
+      orgId: pixelAgency.id,
+      userId: alice.id,
+      action: "member.role_changed",
+      entity: "User",
+      entityId: emma.id,
+      metadata: JSON.stringify({ from: "member", to: "member", email: "emma@pixel.co" }),
+      createdAt: daysFromNow(-20),
+    },
+    // Project actions
+    {
+      orgId: pixelAgency.id,
+      userId: alice.id,
+      action: "project.created",
+      entity: "Project",
+      entityId: project1.id,
+      metadata: JSON.stringify({ name: "Acme Corp Website Redesign" }),
+      createdAt: daysFromNow(-25),
+    },
+    {
+      orgId: pixelAgency.id,
+      userId: bob.id,
+      action: "project.created",
+      entity: "Project",
+      entityId: project2.id,
+      metadata: JSON.stringify({ name: "Internal Dashboard v2.0" }),
+      createdAt: daysFromNow(-22),
+    },
+    {
+      orgId: pixelAgency.id,
+      userId: alice.id,
+      action: "project.created",
+      entity: "Project",
+      entityId: project3.id,
+      metadata: JSON.stringify({ name: "Mobile App MVP" }),
+      createdAt: daysFromNow(-18),
+    },
+    {
+      orgId: pixelAgency.id,
+      userId: bob.id,
+      action: "project.created",
+      entity: "Project",
+      entityId: project4.id,
+      metadata: JSON.stringify({ name: "Brand Identity Refresh" }),
+      createdAt: daysFromNow(-15),
+    },
+    {
+      orgId: pixelAgency.id,
+      userId: alice.id,
+      action: "project.created",
+      entity: "Project",
+      entityId: project5.id,
+      metadata: JSON.stringify({ name: "E-Commerce Platform" }),
+      createdAt: daysFromNow(-12),
+    },
+    {
+      orgId: pixelAgency.id,
+      userId: bob.id,
+      action: "project.updated",
+      entity: "Project",
+      entityId: project4.id,
+      metadata: JSON.stringify({ field: "status", from: "active", to: "completed" }),
+      createdAt: daysFromNow(-6),
+    },
+    // Task actions
+    {
+      orgId: pixelAgency.id,
+      userId: carol.id,
+      action: "task.status_changed",
+      entity: "Task",
+      metadata: JSON.stringify({ title: "Design homepage wireframes", from: "IN_PROGRESS", to: "DONE" }),
+      createdAt: daysFromNow(-5),
+    },
+    {
+      orgId: pixelAgency.id,
+      userId: emma.id,
+      action: "task.status_changed",
+      entity: "Task",
+      metadata: JSON.stringify({ title: "Implement responsive navigation", from: "IN_PROGRESS", to: "DONE" }),
+      createdAt: daysFromNow(-3),
+    },
+    {
+      orgId: pixelAgency.id,
+      userId: alice.id,
+      action: "task.created",
+      entity: "Task",
+      metadata: JSON.stringify({ title: "Setup Stripe payment integration", project: "E-Commerce Platform" }),
+      createdAt: daysFromNow(-10),
+    },
+    // File actions
+    {
+      orgId: pixelAgency.id,
+      userId: carol.id,
+      action: "file.uploaded",
+      entity: "File",
+      metadata: JSON.stringify({ name: "homepage-wireframes-v2.fig", size: "4.2 MB" }),
+      createdAt: daysFromNow(-5),
+    },
+    {
+      orgId: pixelAgency.id,
+      userId: bob.id,
+      action: "file.uploaded",
+      entity: "File",
+      metadata: JSON.stringify({ name: "brand-assets.zip", size: "28.5 MB" }),
+      createdAt: daysFromNow(-4),
+    },
+    {
+      orgId: pixelAgency.id,
+      userId: dave.id,
+      action: "file.uploaded",
+      entity: "File",
+      metadata: JSON.stringify({ name: "client-requirements.pdf", size: "1.8 MB" }),
+      createdAt: daysFromNow(-3),
+    },
+    // Comment action
+    {
+      orgId: pixelAgency.id,
+      userId: dave.id,
+      action: "comment.added",
+      entity: "Comment",
+      metadata: JSON.stringify({ project: "Acme Corp Website Redesign", preview: "The wireframes look great!" }),
+      createdAt: daysFromNow(-2),
+    },
+    // Recent billing/plan event
+    {
+      orgId: pixelAgency.id,
+      userId: alice.id,
+      action: "org.updated",
+      entity: "Org",
+      entityId: pixelAgency.id,
+      metadata: JSON.stringify({ field: "plan", from: "starter", to: "pro" }),
+      createdAt: daysFromNow(-1),
+    },
+  ];
+
+  // Audit logs for Nova Studio
+  const novaAuditData = [
+    {
+      orgId: novaStudio.id,
+      userId: frank.id,
+      action: "org.created",
+      entity: "Org",
+      entityId: novaStudio.id,
+      metadata: JSON.stringify({ name: "Nova Studio", plan: "starter" }),
+      createdAt: daysFromNow(-20),
+    },
+    {
+      orgId: novaStudio.id,
+      userId: frank.id,
+      action: "member.invited",
+      entity: "User",
+      entityId: grace.id,
+      metadata: JSON.stringify({ email: "grace@nova.co", role: "manager" }),
+      createdAt: daysFromNow(-19),
+    },
+    {
+      orgId: novaStudio.id,
+      userId: frank.id,
+      action: "project.created",
+      entity: "Project",
+      entityId: novaProject1.id,
+      metadata: JSON.stringify({ name: "Nova Internal Tools" }),
+      createdAt: daysFromNow(-18),
+    },
+  ];
+
+  for (const log of [...auditLogsData, ...novaAuditData]) {
+    await prisma.auditLog.create({ data: log });
+  }
+  console.log("Created Audit Logs.");
+
   console.log("\n✅ Seed completed successfully!");
   console.log("\n📧 Demo login credentials:");
-  console.log("   Admin:   alice@pixel.co / password123");
-  console.log("   Manager: bob@pixel.co / password123");
-  console.log("   Member:  carol@pixel.co / password123");
-  console.log("   Client:  dave@acme.com / password123");
+  console.log("  ─── Pixel Agency (Pro Plan) ───");
+  console.log("   Admin:   alice@pixel.co   / password123");
+  console.log("   Manager: bob@pixel.co     / password123");
+  console.log("   Member:  carol@pixel.co   / password123");
+  console.log("   Client:  dave@acme.com    / password123");
+  console.log("  ─── Nova Studio (Starter Plan — Isolation Demo) ───");
+  console.log("   Admin:   frank@nova.co    / password123");
+  console.log("   Manager: grace@nova.co    / password123");
+  console.log("   Client:  henry@startup.io / password123");
 }
 
 main()

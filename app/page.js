@@ -450,27 +450,50 @@ export async function getProjects(session) {
             Try the live demo
           </h2>
           <p className="mt-2 text-sm text-zinc-400 max-w-lg mx-auto">
-            Sign in with any of these test accounts to explore different role
-            perspectives.
+            Two fully-seeded tenants with complete data isolation. Log into both
+            in separate windows and try pasting URLs between them — the "Iron
+            Curtain" blocks all cross-tenant access.
           </p>
-          <div className="mt-6 grid gap-3 sm:grid-cols-2 max-w-xl mx-auto text-left text-xs">
-            {[
-              { role: "Admin", email: "alice@pixel.co", color: "border-indigo-500/30 bg-indigo-500/5" },
-              { role: "Manager", email: "bob@pixel.co", color: "border-sky-500/30 bg-sky-500/5" },
-              { role: "Member", email: "carol@pixel.co", color: "border-emerald-500/30 bg-emerald-500/5" },
-              { role: "Client", email: "dave@acme.com", color: "border-amber-500/30 bg-amber-500/5" },
-            ].map((cred) => (
-              <div
-                key={cred.role}
-                className={`rounded-2xl border ${cred.color} p-4`}
-              >
-                <p className="font-semibold text-zinc-200">{cred.role}</p>
-                <p className="mt-1 text-zinc-400">
-                  {cred.email}
-                </p>
-                <p className="text-zinc-500">password123</p>
+          <div className="mt-6 grid gap-6 sm:grid-cols-2 max-w-2xl mx-auto text-left text-xs">
+            <div className="space-y-3">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-indigo-400">Pixel Agency (Pro)</p>
+              {[
+                { role: "Admin", email: "alice@pixel.co", color: "border-indigo-500/30 bg-indigo-500/5" },
+                { role: "Manager", email: "bob@pixel.co", color: "border-sky-500/30 bg-sky-500/5" },
+                { role: "Member", email: "carol@pixel.co", color: "border-emerald-500/30 bg-emerald-500/5" },
+                { role: "Client", email: "dave@acme.com", color: "border-amber-500/30 bg-amber-500/5" },
+              ].map((cred) => (
+                <div
+                  key={cred.role}
+                  className={`rounded-2xl border ${cred.color} p-3`}
+                >
+                  <p className="font-semibold text-zinc-200">{cred.role}</p>
+                  <p className="text-zinc-400">{cred.email}</p>
+                  <p className="text-zinc-500">password123</p>
+                </div>
+              ))}
+            </div>
+            <div className="space-y-3">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-rose-400">Nova Studio (Starter)</p>
+              {[
+                { role: "Admin", email: "frank@nova.co", color: "border-rose-500/30 bg-rose-500/5" },
+                { role: "Manager", email: "grace@nova.co", color: "border-violet-500/30 bg-violet-500/5" },
+                { role: "Client", email: "henry@startup.io", color: "border-teal-500/30 bg-teal-500/5" },
+              ].map((cred) => (
+                <div
+                  key={cred.role}
+                  className={`rounded-2xl border ${cred.color} p-3`}
+                >
+                  <p className="font-semibold text-zinc-200">{cred.role}</p>
+                  <p className="text-zinc-400">{cred.email}</p>
+                  <p className="text-zinc-500">password123</p>
+                </div>
+              ))}
+              <div className="rounded-2xl border border-zinc-700 bg-zinc-800/50 p-3 mt-2">
+                <p className="font-semibold text-yellow-300 text-[10px] uppercase tracking-wider">🔒 Leak Test</p>
+                <p className="text-zinc-400 mt-1">Copy a project URL from Pixel Agency and paste it in Nova Studio's session — it returns 403.</p>
               </div>
-            ))}
+            </div>
           </div>
           <Link
             href="/login"
