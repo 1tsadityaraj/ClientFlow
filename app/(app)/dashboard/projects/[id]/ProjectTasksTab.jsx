@@ -3,7 +3,7 @@
 import { useState, useEffect, useOptimistic, startTransition } from "react";
 import { useSession } from "next-auth/react";
 import { Can } from "../../../../../components/Can";
-import { PlusCircle, Calendar, MessageSquare, GripVertical } from "lucide-react";
+import { PlusCircle, Calendar, MessageSquare, GripVertical, CheckCircle2 } from "lucide-react";
 import { updateTaskStatus } from "@/actions/task";
 
 /**
@@ -28,6 +28,12 @@ export default function ProjectTasksTab({ projectId }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const [toast, setToast] = useState(null);
+  
+  function showToast(message) {
+    setToast(message);
+    setTimeout(() => setToast(null), 3000);
+  }
   
   // Drag state
   const [draggedTaskId, setDraggedTaskId] = useState(null);
@@ -87,6 +93,7 @@ export default function ProjectTasksTab({ projectId }) {
         setTasks((prev) =>
           prev.map((t) => (t.id === draggedTaskId ? { ...t, status: targetStatus } : t))
         );
+        showToast("Saved");
       } else {
         // Optimistic UI automatically reverts when transition completes without base state updates
         console.error("Failed to update task status:", res?.error);
@@ -282,6 +289,14 @@ export default function ProjectTasksTab({ projectId }) {
           );
         })}
       </div>
+
+      {/* Toast Notification */}
+      {toast && (
+        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-4 py-2 text-sm font-medium text-emerald-400 shadow-lg backdrop-blur-md animate-in fade-in slide-in-from-bottom-5">
+          <CheckCircle2 className="h-4 w-4" />
+          {toast}
+        </div>
+      )}
     </div>
   );
 }
