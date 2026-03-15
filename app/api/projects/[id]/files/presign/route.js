@@ -1,7 +1,8 @@
-import { auth } from "../../../../../../lib/auth.js";
-import { prisma } from "../../../../../../lib/prisma.js";
-import { assertPermission } from "../../../../../../lib/permissions.js";
-import { generatePresignedUrl } from "../../../../../../lib/s3.js";
+export const dynamic = "force-dynamic";
+import { auth } from "@/lib/auth.js";
+import { prisma } from "@/lib/prisma.js";
+import { assertPermission } from "@/lib/permissions.js";
+import { generatePresignedUrl } from "@/lib/s3.js";
 import { z } from "zod";
 
 const presignSchema = z.object({

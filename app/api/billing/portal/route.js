@@ -1,7 +1,7 @@
-import { auth } from "../../../../lib/auth.js";
-import { prisma } from "../../../../lib/prisma.js";
-import { assertPermission } from "../../../../lib/permissions.js";
-import { stripe } from "../../../../lib/stripe.js";
+import { auth } from "@/lib/auth.js";
+import { prisma } from "@/lib/prisma.js";
+import { assertPermission } from "@/lib/permissions.js";
+import { stripe } from "@/lib/stripe.js";
 
 const baseUrl =
   process.env.NEXT_PUBLIC_APP_URL ||

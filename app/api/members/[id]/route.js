@@ -1,6 +1,6 @@
-import { auth } from "../../../../lib/auth.js";
-import { prisma } from "../../../../lib/prisma.js";
-import { assertPermission } from "../../../../lib/permissions.js";
+import { auth } from "@/lib/auth.js";
+import { prisma } from "@/lib/prisma.js";
+import { assertPermission } from "@/lib/permissions.js";
 import { z } from "zod";
 
 const updateRoleSchema = z.object({

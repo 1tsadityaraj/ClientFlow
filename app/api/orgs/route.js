@@ -1,6 +1,7 @@
-import { auth } from "../../../lib/auth.js";
-import { prisma } from "../../../lib/prisma.js";
-import { assertPermission } from "../../../lib/permissions.js";
+export const dynamic = "force-dynamic";
+import { auth } from "@/lib/auth.js";
+import { prisma } from "@/lib/prisma.js";
+import { assertPermission } from "@/lib/permissions.js";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 

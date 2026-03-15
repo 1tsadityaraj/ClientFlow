@@ -1,9 +1,9 @@
-import { auth } from "../../../lib/auth.js";
-import { prisma } from "../../../lib/prisma.js";
-import { assertPermission } from "../../../lib/permissions.js";
-import { inviteLimiter, checkRateLimit } from "../../../lib/rateLimit.js";
-import { sendInviteEmail } from "../../../lib/email.js";
-import { logAudit, ACTIONS } from "../../../lib/audit.js";
+import { auth } from "@/lib/auth.js";
+import { prisma } from "@/lib/prisma.js";
+import { assertPermission } from "@/lib/permissions.js";
+import { inviteLimiter, checkRateLimit } from "@/lib/rateLimit.js";
+import { sendInviteEmail } from "@/lib/email.js";
+import { logAudit, ACTIONS } from "@/lib/audit.js";
 import { z } from "zod";
 import crypto from "crypto";
 

@@ -264,6 +264,54 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* Built for Scale */}
+        <section className="grid gap-12 md:grid-cols-2 md:items-center">
+          <div className="space-y-6">
+            <h2 className="text-3xl font-bold tracking-tight">
+              Built for production, <br />
+              <span className="text-indigo-400">architected for scale.</span>
+            </h2>
+            <p className="text-zinc-400">
+              ClientFlow isn't just a UI—it's a complete infrastructure blueprint. 
+              We've solved the hard problems of multitenancy and security so you can 
+              focus on shipping features.
+            </p>
+            <div className="space-y-4">
+              {[
+                { title: "Query-Level Security", desc: "Forced org-level scoping on every Prisma query." },
+                { title: "Edge Performance", desc: "Rate limiting and session management at the edge." },
+                { title: "Audit Ready", desc: "Comprehensive logging for every critical action." },
+              ].map((item) => (
+                <div key={item.title} className="flex gap-4">
+                  <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-500/20 text-indigo-400">
+                    <CheckCircle2 className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-semibold text-zinc-200">{item.title}</h4>
+                    <p className="text-xs text-zinc-500">{item.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="relative">
+            <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-indigo-500 to-violet-500 opacity-20 blur-xl" />
+            <div className="relative rounded-3xl border border-zinc-800 bg-zinc-900/80 p-6 backdrop-blur-xl">
+              <pre className="text-[10px] leading-relaxed text-indigo-300/80 overflow-x-auto">
+                <code>{`// Org-scoped safety example
+export async function getProjects(session) {
+  return await prisma.project.findMany({
+    where: { 
+      orgId: session.user.orgId // Inherently secure
+    },
+    include: { tasks: true }
+  });
+}`}</code>
+              </pre>
+            </div>
+          </div>
+        </section>
+
         {/* Tech Stack Banner */}
         <section className="rounded-3xl border border-zinc-800 bg-zinc-900/40 p-8">
           <div className="text-center mb-8">
@@ -276,10 +324,10 @@ export default function LandingPage() {
           </div>
           <div className="flex flex-wrap justify-center gap-4">
             {[
-              "Next.js 16",
-              "Prisma ORM",
+              "Next.js 15",
+              "Prisma 6",
               "NextAuth v5",
-              "Tailwind CSS",
+              "Tailwind CSS v4",
               "Stripe",
               "AWS S3",
               "Upstash Redis",

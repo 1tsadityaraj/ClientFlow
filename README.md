@@ -2,7 +2,10 @@
 
 **A production-grade B2B SaaS platform with role-based access control, multitenancy, and a branded client portal — built for modern digital agencies.**
 
-> Built as a full-stack demonstration of enterprise SaaS architecture patterns including RBAC, org-scoped data isolation, Stripe billing, S3 file management, and comprehensive test coverage.
+[![ClientFlow Dashboard](/Users/aditya/.gemini/antigravity/brain/c112d8ff-463f-477b-bafc-c6487a670eba/clientflow_dashboard_mockup_1773556803626.png)](https://client-flow-sooty.vercel.app)
+
+> [!IMPORTANT]
+> **Live Demo:** [https://client-flow-sooty.vercel.app](https://client-flow-sooty.vercel.app)
 
 ---
 
@@ -26,13 +29,13 @@
 
 | Layer | Technology |
 | --- | --- |
-| **Framework** | Next.js 16 (App Router, Server Components) |
-| **Database** | SQLite (dev) / PostgreSQL (prod) |
-| **ORM** | Prisma |
+| **Framework** | Next.js 15 (App Router, Server Components) |
+| **Database** | SQLite (dev) / PostgreSQL (prod via Neon) |
+| **ORM** | Prisma 6 |
 | **Authentication** | NextAuth.js v5 |
 | **Styling** | Tailwind CSS v4 + Lucide Icons |
 | **Rate Limiting** | Upstash Redis |
-| **Storage** | AWS S3 / Cloudflare R2 |
+| **Storage** | AWS S3 |
 | **Email** | Resend |
 | **Payments** | Stripe |
 | **Testing** | Vitest |

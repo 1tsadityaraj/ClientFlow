@@ -1,8 +1,9 @@
-import { auth } from "../../../../lib/auth.js";
-import { prisma } from "../../../../lib/prisma.js";
-import { assertPermission } from "../../../../lib/permissions.js";
-import { logAudit, ACTIONS } from "../../../../lib/audit.js";
-import { updateOrgSchema, validate } from "../../../../lib/validations.js";
+export const dynamic = "force-dynamic";
+import { auth } from "@/lib/auth.js";
+import { prisma } from "@/lib/prisma.js";
+import { assertPermission } from "@/lib/permissions.js";
+import { logAudit, ACTIONS } from "@/lib/audit.js";
+import { updateOrgSchema, validate } from "@/lib/validations.js";
 
 export async function PATCH(request, { params }) {
   const session = await auth();

@@ -1,5 +1,6 @@
-import { handlers } from "../../../../lib/auth.js";
-import { authLimiter, checkRateLimit } from "../../../../lib/rateLimit.js";
+export const dynamic = "force-dynamic";
+import { handlers } from "@/lib/auth.js";
+import { authLimiter, checkRateLimit } from "@/lib/rateLimit.js";
 
 export const GET = handlers.GET;
 
