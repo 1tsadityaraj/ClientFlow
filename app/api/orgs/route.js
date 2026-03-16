@@ -15,20 +15,10 @@ const createOrgSchema = z.object({
 
 export async function POST(request) {
   try {
-    const session = await auth();
-    if (session) {
-      // Already signed in, cannot create another org via this endpoint
-      try {
-        assertPermission(session, "updateOrg");
-      } catch {
-        return Response.json({ error: "Forbidden" }, { status: 403 });
-      }
-    }
-
     const json = await request.json();
-    console.log("[API/ORGS] Received signup request for:", json.email);
-    const parsed = createOrgSchema.safeParse(json);
+    console.log("[API/ORGS] Signup attempt for email:", json.email);
 
+    const parsed = createOrgSchema.safeParse(json);
     if (!parsed.success) {
       console.log("[API/ORGS] Validation failed:", parsed.error.issues);
       return Response.json(
@@ -39,13 +29,26 @@ export async function POST(request) {
 
     const data = parsed.data;
 
+    // Check for existing org slug
     const existingSlug = await prisma.org.findUnique({
       where: { slug: data.orgSlug },
     });
 
     if (existingSlug) {
       return Response.json(
-        { error: "Slug already taken" },
+        { error: "Workspace slug already taken" },
+        { status: 409 }
+      );
+    }
+
+    // Check for existing user email
+    const existingUser = await prisma.user.findUnique({
+      where: { email: data.email },
+    });
+
+    if (existingUser) {
+      return Response.json(
+        { error: "User with this email already exists" },
         { status: 409 }
       );
     }
@@ -73,13 +76,13 @@ export async function POST(request) {
       return { org, user };
     });
 
-    console.log("[API/ORGS] Successfully created org:", result.org.slug);
+    console.log("[API/ORGS] Successfully created org and user:", result.org.slug);
     return Response.json(
       { org: result.org, user: result.user },
       { status: 201 }
     );
   } catch (error) {
-    console.error("[API/ORGS] Critical error during signup:", error);
+    console.error("[API/ORGS] Signup error:", error);
     return Response.json(
       { 
         error: "Internal Server Error", 
