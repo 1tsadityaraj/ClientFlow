@@ -55,10 +55,10 @@ export async function manageMember(memberId, action, data) {
     return { error: `Validation failed: ${msg}` };
   }
 
-  // ── Permission: Only ADMIN can change roles / delete ──
+  // ── Permission: Only ADMIN or MANAGER can manage members ──
   const callerRole = session.user.role;
-  if (callerRole !== "admin") {
-    return { error: "Only admins can manage member roles and removal" };
+  if (callerRole !== "admin" && callerRole !== "manager") {
+    return { error: "Insufficient permissions to manage members" };
   }
 
   // ── Cannot modify yourself ────────────────────────────
