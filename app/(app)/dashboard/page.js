@@ -185,13 +185,11 @@ export default async function DashboardPage() {
               icon={<Users className="h-4 w-4" />}
               label="Members"
             />
-            {canSendMessage && (
-              <SidebarLink
-                href="/dashboard/chat"
-                icon={<MessageCircle className="h-4 w-4" />}
-                label="Team Chat"
-              />
-            )}
+            <SidebarLink
+              href="/dashboard/chat"
+              icon={<MessageCircle className="h-4 w-4" />}
+              label="Team Chat"
+            />
             <SidebarLink
               href="/dashboard/settings"
               icon={<Settings className="h-4 w-4" />}
@@ -251,15 +249,13 @@ export default async function DashboardPage() {
               {canCreateProject && (
                 <CreateProjectButton clientMembers={clientMembers} />
               )}
-              {canSendMessage && (
-                <Link
-                  href="/dashboard/chat"
-                  className="flex items-center gap-2 rounded-full border border-zinc-700/80 px-4 py-2 text-xs font-medium text-zinc-300 transition-all hover:border-brand-primary/50 hover:bg-brand-primary/10 hover:text-brand-primary"
-                >
-                  <MessageCircle className="h-3.5 w-3.5" />
-                  Team Chat
-                </Link>
-              )}
+              <Link
+                href="/dashboard/chat"
+                className="flex items-center gap-2 rounded-full border border-zinc-700/80 px-4 py-2 text-xs font-medium text-zinc-300 transition-all hover:border-brand-primary/50 hover:bg-brand-primary/10 hover:text-brand-primary"
+              >
+                <MessageCircle className="h-3.5 w-3.5" />
+                Team Chat
+              </Link>
               <Link
                 href="/dashboard/members"
                 className="flex items-center gap-2 rounded-full border border-zinc-700/80 px-4 py-2 text-xs font-medium text-zinc-300 transition-all hover:border-zinc-600 hover:bg-zinc-800/50 hover:text-white lg:hidden"

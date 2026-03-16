@@ -26,6 +26,7 @@ export default function CreateProjectButton({ clientMembers = [] }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
 
   const [form, setForm] = useState({
     name: "",
@@ -36,29 +37,46 @@ export default function CreateProjectButton({ clientMembers = [] }) {
 
   async function handleSubmit(e) {
     e.preventDefault();
+    console.log("DEBUG: handleSubmit triggered with form:", form);
     setLoading(true);
     setError("");
+    setSuccess(false);
 
     try {
-      const res = await createProject({
-        name: form.name.trim(),
-        description: form.description.trim() || null,
-        color: form.color,
-        clientUserId: form.clientUserId || null,
+      const response = await fetch("/api/projects", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.name.trim(),
+          description: form.description.trim() || null,
+          color: form.color,
+          clientUserId: form.clientUserId || null,
+        }),
       });
 
-      if (res.error) {
-        setError(res.error);
-        return;
+      const res = await response.json();
+      console.log("DEBUG: API Response:", res);
+
+      if (!response.ok) {
+        throw new Error(res.error || "Failed to create project");
       }
 
-      // Success — navigate to the new project
-      setOpen(false);
+      // Success
+      setSuccess(true);
       setForm({ name: "", description: "", color: "#6366f1", clientUserId: "" });
-      router.push(`/dashboard/projects/${res.project.id}`);
+      
+      // Refresh the dashboard data
+      router.refresh();
+
+      // Brief delay to show success, then close
+      setTimeout(() => {
+        setOpen(false);
+        setSuccess(false);
+      }, 1500);
+
     } catch (err) {
       console.error("DEBUG Project Create Client Error:", err);
-      setError("Something went wrong: " + (err.message || "Unknown error"));
+      setError(err.message || "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -76,16 +94,16 @@ export default function CreateProjectButton({ clientMembers = [] }) {
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="w-full max-w-lg rounded-2xl border border-zinc-800 bg-zinc-900 p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 flex justify-center items-start overflow-y-auto bg-black/70 backdrop-blur-md p-4 sm:p-6">
+          <div className="my-4 w-full max-w-lg rounded-2xl border border-zinc-800 bg-zinc-900 p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
             {/* Header */}
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-8 border-b border-zinc-800 pb-4">
               <div>
-                <h2 className="text-lg font-semibold text-zinc-50">
-                  Create New Project
+                <h2 className="text-xl font-bold text-zinc-50 tracking-tight">
+                  Start a New Project
                 </h2>
-                <p className="mt-0.5 text-xs text-zinc-500">
-                  Set up a new project and start collaborating
+                <p className="mt-1 text-xs text-zinc-500 font-medium">
+                  Fill in the details below to initialize your project space.
                 </p>
               </div>
               <button
@@ -174,6 +192,13 @@ export default function CreateProjectButton({ clientMembers = [] }) {
                       </option>
                     ))}
                   </select>
+                </div>
+              )}
+
+              {/* Success */}
+              {success && (
+                <div className="rounded-xl border border-emerald-900/50 bg-emerald-950/20 px-4 py-3 text-xs font-medium text-emerald-300">
+                  Project created successfully!
                 </div>
               )}
 

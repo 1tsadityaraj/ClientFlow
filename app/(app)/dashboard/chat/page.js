@@ -9,10 +9,6 @@ export default async function ChatPage() {
     redirect("/login");
   }
 
-  if (!hasPermission(session, "sendMessage")) {
-    redirect("/dashboard");
-  }
-
   return (
     <ChatClient
       currentUser={{

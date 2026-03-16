@@ -127,7 +127,7 @@ export default function ChatClient({ currentUser }) {
   // Load messages
   const loadMessages = useCallback(async () => {
     try {
-      const res = await fetch("/api/messages", { cache: "no-store" });
+      const res = await fetch("/api/chat", { cache: "no-store" });
       if (!res.ok) return;
       const data = await res.json();
       const msgs = data.messages || [];
@@ -197,7 +197,7 @@ export default function ChatClient({ currentUser }) {
     setTimeout(() => scrollToBottom(), 50);
 
     try {
-      const res = await fetch("/api/messages", {
+      const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ body }),

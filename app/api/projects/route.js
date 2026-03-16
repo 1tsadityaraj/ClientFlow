@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma.js";
 import { assertPermission } from "@/lib/permissions.js";
 import { logAudit, ACTIONS } from "@/lib/audit.js";
 import { createProjectSchema, validate } from "@/lib/validations.js";
+import { revalidatePath } from "next/cache";
 
 export async function GET() {
   const session = await auth();
@@ -43,13 +44,15 @@ export async function POST(request) {
     }
 
     const json = await request.json();
-    console.log("[API/PROJECTS] POST - Body:", JSON.stringify(json));
+    console.log("[API/PROJECTS] POST - Incoming Body:", JSON.stringify(json, null, 2));
 
     const { data, error } = validate(createProjectSchema, json);
     if (error) {
-      console.log("[API/PROJECTS] POST - Validation failed:", error);
+      console.log("[API/PROJECTS] POST - Validation failed. Errors:", error);
       return Response.json({ error }, { status: 422 });
     }
+
+    console.log("[API/PROJECTS] POST - Validation successful. Data:", JSON.stringify(data));
 
     const project = await prisma.project.create({
       data: {
@@ -61,6 +64,7 @@ export async function POST(request) {
         managerId: session.user.id,
       },
     });
+    console.log("[API/PROJECTS] POST - Project created successfully:", project.id);
 
     await logAudit({
       orgId: session.user.orgId,
@@ -70,6 +74,8 @@ export async function POST(request) {
       entityId: project.id,
       metadata: { name: project.name },
     });
+
+    revalidatePath("/dashboard");
 
     return Response.json(project, { status: 201 });
   } catch (err) {
