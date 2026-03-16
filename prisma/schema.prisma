@@ -25,6 +25,7 @@ model Org {
   files                File[]
   comments             Comment[]
   auditLogs            AuditLog[]
+  messages             Message[]
 }
 
 model User {
@@ -43,6 +44,7 @@ model User {
   comments        Comment[]
   tasks           Task[]
   auditLogs       AuditLog[]
+  messages        Message[]
 }
 
 model Project {
@@ -128,5 +130,15 @@ model AuditLog {
   entity    String
   entityId  String?
   metadata  String?
+  createdAt DateTime @default(now())
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  orgId     String
+  org       Org      @relation(fields: [orgId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  body      String
   createdAt DateTime @default(now())
 }

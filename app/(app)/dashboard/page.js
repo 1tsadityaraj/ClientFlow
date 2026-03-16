@@ -16,7 +16,10 @@ import {
   Activity,
   Zap,
   Home,
+  MessageCircle,
+  BarChart3,
 } from "lucide-react";
+import CreateProjectButton from "./CreateProjectButton";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -50,6 +53,9 @@ export default async function DashboardPage() {
     prisma.task.findMany({
       where: { orgId: session.user.orgId },
       orderBy: { createdAt: "desc" },
+      include: {
+        assignee: { select: { id: true, name: true } },
+      },
     }),
     prisma.auditLog.findMany({
       where: { orgId: session.user.orgId },
@@ -83,6 +89,23 @@ export default async function DashboardPage() {
     .filter((t) => t.dueDate && new Date(t.dueDate) > now && t.status !== "DONE")
     .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
     .slice(0, 5);
+
+  // Member workload data
+  const memberWorkload = members
+    .filter((m) => m.role !== "client")
+    .map((m) => {
+      const memberTasks = tasks.filter((t) => t.assignee?.id === m.id);
+      const done = memberTasks.filter((t) => t.status === "DONE").length;
+      const inProgress = memberTasks.filter(
+        (t) => t.status === "IN_PROGRESS"
+      ).length;
+      const todo = memberTasks.filter((t) => t.status === "TODO").length;
+      const total = memberTasks.length;
+      return { ...m, done, inProgress, todo, total };
+    });
+
+  // Client members for project creation
+  const clientMembers = members.filter((m) => m.role === "client");
 
   const statusColor = (status) => {
     switch (status) {
@@ -118,6 +141,9 @@ export default async function DashboardPage() {
     if (diff === 1) return "Tomorrow";
     return `${diff} days`;
   };
+
+  const canCreateProject = PERMISSIONS[session.user.role]?.createProject;
+  const canSendMessage = PERMISSIONS[session.user.role]?.sendMessage;
 
   return (
     <main className="min-h-screen bg-zinc-950 text-zinc-50">
@@ -156,6 +182,13 @@ export default async function DashboardPage() {
               icon={<Users className="h-4 w-4" />}
               label="Members"
             />
+            {canSendMessage && (
+              <SidebarLink
+                href="/dashboard/chat"
+                icon={<MessageCircle className="h-4 w-4" />}
+                label="Team Chat"
+              />
+            )}
             <SidebarLink
               href="/dashboard/settings"
               icon={<Settings className="h-4 w-4" />}
@@ -212,6 +245,18 @@ export default async function DashboardPage() {
               </h1>
             </div>
             <div className="flex items-center gap-3">
+              {canCreateProject && (
+                <CreateProjectButton clientMembers={clientMembers} />
+              )}
+              {canSendMessage && (
+                <Link
+                  href="/dashboard/chat"
+                  className="flex items-center gap-2 rounded-full border border-zinc-700/80 px-4 py-2 text-xs font-medium text-zinc-300 transition-all hover:border-brand-primary/50 hover:bg-brand-primary/10 hover:text-brand-primary"
+                >
+                  <MessageCircle className="h-3.5 w-3.5" />
+                  Team Chat
+                </Link>
+              )}
               <Link
                 href="/dashboard/members"
                 className="flex items-center gap-2 rounded-full border border-zinc-700/80 px-4 py-2 text-xs font-medium text-zinc-300 transition-all hover:border-zinc-600 hover:bg-zinc-800/50 hover:text-white lg:hidden"
@@ -324,6 +369,104 @@ export default async function DashboardPage() {
                 </span>
               </div>
             </section>
+
+            {/* Team Member Workload */}
+            {memberWorkload.length > 0 && (
+              <section className="rounded-2xl border border-zinc-800/80 bg-zinc-900/40 p-5">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="flex items-center gap-2 text-sm font-medium text-zinc-200">
+                    <BarChart3 className="h-4 w-4 text-violet-400" />
+                    Team Progress
+                  </h3>
+                  <span className="text-xs text-zinc-500">
+                    {memberWorkload.filter((m) => m.total > 0).length} active
+                    members
+                  </span>
+                </div>
+                <div className="space-y-4">
+                  {memberWorkload.map((m) => {
+                    const pct =
+                      m.total > 0
+                        ? Math.round((m.done / m.total) * 100)
+                        : 0;
+                    return (
+                      <div key={m.id} className="group">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2.5">
+                            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-violet-500/30 to-purple-500/30 text-[10px] font-bold text-violet-300">
+                              {m.name.charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                              <p className="text-xs font-medium text-zinc-200">
+                                {m.name}
+                              </p>
+                              <p className="text-[10px] text-zinc-500 capitalize">
+                                {m.role}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3 text-[10px]">
+                            <span className="flex items-center gap-1 text-emerald-400">
+                              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                              {m.done}
+                            </span>
+                            <span className="flex items-center gap-1 text-amber-400">
+                              <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+                              {m.inProgress}
+                            </span>
+                            <span className="flex items-center gap-1 text-zinc-400">
+                              <span className="h-1.5 w-1.5 rounded-full bg-zinc-500" />
+                              {m.todo}
+                            </span>
+                            <span className="ml-1 font-semibold text-zinc-300">
+                              {pct}%
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex h-2 overflow-hidden rounded-full bg-zinc-800">
+                          {m.done > 0 && (
+                            <div
+                              className="bg-gradient-to-r from-emerald-500 to-emerald-400 transition-all duration-700"
+                              style={{
+                                width: `${
+                                  m.total > 0
+                                    ? (m.done / m.total) * 100
+                                    : 0
+                                }%`,
+                              }}
+                            />
+                          )}
+                          {m.inProgress > 0 && (
+                            <div
+                              className="bg-gradient-to-r from-amber-500 to-amber-400 transition-all duration-700"
+                              style={{
+                                width: `${
+                                  m.total > 0
+                                    ? (m.inProgress / m.total) * 100
+                                    : 0
+                                }%`,
+                              }}
+                            />
+                          )}
+                          {m.todo > 0 && (
+                            <div
+                              className="bg-gradient-to-r from-zinc-600 to-zinc-500 transition-all duration-700"
+                              style={{
+                                width: `${
+                                  m.total > 0
+                                    ? (m.todo / m.total) * 100
+                                    : 0
+                                }%`,
+                              }}
+                            />
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </section>
+            )}
 
             {/* Two Column Section */}
             <div className="grid gap-6 xl:grid-cols-3">

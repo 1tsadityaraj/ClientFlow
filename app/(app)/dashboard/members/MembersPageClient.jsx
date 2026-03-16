@@ -56,7 +56,7 @@ export default function MembersPageClient() {
 
   async function handleRoleChange(memberId, newRole) {
     setRoleUpdating(memberId);
-    const res = await fetch(`/api/members/${memberId}/role`, {
+    const res = await fetch(`/api/members/${memberId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ role: newRole }),
