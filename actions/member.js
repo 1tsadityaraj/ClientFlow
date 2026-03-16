@@ -8,12 +8,12 @@ import { z } from "zod";
 
 // ─── Zod Schemas ────────────────────────────────────────
 const deleteSchema = z.object({
-  memberId: z.string().cuid(),
+  memberId: z.string().min(1),
   action: z.literal("DELETE"),
 });
 
 const updateRoleSchema = z.object({
-  memberId: z.string().cuid(),
+  memberId: z.string().min(1),
   action: z.literal("UPDATE_ROLE"),
   data: z.object({
     role: z.enum(["admin", "manager", "member", "client"]),
