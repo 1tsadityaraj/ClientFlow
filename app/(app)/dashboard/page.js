@@ -143,8 +143,10 @@ export default async function DashboardPage() {
     return `${diff} days`;
   };
 
+  console.log("[DASHBOARD] User Role:", session.user.role);
   const canCreateProject = PERMISSIONS[session.user.role]?.createProject;
   const canSendMessage = PERMISSIONS[session.user.role]?.sendMessage;
+  console.log("[DASHBOARD] canCreateProject:", canCreateProject, "canSendMessage:", canSendMessage);
 
   return (
     <main className="min-h-screen bg-zinc-950 text-zinc-50">

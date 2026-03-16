@@ -19,6 +19,8 @@ const PROJECT_COLORS = [
   "#a855f7", // Purple
 ];
 
+import { createProject } from "@/actions/project.js";
+
 export default function CreateProjectButton({ clientMembers = [] }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -38,31 +40,25 @@ export default function CreateProjectButton({ clientMembers = [] }) {
     setError("");
 
     try {
-      const res = await fetch("/api/projects", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: form.name.trim(),
-          description: form.description.trim() || null,
-          color: form.color,
-          clientUserId: form.clientUserId || null,
-        }),
+      const res = await createProject({
+        name: form.name.trim(),
+        description: form.description.trim() || null,
+        color: form.color,
+        clientUserId: form.clientUserId || null,
       });
 
-      const data = await res.json().catch(() => ({}));
-
-      if (!res.ok) {
-        setError(data.error || "Failed to create project");
+      if (res.error) {
+        setError(res.error);
         return;
       }
 
       // Success — navigate to the new project
       setOpen(false);
       setForm({ name: "", description: "", color: "#6366f1", clientUserId: "" });
-      router.refresh();
-      router.push(`/dashboard/projects/${data.id}`);
-    } catch {
-      setError("Something went wrong");
+      router.push(`/dashboard/projects/${res.project.id}`);
+    } catch (err) {
+      console.error("DEBUG Project Create Client Error:", err);
+      setError("Something went wrong: " + (err.message || "Unknown error"));
     } finally {
       setLoading(false);
     }
