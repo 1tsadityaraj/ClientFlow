@@ -255,6 +255,7 @@ function InviteModal({ onClose, onSuccess }) {
   const [role, setRole] = useState("member");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [successData, setSuccessData] = useState(null);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -271,7 +272,49 @@ function InviteModal({ onClose, onSuccess }) {
       setError(data.error || "Failed to send invite");
       return;
     }
-    onSuccess();
+    setSuccessData(data);
+  }
+
+  if (successData) {
+    const inviteUrl = `${window.location.origin}/invite/${successData.invite.token}`;
+    return (
+      <div className="fixed inset-0 z-10 flex items-center justify-center bg-black/60 p-4">
+        <div className="w-full max-w-md rounded-2xl border border-zinc-800 bg-zinc-900 p-6 shadow-xl">
+          <h2 className="text-lg font-semibold text-emerald-400">Invite Created!</h2>
+          {!successData.emailSent ? (
+            <p className="mt-2 text-sm text-amber-400">
+              Email delivery failed (likely due to unauthorized domain in Resend test mode), but you can manually share this link with them instead:
+            </p>
+          ) : (
+            <p className="mt-2 text-sm text-zinc-300">
+              An email has been sent to {successData.invite.email}. You can also share the link directly:
+            </p>
+          )}
+          <div className="mt-4 flex gap-2">
+            <input
+              readOnly
+              value={inviteUrl}
+              className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-zinc-50 outline-none focus:border-brand-primary"
+            />
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(inviteUrl);
+                alert("Copied to clipboard!");
+              }}
+              className="rounded-lg bg-zinc-800 px-4 py-2 text-sm text-zinc-300 hover:bg-zinc-700 transition-colors"
+            >
+              Copy
+            </button>
+          </div>
+          <button
+            onClick={() => onSuccess()}
+            className="mt-6 w-full rounded-full bg-brand-primary px-4 py-2 text-sm font-medium text-white hover:opacity-90 transition-all shadow-lg shadow-brand-primary/20"
+          >
+            Done
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
