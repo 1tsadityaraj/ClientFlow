@@ -44,6 +44,7 @@ export default async function DashboardPage() {
       include: {
         _count: { select: { tasks: true, files: true, comments: true } },
         manager: { select: { name: true } },
+        tasks: { select: { status: true } },
       },
     }),
     prisma.user.findMany({
@@ -483,7 +484,12 @@ export default async function DashboardPage() {
                 </div>
 
                 <div className="grid gap-3 sm:grid-cols-2">
-                  {projects.map((project) => (
+                    {projects.map((project) => {
+                      const totalProjectTasks = project.tasks?.length || 0;
+                      const doneProjectTasks = project.tasks?.filter((t) => t.status === "DONE").length || 0;
+                      const calculatedProgress = totalProjectTasks > 0 ? Math.round((doneProjectTasks / totalProjectTasks) * 100) : 0;
+
+                      return (
                     <Link
                       key={project.id}
                       href={`/dashboard/projects/${project.id}`}
@@ -527,14 +533,14 @@ export default async function DashboardPage() {
                             Progress
                           </span>
                           <span className="text-[10px] font-semibold text-zinc-300">
-                            {project.progress}%
+                            {calculatedProgress}%
                           </span>
                         </div>
                         <div className="h-1.5 overflow-hidden rounded-full bg-zinc-800">
                           <div
                             className="h-full rounded-full transition-all duration-500"
                             style={{
-                              width: `${project.progress}%`,
+                              width: `${calculatedProgress}%`,
                               backgroundColor: project.color,
                             }}
                           />
@@ -549,7 +555,7 @@ export default async function DashboardPage() {
                         </span>
                         <span className="flex items-center gap-1">
                           <MessageSquare className="h-3 w-3" />
-                          {project._count.comments} comments
+                          {project._count.comments} discussions
                         </span>
                       </div>
 
@@ -557,7 +563,7 @@ export default async function DashboardPage() {
                         <ArrowRight className="h-4 w-4 text-zinc-400" />
                       </div>
                     </Link>
-                  ))}
+                  )})}
 
                   {projects.length === 0 && (
                     <div className="col-span-2 rounded-2xl border border-dashed border-zinc-700 p-8 text-center">

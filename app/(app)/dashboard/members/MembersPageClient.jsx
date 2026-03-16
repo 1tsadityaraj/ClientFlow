@@ -1,10 +1,20 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useTransition } from "react";
 import Link from "next/link";
 import { Can } from "../../../../components/Can";
+import { manageMember } from "@/actions/member";
+import { useSession } from "next-auth/react";
+import { Shield, Trash2, UserCog, CheckCircle2 } from "lucide-react";
 
 const ROLES = ["admin", "manager", "member", "client"];
+
+const ROLE_BADGE = {
+  admin: "bg-rose-500/15 text-rose-400 border-rose-500/30",
+  manager: "bg-amber-500/15 text-amber-400 border-amber-500/30",
+  member: "bg-sky-500/15 text-sky-400 border-sky-500/30",
+  client: "bg-zinc-500/15 text-zinc-400 border-zinc-500/30",
+};
 
 function TableSkeleton() {
   return (
@@ -24,25 +34,31 @@ function TableSkeleton() {
 }
 
 export default function MembersPageClient() {
+  const { data: session } = useSession();
   const [members, setMembers] = useState([]);
   const [invites, setInvites] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [inviteOpen, setInviteOpen] = useState(false);
-  const [roleUpdating, setRoleUpdating] = useState(null);
-  const [removing, setRemoving] = useState(null);
+  const [toast, setToast] = useState(null);
+  const [isPending, startTransition] = useTransition();
+
+  function showToast(message, type = "success") {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 3000);
+  }
 
   async function loadData() {
     const [mRes, iRes] = await Promise.all([
       fetch("/api/members", { cache: "no-store" }),
       fetch("/api/invites", { cache: "no-store" }),
     ]);
-    
+
     if (!mRes.ok || !iRes.ok) {
       setError("Failed to load members or invites");
       return;
     }
-    
+
     const [mList, iList] = await Promise.all([mRes.json(), iRes.json()]);
     setMembers(Array.isArray(mList) ? mList : []);
     setInvites(Array.isArray(iList) ? iList : []);
@@ -54,25 +70,41 @@ export default function MembersPageClient() {
     loadData().finally(() => setLoading(false));
   }, []);
 
-  async function handleRoleChange(memberId, newRole) {
-    setRoleUpdating(memberId);
-    const res = await fetch(`/api/members/${memberId}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ role: newRole }),
+  // ── Server Action: Change Role ──────────────────────────
+  function handleRoleChange(memberId, newRole) {
+    startTransition(async () => {
+      const res = await manageMember(memberId, "UPDATE_ROLE", { role: newRole });
+      if (res.success) {
+        // Optimistically update UI
+        setMembers((prev) =>
+          prev.map((m) => (m.id === memberId ? { ...m, role: newRole } : m))
+        );
+        showToast("Role updated");
+      } else {
+        showToast(res.error || "Failed to update role", "error");
+      }
     });
-    setRoleUpdating(null);
-    if (res.ok) loadData();
   }
 
-  async function handleRemove(memberId) {
-    if (!confirm("Remove this member from the workspace?")) return;
-    setRemoving(memberId);
-    const res = await fetch(`/api/members/${memberId}`, {
-      method: "DELETE",
+  // ── Server Action: Remove Member ────────────────────────
+  function handleRemove(memberId) {
+    const target = members.find((m) => m.id === memberId);
+    if (
+      !confirm(
+        `Remove ${target?.name || "this member"} from the workspace? This cannot be undone.`
+      )
+    )
+      return;
+
+    startTransition(async () => {
+      const res = await manageMember(memberId, "DELETE");
+      if (res.success) {
+        setMembers((prev) => prev.filter((m) => m.id !== memberId));
+        showToast("Member removed");
+      } else {
+        showToast(res.error || "Failed to remove member", "error");
+      }
     });
-    setRemoving(null);
-    if (res.ok) loadData();
   }
 
   async function handleCancelInvite(inviteId) {
@@ -80,7 +112,10 @@ export default function MembersPageClient() {
     const res = await fetch(`/api/invites/${inviteId}`, {
       method: "DELETE",
     });
-    if (res.ok) loadData();
+    if (res.ok) {
+      setInvites((prev) => prev.filter((i) => i.id !== inviteId));
+      showToast("Invite cancelled");
+    }
   }
 
   if (loading) {
@@ -111,6 +146,9 @@ export default function MembersPageClient() {
     );
   }
 
+  const isAdmin = session?.user?.role === "admin";
+  const currentUserId = session?.user?.id;
+
   return (
     <main className="min-h-screen bg-zinc-950 text-zinc-50">
       <div className="mx-auto max-w-5xl px-6 py-10">
@@ -132,89 +170,128 @@ export default function MembersPageClient() {
           </Can>
         </div>
 
+        {/* Members Table */}
         <div className="mt-6 overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/60">
           <table className="min-w-full text-left text-xs">
             <thead className="border-b border-zinc-800 bg-zinc-900/80 text-zinc-500">
               <tr>
-                <th className="px-4 py-3 font-medium">Name</th>
+                <th className="px-4 py-3 font-medium">Member</th>
                 <th className="px-4 py-3 font-medium">Email</th>
                 <th className="px-4 py-3 font-medium">Role</th>
-                <th className="px-4 py-3 font-medium">Actions</th>
+                <th className="px-4 py-3 font-medium text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {members.map((m) => (
-                <tr
-                  key={m.id}
-                  className="border-b border-zinc-800/80 last:border-0"
-                >
-                  <td className="px-4 py-3 text-zinc-50">{m.name}</td>
-                  <td className="px-4 py-3 text-zinc-400">{m.email}</td>
-                  <td className="px-4 py-3">
-                    <Can
-                      permission="changeRoles"
-                      fallback={
-                        <span className="inline-flex rounded-full bg-zinc-800 px-2 py-0.5 text-[10px] uppercase tracking-wide text-zinc-300">
+              {members.map((m) => {
+                const isSelf = m.id === currentUserId;
+                return (
+                  <tr
+                    key={m.id}
+                    className="border-b border-zinc-800/80 last:border-0 transition-colors hover:bg-zinc-900/40"
+                  >
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-brand-primary/30 to-brand-primary/10 text-xs font-bold text-brand-primary">
+                          {m.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-zinc-50">
+                            {m.name}
+                            {isSelf && (
+                              <span className="ml-1.5 text-[10px] text-zinc-500">
+                                (you)
+                              </span>
+                            )}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-zinc-400">{m.email}</td>
+                    <td className="px-4 py-3">
+                      {isAdmin && !isSelf ? (
+                        <select
+                          value={m.role}
+                          disabled={isPending}
+                          onChange={(e) =>
+                            handleRoleChange(m.id, e.target.value)
+                          }
+                          className="cursor-pointer rounded-lg border border-zinc-700 bg-zinc-900 px-2.5 py-1.5 text-xs text-zinc-200 outline-none transition-all hover:border-zinc-600 focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/50"
+                        >
+                          {ROLES.map((r) => (
+                            <option key={r} value={r}>
+                              {r.charAt(0).toUpperCase() + r.slice(1)}
+                            </option>
+                          ))}
+                        </select>
+                      ) : (
+                        <span
+                          className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
+                            ROLE_BADGE[m.role] || ROLE_BADGE.member
+                          }`}
+                        >
+                          {m.role === "admin" && (
+                            <Shield className="h-3 w-3" />
+                          )}
                           {m.role}
                         </span>
-                      }
-                    >
-                      <select
-                        value={m.role}
-                        disabled={roleUpdating === m.id}
-                        onChange={(e) =>
-                          handleRoleChange(m.id, e.target.value)
-                        }
-                        className="rounded border border-zinc-700 bg-zinc-900 px-2 py-1 text-zinc-200"
-                      >
-                        {ROLES.map((r) => (
-                          <option key={r} value={r}>
-                            {r}
-                          </option>
-                        ))}
-                      </select>
-                    </Can>
-                  </td>
-                  <td className="px-4 py-3">
-                    <Can
-                      permission="manageMembers"
-                      fallback={<span className="text-zinc-500">—</span>}
-                    >
-                      <button
-                        type="button"
-                        disabled={removing === m.id}
-                        onClick={() => handleRemove(m.id)}
-                        className="text-rose-400 hover:text-rose-300 disabled:opacity-50"
-                      >
-                        {removing === m.id ? "Removing..." : "Remove"}
-                      </button>
-                    </Can>
-                  </td>
-                </tr>
-              ))}
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      {isAdmin && !isSelf ? (
+                        <button
+                          type="button"
+                          disabled={isPending}
+                          onClick={() => handleRemove(m.id)}
+                          className="inline-flex items-center gap-1.5 rounded-lg border border-rose-900/50 bg-rose-950/20 px-3 py-1.5 text-[11px] font-medium text-rose-400 transition-all hover:bg-rose-900/30 hover:text-rose-300 disabled:opacity-50"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                          Remove
+                        </button>
+                      ) : (
+                        <span className="text-zinc-600">—</span>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+
+              {/* Pending Invites */}
               {invites.map((i) => (
                 <tr
                   key={i.id}
-                  className="border-b border-zinc-800/80 last:border-0 bg-zinc-900/30"
+                  className="border-b border-zinc-800/80 last:border-0 bg-zinc-900/20"
                 >
-                  <td className="px-4 py-3 italic text-zinc-500">Pending...</td>
-                  <td className="px-4 py-3 text-zinc-400">
-                    {i.email}
-                    <span className="ml-2 rounded-full bg-amber-500/10 px-1.5 py-0.5 text-[10px] text-amber-500">
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full border border-dashed border-amber-500/30 bg-amber-500/5 text-xs font-bold text-amber-500">
+                        ?
+                      </div>
+                      <p className="text-sm italic text-zinc-500">
+                        Pending invite...
+                      </p>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3">
+                    <span className="text-zinc-400">{i.email}</span>
+                    <span className="ml-2 rounded-full bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-medium text-amber-500">
                       Invited
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <span className="inline-flex rounded-full bg-zinc-800 px-2 py-0.5 text-[10px] uppercase tracking-wide text-zinc-400">
+                    <span
+                      className={`inline-flex rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
+                        ROLE_BADGE[i.role] || ROLE_BADGE.member
+                      }`}
+                    >
                       {i.role}
                     </span>
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3 text-right">
                     <Can permission="inviteMembers">
                       <button
                         type="button"
                         onClick={() => handleCancelInvite(i.id)}
-                        className="text-zinc-500 hover:text-zinc-300"
+                        className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
                       >
                         Cancel
                       </button>
@@ -222,6 +299,7 @@ export default function MembersPageClient() {
                   </td>
                 </tr>
               ))}
+
               {members.length === 0 && invites.length === 0 && (
                 <tr>
                   <td
@@ -245,11 +323,26 @@ export default function MembersPageClient() {
             }}
           />
         )}
+
+        {/* Toast */}
+        {toast && (
+          <div
+            className={`fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-full border px-4 py-2.5 text-sm font-medium shadow-lg backdrop-blur-md animate-in fade-in slide-in-from-bottom-5 ${
+              toast.type === "error"
+                ? "border-rose-500/20 bg-rose-500/10 text-rose-400"
+                : "border-emerald-500/20 bg-emerald-500/10 text-emerald-400"
+            }`}
+          >
+            <CheckCircle2 className="h-4 w-4" />
+            {toast.message}
+          </div>
+        )}
       </div>
     </main>
   );
 }
 
+// ── Invite Modal ──────────────────────────────────────────
 function InviteModal({ onClose, onSuccess }) {
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("member");
@@ -278,7 +371,7 @@ function InviteModal({ onClose, onSuccess }) {
   if (successData) {
     const inviteUrl = `${window.location.origin}/invite/${successData.invite.token}`;
     return (
-      <div className="fixed inset-0 z-10 flex items-center justify-center bg-black/60 p-4">
+      <div className="fixed inset-0 z-10 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
         <div className="w-full max-w-md rounded-2xl border border-zinc-800 bg-zinc-900 p-6 shadow-xl">
           <h2 className="text-lg font-semibold text-emerald-400">Invite Created!</h2>
           {!successData.emailSent ? (
@@ -318,7 +411,7 @@ function InviteModal({ onClose, onSuccess }) {
   }
 
   return (
-    <div className="fixed inset-0 z-10 flex items-center justify-center bg-black/60 p-4">
+    <div className="fixed inset-0 z-10 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
       <div className="w-full max-w-md rounded-2xl border border-zinc-800 bg-zinc-900 p-6 shadow-xl">
         <h2 className="text-lg font-semibold">Invite member</h2>
         <form onSubmit={handleSubmit} className="mt-4 space-y-4">
@@ -341,7 +434,7 @@ function InviteModal({ onClose, onSuccess }) {
             >
               {ROLES.map((r) => (
                 <option key={r} value={r}>
-                  {r}
+                  {r.charAt(0).toUpperCase() + r.slice(1)}
                 </option>
               ))}
             </select>

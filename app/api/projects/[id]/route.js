@@ -6,6 +6,7 @@ import { logAudit, ACTIONS } from "@/lib/audit.js";
 import { updateProjectSchema, validate } from "@/lib/validations.js";
 
 export async function GET(_request, { params }) {
+  const { id } = await params;
   const session = await auth();
   if (!session) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
@@ -13,7 +14,7 @@ export async function GET(_request, { params }) {
 
   const project = await prisma.project.findFirst({
     where: {
-      id: params.id,
+      id,
       orgId: session.user.orgId,
     },
   });
@@ -33,6 +34,7 @@ export async function GET(_request, { params }) {
 }
 
 export async function PATCH(request, { params }) {
+  const { id } = await params;
   const session = await auth();
   if (!session) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
@@ -51,7 +53,7 @@ export async function PATCH(request, { params }) {
   }
 
   const existing = await prisma.project.findFirst({
-    where: { id: params.id, orgId: session.user.orgId },
+    where: { id, orgId: session.user.orgId },
   });
 
   if (!existing) {
@@ -76,6 +78,7 @@ export async function PATCH(request, { params }) {
 }
 
 export async function DELETE(_request, { params }) {
+  const { id } = await params;
   const session = await auth();
   if (!session) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
@@ -88,16 +91,20 @@ export async function DELETE(_request, { params }) {
   }
 
   const existing = await prisma.project.findFirst({
-    where: { id: params.id, orgId: session.user.orgId },
+    where: { id, orgId: session.user.orgId },
   });
 
   if (!existing) {
     return Response.json({ error: "Not found" }, { status: 404 });
   }
 
-  await prisma.project.delete({
-    where: { id: existing.id },
-  });
+  // Cascade delete all tasks, comments, files related to this project
+  await prisma.$transaction([
+    prisma.task.deleteMany({ where: { projectId: existing.id } }),
+    prisma.comment.deleteMany({ where: { projectId: existing.id } }),
+    prisma.file.deleteMany({ where: { projectId: existing.id } }),
+    prisma.project.delete({ where: { id: existing.id } }),
+  ]);
 
   await logAudit({
     orgId: session.user.orgId,
