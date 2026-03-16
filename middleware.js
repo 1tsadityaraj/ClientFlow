@@ -1,8 +1,7 @@
-import { auth } from "@/lib/auth";
+import NextAuth from "next-auth";
+import authConfig from "./lib/auth.config";
 
-export default auth((req) => {
-  // Optional: add custom logic here
-});
+export default NextAuth(authConfig).auth;
 
 export const config = {
   matcher: [
