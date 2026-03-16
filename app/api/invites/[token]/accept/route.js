@@ -8,7 +8,7 @@ const acceptSchema = z.object({
 });
 
 export async function POST(request, { params }) {
-  const token = params.token;
+  const { token } = await params;
 
   const json = await request.json();
   const parsed = acceptSchema.safeParse(json);

@@ -13,13 +13,14 @@ const createFileSchema = z.object({
 });
 
 export async function GET(_request, { params }) {
+  const { id } = await params;
   const session = await auth();
   if (!session) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const project = await prisma.project.findFirst({
-    where: { id: params.id, orgId: session.user.orgId },
+    where: { id: id, orgId: session.user.orgId },
   });
 
   if (!project) {
@@ -36,7 +37,7 @@ export async function GET(_request, { params }) {
   const files = await prisma.file.findMany({
     where: {
       orgId: session.user.orgId,
-      projectId: params.id,
+      projectId: id,
     },
     include: { uploadedBy: { select: { name: true } } },
     orderBy: { createdAt: "desc" },
@@ -61,6 +62,7 @@ export async function GET(_request, { params }) {
 }
 
 export async function POST(request, { params }) {
+  const { id } = await params;
   const session = await auth();
   if (!session) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
@@ -73,7 +75,7 @@ export async function POST(request, { params }) {
   }
 
   const project = await prisma.project.findFirst({
-    where: { id: params.id, orgId: session.user.orgId },
+    where: { id: id, orgId: session.user.orgId },
   });
 
   if (!project) {
