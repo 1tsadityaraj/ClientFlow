@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma.js";
 import { assertPermission } from "@/lib/permissions.js";
 
 export async function GET(request, { params }) {
+  const resolvedParams = await params;
+  const { id } = resolvedParams;
   const session = await auth();
   if (!session) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
@@ -17,7 +19,7 @@ export async function GET(request, { params }) {
   // Find project first to ensure it belongs to the org
   const project = await prisma.project.findFirst({
     where: {
-      id: params.id,
+      id: id,
       orgId: session.user.orgId,
       // If client, check clientUserId
       ...(session.user.role === "client" ? { clientUserId: session.user.id } : {})
@@ -34,7 +36,7 @@ export async function GET(request, { params }) {
   // We can fetch tasks for this project and get their IDs.
   
   const tasks = await prisma.task.findMany({
-    where: { projectId: params.id },
+    where: { projectId: id },
     select: { id: true }
   });
   const taskIds = tasks.map(t => t.id);
@@ -43,9 +45,9 @@ export async function GET(request, { params }) {
     where: {
       orgId: session.user.orgId,
       OR: [
-        { entity: "Project", entityId: params.id },
+        { entity: "Project", entityId: id },
         { entity: "Task", entityId: { in: taskIds } },
-        { entity: "Comment", entityId: params.id }, // Wait, comments use project ID? No, entityId = comment.id, we can't easily filter by comments unless we fetch all comments for project. Let's just do Project and Task for now.
+        { entity: "Comment", entityId: id }, // Wait, comments use project ID? No, entityId = comment.id, we can't easily filter by comments unless we fetch all comments for project. Let's just do Project and Task for now.
       ]
     },
     orderBy: { createdAt: "desc" },

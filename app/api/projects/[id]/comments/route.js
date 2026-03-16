@@ -6,13 +6,15 @@ import { logAudit, ACTIONS } from "@/lib/audit.js";
 import { createCommentSchema, validate } from "@/lib/validations.js";
 
 export async function GET(_request, { params }) {
+  const resolvedParams = await params;
+  const { id } = resolvedParams;
   const session = await auth();
   if (!session) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const project = await prisma.project.findFirst({
-    where: { id: params.id, orgId: session.user.orgId },
+    where: { id: id, orgId: session.user.orgId },
   });
 
   if (!project) {
@@ -29,7 +31,7 @@ export async function GET(_request, { params }) {
   const comments = await prisma.comment.findMany({
     where: {
       orgId: session.user.orgId,
-      projectId: params.id,
+      projectId: id,
     },
     include: { user: { select: { name: true } } },
     orderBy: { createdAt: "asc" },
@@ -39,6 +41,8 @@ export async function GET(_request, { params }) {
 }
 
 export async function POST(request, { params }) {
+  const resolvedParams = await params;
+  const { id } = resolvedParams;
   const session = await auth();
   if (!session) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
@@ -51,7 +55,7 @@ export async function POST(request, { params }) {
   }
 
   const project = await prisma.project.findFirst({
-    where: { id: params.id, orgId: session.user.orgId },
+    where: { id: id, orgId: session.user.orgId },
   });
 
   if (!project) {

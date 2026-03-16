@@ -30,12 +30,12 @@ export default function SettingsForm({ org }) {
   const [billingError, setBillingError] = useState("");
 
   useEffect(() => {
-    if (org) {
+    if (org?.id) {
       setName(org.name);
       setSlug(org.slug);
       if (org.primaryColor) setPrimaryColor(org.primaryColor);
     }
-  }, [org]);
+  }, [org?.id]);
 
   useEffect(() => {
     if (searchParams.get("upgraded") === "true") {
