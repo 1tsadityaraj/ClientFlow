@@ -26,42 +26,53 @@ export async function GET() {
 }
 
 export async function POST(request) {
-  const session = await auth();
-  if (!session) {
-    return Response.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
   try {
-    assertPermission(session, "createProject");
-  } catch {
-    return Response.json({ error: "Forbidden" }, { status: 403 });
-  }
+    const session = await auth();
+    console.log("[API/PROJECTS] POST - Session user:", session?.user?.email, "Role:", session?.user?.role);
+    
+    if (!session) {
+      return Response.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-  const json = await request.json();
-  const { data, error } = validate(createProjectSchema, json);
-  if (error) {
-    return Response.json({ error }, { status: 422 });
-  }
+    try {
+      assertPermission(session, "createProject");
+    } catch {
+      console.log("[API/PROJECTS] POST - Permission denied for role:", session.user.role);
+      return Response.json({ error: "Forbidden" }, { status: 403 });
+    }
 
-  const project = await prisma.project.create({
-    data: {
+    const json = await request.json();
+    console.log("[API/PROJECTS] POST - Body:", JSON.stringify(json));
+
+    const { data, error } = validate(createProjectSchema, json);
+    if (error) {
+      console.log("[API/PROJECTS] POST - Validation failed:", error);
+      return Response.json({ error }, { status: 422 });
+    }
+
+    const project = await prisma.project.create({
+      data: {
+        orgId: session.user.orgId,
+        name: data.name,
+        description: data.description,
+        color: data.color ?? "#6366f1",
+        clientUserId: data.clientUserId ?? null,
+        managerId: session.user.id,
+      },
+    });
+
+    await logAudit({
       orgId: session.user.orgId,
-      name: data.name,
-      description: data.description,
-      color: data.color ?? "#6366f1",
-      clientUserId: data.clientUserId ?? null,
-      managerId: session.user.id,
-    },
-  });
+      userId: session.user.id,
+      action: ACTIONS.PROJECT_CREATED,
+      entity: "Project",
+      entityId: project.id,
+      metadata: { name: project.name },
+    });
 
-  await logAudit({
-    orgId: session.user.orgId,
-    userId: session.user.id,
-    action: ACTIONS.PROJECT_CREATED,
-    entity: "Project",
-    entityId: project.id,
-    metadata: { name: project.name },
-  });
-
-  return Response.json(project, { status: 201 });
+    return Response.json(project, { status: 201 });
+  } catch (err) {
+    console.error("[API/PROJECTS] POST - Internal Error:", err);
+    return Response.json({ error: err.message || "Internal Server Error" }, { status: 500 });
+  }
 }
