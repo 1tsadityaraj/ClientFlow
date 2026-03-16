@@ -15,6 +15,17 @@ const createOrgSchema = z.object({
 
 export async function POST(request) {
   try {
+    // 1. Database Connection Check
+    try {
+      await prisma.$queryRaw`SELECT 1`;
+    } catch (dbError) {
+      console.error("Database connection check failed:", dbError);
+      return Response.json(
+        { error: "Database unavailable", message: "Failed to connect to the database" },
+        { status: 503 }
+      );
+    }
+
     const json = await request.json();
     console.log("[API/ORGS] Signup attempt for email:", json.email);
 
@@ -29,7 +40,7 @@ export async function POST(request) {
 
     const data = parsed.data;
 
-    // Check for existing org slug
+    // Check for existing org slug (though unique constraint will catch it too)
     const existingSlug = await prisma.org.findUnique({
       where: { slug: data.orgSlug },
     });
@@ -82,12 +93,25 @@ export async function POST(request) {
       { status: 201 }
     );
   } catch (error) {
-    console.error("[API/ORGS] Signup error:", error);
+    console.error("POST /api/orgs error:", error);
+
+    // Prisma specific error codes
+    if (error.code === "P2002") {
+      return Response.json(
+        { error: "Unique constraint failed", message: "Email or slug already exists" },
+        { status: 409 }
+      );
+    }
+
+    if (error.code === "P1001") {
+      return Response.json(
+        { error: "Database connection failed", message: "Could not reach the database server" },
+        { status: 503 }
+      );
+    }
+
     return Response.json(
-      { 
-        error: "Internal Server Error", 
-        message: "Failed to create organization"
-      },
+      { error: "Internal Server Error", message: error.message },
       { status: 500 }
     );
   }

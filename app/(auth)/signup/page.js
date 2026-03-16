@@ -33,7 +33,15 @@ export default function SignupPage() {
 
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
-      setError(data.error || "Something went wrong");
+      let errorMessage = data.message || data.error || "Something went wrong";
+      
+      if (res.status === 409) {
+        errorMessage = "An account with this email/slug already exists";
+      } else if (res.status === 503) {
+        errorMessage = "Service temporarily unavailable, please try again later";
+      }
+      
+      setError(errorMessage);
       return;
     }
 
