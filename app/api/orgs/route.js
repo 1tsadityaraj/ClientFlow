@@ -84,7 +84,7 @@ export async function POST(request) {
       { 
         error: "Internal Server Error", 
         message: error.message,
-        details: process.env.NODE_ENV === "development" ? error.stack : undefined 
+        details: error.stack
       },
       { status: 500 }
     );
