@@ -268,9 +268,7 @@ export default function ChatClient({ currentUser }) {
             Members
           </p>
           <div className="space-y-1">
-            {onlineMembers
-              .filter((m) => m.role !== "client")
-              .map((m) => (
+            {onlineMembers.map((m) => (
                 <div
                   key={m.id}
                   className="flex items-center gap-2.5 rounded-xl px-2 py-1.5 transition-colors hover:bg-zinc-800/50"
