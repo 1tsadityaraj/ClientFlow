@@ -86,8 +86,7 @@ export async function POST(request) {
     return Response.json(
       { 
         error: "Internal Server Error", 
-        message: error.message,
-        details: error.stack
+        message: "Failed to create organization"
       },
       { status: 500 }
     );
