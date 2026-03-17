@@ -32,12 +32,29 @@ export async function GET() {
   // Check NextAuth
   const nextAuthSecret = !!process.env.NEXTAUTH_SECRET;
 
+  // Check Redis
+  const redisUrl = process.env.UPSTASH_REDIS_REST_URL;
+  const redisConfigured = !!redisUrl && !redisUrl.includes("placeholder");
+
   return Response.json({
     database: { name: "Database (PostgreSQL)", status: dbConnected },
     pusher: { name: "Pusher (Real-time chat)", status: pusherConfigured },
     nextAuth: { name: "NextAuth", status: nextAuthSecret },
     stripe: { name: "Stripe (Billing)", status: isStripeEnabled(), envVar: "STRIPE_SECRET_KEY" },
-    resend: { name: "Resend (Email)", status: resendConfigured, envVar: "RESEND_API_KEY" },
-    s3: { name: "AWS S3 (File uploads)", status: isS3Enabled(), envVar: "AWS_ACCESS_KEY_ID" },
+    resend: { 
+      name: "Resend (Email)", 
+      status: resendConfigured, 
+      envVar: "RESEND_API_KEY",
+      fromEmail: process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev",
+      usingTestDomain: (process.env.RESEND_FROM_EMAIL || "resend.dev").includes("resend.dev")
+    },
+    s3: { 
+      name: "Storage (S3/R2)", 
+      status: isS3Enabled(), 
+      envVar: "AWS_ACCESS_KEY_ID",
+      bucket: process.env.S3_BUCKET_NAME,
+      isR2: !!process.env.AWS_ENDPOINT_URL
+    },
+    redis: { name: "Upstash Redis (Rate limiting)", status: redisConfigured, envVar: "UPSTASH_REDIS_REST_URL" },
   });
 }

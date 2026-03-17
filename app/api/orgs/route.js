@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma.js";
 import { assertPermission } from "@/lib/permissions.js";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
+import { sendWelcomeEmail } from "@/lib/email.js";
 
 const createOrgSchema = z.object({
   orgName: z.string().min(1),
@@ -88,6 +89,14 @@ export async function POST(request) {
     });
 
     console.log("[API/ORGS] Successfully created org and user:", result.org.slug);
+
+    // Send welcome email (asynchronously, don't block response)
+    sendWelcomeEmail({
+      to: result.user.email,
+      name: result.user.name,
+      orgName: result.org.name,
+      plan: result.org.plan,
+    }).catch((err) => console.error("Failed to send welcome email:", err));
     return Response.json(
       { org: result.org, user: result.user },
       { status: 201 }

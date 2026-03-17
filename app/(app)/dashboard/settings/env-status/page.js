@@ -83,9 +83,31 @@ export default function EnvStatusPage() {
                 </div>
                 <div>
                   <h3 className="text-sm font-medium text-zinc-200">{service.name}</h3>
-                  <p className="text-[10px] text-zinc-500">
-                    {service.status ? "Service is operational and configured" : `Key missing: ${service.envVar || "Check .env"}`}
-                  </p>
+                  <div className="text-[10px] text-zinc-500">
+                    {service.status ? (
+                      <div className="space-y-0.5">
+                        <p>Service is operational and configured</p>
+                        {key === 'resend' && (
+                          <div className="flex flex-col gap-0.5 mt-1 border-t border-zinc-800 pt-1">
+                            <p className="text-zinc-400">From: <span className="text-zinc-300">{service.fromEmail}</span></p>
+                            {service.usingTestDomain ? (
+                              <p className="text-amber-500/80 italic font-medium">⚠️ Using resend.dev test domain (verify addresses!)</p>
+                            ) : (
+                              <p className="text-emerald-500/80 font-medium font-medium">✅ Custom domain configured</p>
+                            )}
+                          </div>
+                        )}
+                        {key === 's3' && (
+                          <div className="flex flex-col gap-0.5 mt-1 border-t border-zinc-800 pt-1">
+                            <p className="text-zinc-400">Bucket: <span className="text-zinc-300">{service.bucket}</span></p>
+                            <p className="text-emerald-500/80 font-medium">✅ {service.isR2 ? "Cloudflare R2" : "AWS S3"} Configured</p>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <p>Key missing or placeholder: {service.envVar || "Check .env"}</p>
+                    )}
+                  </div>
                 </div>
               </div>
               <div className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide ${
