@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { isStripeEnabled } from "@/lib/stripe.js";
 
 export async function GET() {

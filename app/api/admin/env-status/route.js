@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { auth } from "@/lib/auth.js";
 import { isStripeEnabled } from "@/lib/stripe.js";
 import { isS3Enabled } from "@/lib/s3.js";

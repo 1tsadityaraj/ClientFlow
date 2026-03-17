@@ -15,4 +15,3 @@ export async function POST(request, context) {
 
   return handlers.POST(request, context);
 }
-
