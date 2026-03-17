@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic";
 import { auth } from "@/lib/auth.js";
 import { prisma } from "@/lib/prisma.js";
 import { assertPermission } from "@/lib/permissions.js";
-import { generatePresignedUrl } from "@/lib/s3.js";
+import { generatePresignedUrl, isS3Enabled } from "@/lib/s3.js";
 import { z } from "zod";
 
 const presignSchema = z.object({
@@ -14,6 +14,13 @@ export async function POST(request, { params }) {
   const session = await auth();
   if (!session) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  if (!isS3Enabled()) {
+    return Response.json(
+      { error: "File uploads not configured", disabled: true },
+      { status: 503 }
+    );
   }
 
   try {

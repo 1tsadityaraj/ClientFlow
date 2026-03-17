@@ -20,7 +20,17 @@ export default function ProjectFilesTab({ projectId }) {
   const [error, setError] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
+  const [uploadsEnabled, setUploadsEnabled] = useState(true);
   const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    async function checkUploads() {
+      const res = await fetch(`/api/projects/${projectId}/files/status`);
+      const data = await res.json().catch(() => ({}));
+      if (data.enabled === false) setUploadsEnabled(false);
+    }
+    checkUploads();
+  }, [projectId]);
 
   async function loadFiles() {
     const res = await fetch(`/api/projects/${projectId}/files`, {
@@ -122,14 +132,21 @@ export default function ProjectFilesTab({ projectId }) {
       <div className="flex items-center justify-between">
         <h2 className="text-sm font-medium text-zinc-300">Files</h2>
         <Can permission="uploadFiles">
-          <label className="flex cursor-pointer items-center gap-2 rounded-full bg-brand-primary px-4 py-1.5 text-xs font-medium text-white transition-opacity hover:opacity-90">
+          <label 
+            title={!uploadsEnabled ? "File uploads require S3 configuration" : ""}
+            className={`flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-medium text-white transition-opacity ${
+              !uploadsEnabled 
+                ? "bg-zinc-800 text-zinc-500 cursor-not-allowed" 
+                : "bg-brand-primary cursor-pointer hover:opacity-90"
+            }`}
+          >
             <Upload className="h-3.5 w-3.5" />
             {uploading ? "Uploading..." : "Upload"}
             <input
               ref={fileInputRef}
               type="file"
               className="hidden"
-              disabled={uploading}
+              disabled={uploading || !uploadsEnabled}
               onChange={handleFileSelect}
             />
           </label>

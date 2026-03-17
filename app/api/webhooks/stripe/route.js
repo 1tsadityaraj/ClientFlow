@@ -2,17 +2,14 @@ export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import Stripe from "stripe";
-import { stripe } from "@/lib/stripe.js";
+import { stripe, isStripeEnabled } from "@/lib/stripe.js";
 import { prisma } from "@/lib/prisma.js";
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 export async function POST(request) {
-  if (!stripe || !webhookSecret) {
-    return NextResponse.json(
-      { error: "Webhook not configured" },
-      { status: 503 }
-    );
+  if (!isStripeEnabled() || !webhookSecret) {
+    return NextResponse.json({ received: true }, { status: 200 });
   }
 
   const headersList = await headers();

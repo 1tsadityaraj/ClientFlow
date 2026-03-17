@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth.js";
 import { prisma } from "@/lib/prisma.js";
 import { assertPermission } from "@/lib/permissions.js";
-import { stripe } from "@/lib/stripe.js";
+import { stripe, isStripeEnabled } from "@/lib/stripe.js";
 
 const baseUrl =
   process.env.NEXT_PUBLIC_APP_URL ||
@@ -20,10 +20,10 @@ export async function POST() {
     return Response.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  if (!stripe) {
+  if (!isStripeEnabled()) {
     return Response.json(
-      { error: "Billing is not configured" },
-      { status: 503 }
+      { error: "Billing not configured", disabled: true },
+      { status: 200 }
     );
   }
 

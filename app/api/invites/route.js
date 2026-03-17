@@ -92,6 +92,8 @@ export async function POST(request) {
         role: invite.role,
       },
       emailSent,
+      devMode: emailResult.devMode || false,
+      inviteLink: emailResult.devMode ? `/invite/${invite.token}` : null,
     },
     { status: 201 }
   );

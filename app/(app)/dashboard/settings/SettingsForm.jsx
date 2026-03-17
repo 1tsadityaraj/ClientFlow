@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { Can } from "../../../../components/Can";
 import { getPlan } from "../../../../lib/plans.js";
 
@@ -28,6 +29,16 @@ export default function SettingsForm({ org }) {
   const [deleteError, setDeleteError] = useState("");
   const [billingLoading, setBillingLoading] = useState(false);
   const [billingError, setBillingError] = useState("");
+  const [billingEnabled, setBillingEnabled] = useState(true);
+
+  useEffect(() => {
+    async function checkBilling() {
+      const res = await fetch("/api/billing/status");
+      const data = await res.json().catch(() => ({}));
+      if (data.enabled === false) setBillingEnabled(false);
+    }
+    checkBilling();
+  }, []);
 
   useEffect(() => {
     if (org?.id) {
@@ -225,6 +236,24 @@ export default function SettingsForm({ org }) {
               Current plan and subscription management.
             </p>
             {(() => {
+              if (!billingEnabled) {
+                return (
+                  <div className="mt-4 rounded-xl border border-dashed border-zinc-700 p-6 text-center">
+                    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-zinc-900 text-zinc-400">
+                      <span className="text-xl">💳</span>
+                    </div>
+                    <h3 className="mt-4 font-medium text-zinc-200">Billing not configured</h3>
+                    <p className="mt-1 text-xs text-zinc-500">
+                      Stripe is not configured. Add STRIPE_SECRET_KEY to enable payment processing.
+                    </p>
+                    <div className="mt-6 border-t border-zinc-800 pt-4">
+                       <p className="text-[10px] text-zinc-500 uppercase tracking-widest font-semibold">Current plan</p>
+                       <p className="mt-1 font-medium text-zinc-300 capitalize">{org.plan}</p>
+                    </div>
+                  </div>
+                );
+              }
+
               const plan = getPlan(org.plan);
               return (
                 <div className="mt-4">
@@ -303,6 +332,15 @@ export default function SettingsForm({ org }) {
             </form>
           </section>
         </Can>
+
+        <div className="flex justify-center pt-8">
+          <Link 
+            href="/dashboard/settings/env-status" 
+            className="text-xs font-medium text-zinc-500 hover:text-zinc-300 transition-colors"
+          >
+            View System Status →
+          </Link>
+        </div>
       </div>
     </main>
   );

@@ -374,9 +374,13 @@ function InviteModal({ onClose, onSuccess }) {
     return (
       <Modal open={true} onClose={() => onSuccess()} title="Invite Created!">
         <div className="space-y-4">
-          {!successData.emailSent ? (
+          {successData.devMode ? (
+            <p className="text-sm text-yellow-400">
+              ✅ Invite created! Email sending is disabled in dev mode. Share this link manually:
+            </p>
+          ) : !successData.emailSent ? (
             <p className="text-sm text-amber-400">
-              Email delivery failed (likely due to unauthorized domain in Resend test mode), but you can manually share this link with them instead:
+              Email delivery failed (likely due to unauthorized domain in Resend test mode), but you can manually share this link instead:
             </p>
           ) : (
             <p className="text-sm text-zinc-300">
