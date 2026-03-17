@@ -20,6 +20,7 @@ import {
   BarChart3,
 } from "lucide-react";
 import CreateProjectButton from "./CreateProjectButton";
+import Sidebar from "@/components/Sidebar";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -153,85 +154,7 @@ export default async function DashboardPage() {
       {/* Sidebar + Content Layout */}
       <div className="flex">
         {/* Sidebar */}
-        <aside className="sticky top-0 hidden h-screen w-64 flex-shrink-0 flex-col border-r border-zinc-800/80 bg-zinc-950 lg:flex">
-          <div className="flex items-center gap-3 border-b border-zinc-800/80 px-5 py-5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-primary text-xs font-bold text-white shadow-lg">
-              CF
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-zinc-50">
-                {org?.name || "ClientFlow"}
-              </p>
-              <p className="text-[10px] font-medium uppercase tracking-wider text-brand-primary">
-                {org?.plan || "starter"} plan
-              </p>
-            </div>
-          </div>
-
-          <nav className="flex-1 space-y-1 px-3 py-4">
-            <SidebarLink
-              href="/"
-              icon={<Home className="h-4 w-4" />}
-              label="Home"
-            />
-            <SidebarLink
-              href="/dashboard"
-              icon={<LayoutDashboard className="h-4 w-4" />}
-              label="Dashboard"
-              active
-            />
-            <SidebarLink
-              href="/dashboard/members"
-              icon={<Users className="h-4 w-4" />}
-              label="Members"
-            />
-            <SidebarLink
-              href="/dashboard/chat"
-              icon={<MessageCircle className="h-4 w-4" />}
-              label="Team Chat"
-            />
-            <SidebarLink
-              href="/dashboard/settings"
-              icon={<Settings className="h-4 w-4" />}
-              label="Settings"
-            />
-
-            <div className="pt-4">
-              <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-widest text-zinc-500">
-                Projects
-              </p>
-              {projects.slice(0, 5).map((project) => (
-                <Link
-                  key={project.id}
-                  href={`/dashboard/projects/${project.id}`}
-                  className="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-zinc-400 transition-all hover:bg-zinc-800/60 hover:text-zinc-200"
-                >
-                  <span
-                    className="h-2 w-2 rounded-full flex-shrink-0"
-                    style={{ backgroundColor: project.color }}
-                  />
-                  <span className="truncate">{project.name}</span>
-                </Link>
-              ))}
-            </div>
-          </nav>
-
-          <div className="border-t border-zinc-800/80 px-4 py-4">
-            <div className="flex items-center gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-primary text-xs font-bold text-white shadow-lg">
-                {(session.user.name || "U").charAt(0).toUpperCase()}
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-xs font-medium text-zinc-200">
-                  {session.user.name}
-                </p>
-                <p className="truncate text-[10px] text-zinc-500">
-                  {session.user.role}
-                </p>
-              </div>
-            </div>
-          </div>
-        </aside>
+        <Sidebar org={org} session={session} projects={projects} />
 
         {/* Main Content */}
         <div className="flex-1 overflow-auto">
@@ -721,21 +644,6 @@ export default async function DashboardPage() {
   );
 }
 
-function SidebarLink({ href, icon, label, active = false }) {
-  return (
-    <Link
-      href={href}
-      className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all ${
-        active
-          ? "bg-brand-primary/10 text-brand-primary"
-          : "text-zinc-400 hover:bg-zinc-800/60 hover:text-zinc-200"
-      }`}
-    >
-      {icon}
-      {label}
-    </Link>
-  );
-}
 
 function StatCard({ icon, label, value, detail, gradient, iconColor }) {
   return (

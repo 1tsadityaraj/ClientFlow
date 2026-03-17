@@ -6,6 +6,7 @@ import { Can } from "../../../../components/Can";
 import { manageMember } from "@/actions/member";
 import { useSession } from "next-auth/react";
 import { Shield, Trash2, UserCog, CheckCircle2 } from "lucide-react";
+import Modal from "../../../../components/Modal";
 
 const ROLES = ["admin", "manager", "member", "client"];
 
@@ -371,19 +372,18 @@ function InviteModal({ onClose, onSuccess }) {
   if (successData) {
     const inviteUrl = `${window.location.origin}/invite/${successData.invite.token}`;
     return (
-      <div className="fixed inset-0 z-10 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-        <div className="w-full max-w-md rounded-2xl border border-zinc-800 bg-zinc-900 p-6 shadow-xl">
-          <h2 className="text-lg font-semibold text-emerald-400">Invite Created!</h2>
+      <Modal open={true} onClose={() => onSuccess()} title="Invite Created!">
+        <div className="space-y-4">
           {!successData.emailSent ? (
-            <p className="mt-2 text-sm text-amber-400">
+            <p className="text-sm text-amber-400">
               Email delivery failed (likely due to unauthorized domain in Resend test mode), but you can manually share this link with them instead:
             </p>
           ) : (
-            <p className="mt-2 text-sm text-zinc-300">
+            <p className="text-sm text-zinc-300">
               An email has been sent to {successData.invite.email}. You can also share the link directly:
             </p>
           )}
-          <div className="mt-4 flex gap-2">
+          <div className="flex gap-2">
             <input
               readOnly
               value={inviteUrl}
@@ -401,63 +401,60 @@ function InviteModal({ onClose, onSuccess }) {
           </div>
           <button
             onClick={() => onSuccess()}
-            className="mt-6 w-full rounded-full bg-brand-primary px-4 py-2 text-sm font-medium text-white hover:opacity-90 transition-all shadow-lg shadow-brand-primary/20"
+            className="w-full rounded-full bg-brand-primary px-4 py-2 text-sm font-medium text-white hover:opacity-90 transition-all shadow-lg shadow-brand-primary/20"
           >
             Done
           </button>
         </div>
-      </div>
+      </Modal>
     );
   }
 
   return (
-    <div className="fixed inset-0 z-10 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="w-full max-w-md rounded-2xl border border-zinc-800 bg-zinc-900 p-6 shadow-xl">
-        <h2 className="text-lg font-semibold">Invite member</h2>
-        <form onSubmit={handleSubmit} className="mt-4 space-y-4">
-          <div>
-            <label className="text-xs font-medium text-zinc-300">Email</label>
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-zinc-50 outline-none focus:border-brand-primary"
-            />
-          </div>
-          <div>
-            <label className="text-xs font-medium text-zinc-300">Role</label>
-            <select
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-zinc-50"
-            >
-              {ROLES.map((r) => (
-                <option key={r} value={r}>
-                  {r.charAt(0).toUpperCase() + r.slice(1)}
-                </option>
-              ))}
-            </select>
-          </div>
-          {error && <p className="text-xs text-rose-400">{error}</p>}
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className="rounded-full border border-zinc-700 px-4 py-2 text-sm text-zinc-300 hover:bg-zinc-800"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className="rounded-full bg-brand-primary px-4 py-2 text-sm font-medium text-white hover:opacity-90 transition-all shadow-lg shadow-brand-primary/20 disabled:opacity-60"
-            >
-              {loading ? "Sending..." : "Send invite"}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+    <Modal open={true} onClose={onClose} title="Invite Member">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="text-xs font-medium text-zinc-300">Email</label>
+          <input
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="mt-1 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-zinc-50 outline-none focus:border-brand-primary"
+          />
+        </div>
+        <div>
+          <label className="text-xs font-medium text-zinc-300">Role</label>
+          <select
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            className="mt-1 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-zinc-50 outline-none transition-all focus:border-brand-primary"
+          >
+            {ROLES.map((r) => (
+              <option key={r} value={r}>
+                {r.charAt(0).toUpperCase() + r.slice(1)}
+              </option>
+            ))}
+          </select>
+        </div>
+        {error && <p className="text-xs text-rose-400">{error}</p>}
+        <div className="flex gap-2 pt-2">
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex-1 rounded-full border border-zinc-700 px-4 py-2 text-sm text-zinc-300 hover:bg-zinc-800 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={loading}
+            className="flex-1 rounded-full bg-brand-primary px-4 py-2 text-sm font-medium text-white hover:opacity-90 transition-all shadow-lg shadow-brand-primary/20 disabled:opacity-60"
+          >
+            {loading ? "Sending..." : "Send invite"}
+          </button>
+        </div>
+      </form>
+    </Modal>
   );
 }

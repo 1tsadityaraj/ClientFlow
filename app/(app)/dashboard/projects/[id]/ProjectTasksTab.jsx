@@ -4,6 +4,7 @@ import { useState, useEffect, useOptimistic, startTransition } from "react";
 import { useSession } from "next-auth/react";
 import { Can } from "../../../../../components/Can";
 import { PlusCircle, Calendar, MessageSquare, GripVertical, CheckCircle2 } from "lucide-react";
+import Modal from "../../../../../components/Modal";
 import { updateTaskStatus } from "@/actions/task";
 
 /**
@@ -152,66 +153,89 @@ export default function ProjectTasksTab({ projectId }) {
         <Can permission="createTask">
           <button
             type="button"
-            onClick={() => setShowForm(!showForm)}
+            onClick={() => setShowForm(true)}
             className="flex items-center gap-2 rounded-full bg-brand-primary px-4 py-1.5 text-xs font-medium text-white transition-opacity hover:opacity-90"
           >
-            {showForm ? "Cancel" : <><PlusCircle className="h-4 w-4" /> Add Task</>}
+            <PlusCircle className="h-4 w-4" /> Add Task
           </button>
         </Can>
       </div>
 
-      {showForm && (
+      <Modal open={showForm} onClose={() => setShowForm(false)} title="Add Task">
         <form
           onSubmit={handleAddTask}
-          className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-5 space-y-4"
+          className="space-y-4"
         >
-          <input
-            type="text"
-            required
-            placeholder="Task title"
-            value={form.title}
-            onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
-            className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-sm text-zinc-50 outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/50"
-          />
-          <div className="flex flex-wrap gap-4">
-            <select
-              value={form.priority}
-              onChange={(e) => setForm((f) => ({ ...f, priority: e.target.value }))}
-              className="rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-2.5 text-sm text-zinc-50 outline-none transition-all focus:border-brand-primary"
-            >
-              {PRIORITIES.map((p) => (
-                <option key={p} value={p}>{p}</option>
-              ))}
-            </select>
-            <select
-              value={form.assigneeId}
-              onChange={(e) => setForm((f) => ({ ...f, assigneeId: e.target.value }))}
-              className="rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-2.5 text-sm text-zinc-50 outline-none transition-all focus:border-brand-primary"
-            >
-              <option value="">Unassigned</option>
-              {members.map((m) => (
-                <option key={m.id} value={m.id}>{m.name}</option>
-              ))}
-            </select>
+          <div>
+            <label className="mb-1.5 block text-xs font-medium text-zinc-300">Task Title</label>
+            <input
+              type="text"
+              required
+              placeholder="What needs to be done?"
+              value={form.title}
+              onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
+              className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-sm text-zinc-50 outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/50"
+            />
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label className="mb-1.5 block text-xs font-medium text-zinc-300">Priority</label>
+              <select
+                value={form.priority}
+                onChange={(e) => setForm((f) => ({ ...f, priority: e.target.value }))}
+                className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-2.5 text-sm text-zinc-50 outline-none transition-all focus:border-brand-primary"
+              >
+                {PRIORITIES.map((p) => (
+                  <option key={p} value={p}>{p}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="mb-1.5 block text-xs font-medium text-zinc-300">Assignee</label>
+              <select
+                value={form.assigneeId}
+                onChange={(e) => setForm((f) => ({ ...f, assigneeId: e.target.value }))}
+                className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-2.5 text-sm text-zinc-50 outline-none transition-all focus:border-brand-primary"
+              >
+                <option value="">Unassigned</option>
+                {members.map((m) => (
+                  <option key={m.id} value={m.id}>{m.name}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-xs font-medium text-zinc-300">Due Date</label>
             <input
               type="date"
               value={form.dueDate ? form.dueDate.split('T')[0] : ''}
               onChange={(e) => setForm((f) => ({ ...f, dueDate: e.target.value }))}
-              className="rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-2.5 text-sm text-zinc-50 outline-none transition-all focus:border-brand-primary [&::-webkit-calendar-picker-indicator]:invert"
+              className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-2.5 text-sm text-zinc-50 outline-none transition-all focus:border-brand-primary [&::-webkit-calendar-picker-indicator]:invert"
             />
           </div>
+
           {formError && <p className="text-xs text-rose-400 font-medium">{formError}</p>}
-          <div className="flex justify-end">
+          
+          <div className="flex gap-3 pt-2">
+            <button
+              type="button"
+              onClick={() => setShowForm(false)}
+              className="flex-1 rounded-full border border-zinc-700 px-4 py-2.5 text-sm font-medium text-zinc-300 transition-colors hover:bg-zinc-800"
+            >
+              Cancel
+            </button>
             <button
               type="submit"
               disabled={submitting}
-              className="rounded-full bg-brand-primary px-5 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-60 transition-opacity"
+              className="flex-1 rounded-full bg-brand-primary px-4 py-2.5 text-sm font-medium text-white hover:opacity-90 disabled:opacity-60 transition-opacity"
             >
               {submitting ? "Adding..." : "Create Task"}
             </button>
           </div>
         </form>
-      )}
+      </Modal>
 
       {/* Kanban Board Grid */}
       <div className="grid gap-6 md:grid-cols-3 min-h-[500px] overflow-auto pb-4">

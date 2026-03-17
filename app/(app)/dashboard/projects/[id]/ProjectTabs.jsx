@@ -17,6 +17,7 @@ import {
   AlertTriangle,
   Users,
 } from "lucide-react";
+import Modal from "../../../../../components/Modal";
 
 const TABS = [
   { id: "tasks", label: "Tasks", icon: CheckCircle2 },
@@ -201,49 +202,50 @@ export default function ProjectTabs({ project, userRole }) {
       </div>
 
       {/* Delete Confirmation Modal */}
-      {showDeleteConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="w-full max-w-md rounded-2xl border border-zinc-800 bg-zinc-900 p-6 shadow-2xl">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-rose-500/10">
-                <AlertTriangle className="h-5 w-5 text-rose-400" />
-              </div>
-              <div>
-                <h3 className="text-base font-semibold text-zinc-50">
-                  Delete Project
-                </h3>
-                <p className="text-xs text-zinc-500">
-                  This action cannot be undone
-                </p>
-              </div>
+      <Modal 
+        open={showDeleteConfirm} 
+        onClose={() => setShowDeleteConfirm(false)} 
+        title="Delete Project"
+      >
+        <div className="space-y-6">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-rose-500/10">
+              <AlertTriangle className="h-5 w-5 text-rose-400" />
             </div>
-            <p className="text-sm text-zinc-400 mb-6">
-              Are you sure you want to delete{" "}
-              <strong className="text-zinc-200">{project.name}</strong>? All
-              tasks, comments, and files associated with this project will be
-              permanently removed.
-            </p>
-            <div className="flex gap-3">
-              <button
-                type="button"
-                onClick={() => setShowDeleteConfirm(false)}
-                disabled={deleting}
-                className="flex-1 rounded-full border border-zinc-700 px-4 py-2.5 text-sm font-medium text-zinc-300 transition-colors hover:bg-zinc-800"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleDeleteProject}
-                disabled={deleting}
-                className="flex-1 rounded-full bg-rose-600 px-4 py-2.5 text-sm font-medium text-white transition-all hover:bg-rose-500 disabled:opacity-60"
-              >
-                {deleting ? "Deleting..." : "Delete Project"}
-              </button>
+            <div>
+              <p className="text-xs text-zinc-500 font-medium uppercase tracking-wider">
+                This action cannot be undone
+              </p>
             </div>
           </div>
+          
+          <p className="text-sm text-zinc-400">
+            Are you sure you want to delete{" "}
+            <strong className="text-zinc-200">{project.name}</strong>? All
+            tasks, comments, and files associated with this project will be
+            permanently removed.
+          </p>
+
+          <div className="flex gap-3 pt-2">
+            <button
+              type="button"
+              onClick={() => setShowDeleteConfirm(false)}
+              disabled={deleting}
+              className="flex-1 rounded-full border border-zinc-700 px-4 py-2.5 text-sm font-medium text-zinc-300 transition-colors hover:bg-zinc-800"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handleDeleteProject}
+              disabled={deleting}
+              className="flex-1 rounded-full bg-rose-600 px-4 py-2.5 text-sm font-medium text-white transition-all hover:bg-rose-500 disabled:opacity-60"
+            >
+              {deleting ? "Deleting..." : "Delete Project"}
+            </button>
+          </div>
         </div>
-      )}
+      </Modal>
     </main>
   );
 }

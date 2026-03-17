@@ -141,4 +141,6 @@ model Message {
   user      User     @relation(fields: [userId], references: [id])
   body      String
   createdAt DateTime @default(now())
+
+  @@index([orgId, createdAt])
 }

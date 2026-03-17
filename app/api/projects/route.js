@@ -27,7 +27,7 @@ export async function GET() {
 }
 
 export async function POST(request) {
-  console.log("[API/PROJECTS] POST request started");
+  console.log(">>> [API/PROJECTS] POST request entry");
   try {
     const session = await auth();
     console.log("[API/PROJECTS] POST - Session user:", session?.user?.email, "Role:", session?.user?.role);

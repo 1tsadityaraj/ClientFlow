@@ -20,6 +20,7 @@ const PROJECT_COLORS = [
 ];
 
 import { createProject } from "@/actions/project.js";
+import Modal from "@/components/Modal";
 
 export default function CreateProjectButton({ clientMembers = [] }) {
   const router = useRouter();
@@ -37,7 +38,6 @@ export default function CreateProjectButton({ clientMembers = [] }) {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    console.log("DEBUG: handleSubmit triggered with form:", form);
     setLoading(true);
     setError("");
     setSuccess(false);
@@ -55,27 +55,22 @@ export default function CreateProjectButton({ clientMembers = [] }) {
       });
 
       const res = await response.json();
-      console.log("DEBUG: API Response:", res);
 
       if (!response.ok) {
         throw new Error(res.error || "Failed to create project");
       }
 
-      // Success
       setSuccess(true);
       setForm({ name: "", description: "", color: "#6366f1", clientUserId: "" });
       
-      // Refresh the dashboard data
       router.refresh();
 
-      // Brief delay to show success, then close
       setTimeout(() => {
         setOpen(false);
         setSuccess(false);
       }, 1500);
 
     } catch (err) {
-      console.error("DEBUG Project Create Client Error:", err);
       setError(err.message || "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
@@ -93,143 +88,128 @@ export default function CreateProjectButton({ clientMembers = [] }) {
         New Project
       </button>
 
-      {open && (
-        <div className="fixed inset-0 z-50 flex justify-center items-start overflow-y-auto bg-black/70 backdrop-blur-md p-4 sm:p-6">
-          <div className="my-4 w-full max-w-lg rounded-2xl border border-zinc-800 bg-zinc-900 p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
-            {/* Header */}
-            <div className="flex items-center justify-between mb-8 border-b border-zinc-800 pb-4">
-              <div>
-                <h2 className="text-xl font-bold text-zinc-50 tracking-tight">
-                  Start a New Project
-                </h2>
-                <p className="mt-1 text-xs text-zinc-500 font-medium">
-                  Fill in the details below to initialize your project space.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setOpen(false)}
-                className="flex h-8 w-8 items-center justify-center rounded-xl bg-zinc-800 text-zinc-400 transition-colors hover:bg-zinc-700 hover:text-white"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
+      <Modal 
+        open={open} 
+        onClose={() => setOpen(false)} 
+        title="Start a New Project"
+      >
+        <p className="mb-6 -mt-4 text-xs text-zinc-500 font-medium">
+          Fill in the details below to initialize your project space.
+        </p>
 
-            <form onSubmit={handleSubmit} className="space-y-5">
-              {/* Project Name */}
-              <div>
-                <label className="mb-1.5 block text-xs font-medium text-zinc-300">
-                  Project Name <span className="text-rose-400">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Website Redesign"
-                  value={form.name}
-                  onChange={(e) =>
-                    setForm((f) => ({ ...f, name: e.target.value }))
-                  }
-                  className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-sm text-zinc-50 outline-none transition-all placeholder:text-zinc-600 focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/50"
-                />
-              </div>
-
-              {/* Description */}
-              <div>
-                <label className="mb-1.5 block text-xs font-medium text-zinc-300">
-                  Description
-                </label>
-                <textarea
-                  rows={3}
-                  placeholder="What's this project about?"
-                  value={form.description}
-                  onChange={(e) =>
-                    setForm((f) => ({ ...f, description: e.target.value }))
-                  }
-                  className="w-full resize-none rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-sm text-zinc-50 outline-none transition-all placeholder:text-zinc-600 focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/50"
-                />
-              </div>
-
-              {/* Color Picker */}
-              <div>
-                <label className="mb-1.5 flex items-center gap-1 text-xs font-medium text-zinc-300">
-                  <Palette className="h-3 w-3" />
-                  Project Color
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {PROJECT_COLORS.map((color) => (
-                    <button
-                      key={color}
-                      type="button"
-                      onClick={() => setForm((f) => ({ ...f, color }))}
-                      className={`h-8 w-8 rounded-full transition-all hover:scale-110 ${
-                        form.color === color
-                          ? "ring-2 ring-white ring-offset-2 ring-offset-zinc-900 scale-110"
-                          : "ring-1 ring-zinc-700"
-                      }`}
-                      style={{ backgroundColor: color }}
-                    />
-                  ))}
-                </div>
-              </div>
-
-              {/* Assign Client */}
-              {clientMembers.length > 0 && (
-                <div>
-                  <label className="mb-1.5 block text-xs font-medium text-zinc-300">
-                    Assign to Client (optional)
-                  </label>
-                  <select
-                    value={form.clientUserId}
-                    onChange={(e) =>
-                      setForm((f) => ({ ...f, clientUserId: e.target.value }))
-                    }
-                    className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-sm text-zinc-50 outline-none transition-all focus:border-brand-primary"
-                  >
-                    <option value="">No client assigned</option>
-                    {clientMembers.map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {c.name} ({c.email})
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              )}
-
-              {/* Success */}
-              {success && (
-                <div className="rounded-xl border border-emerald-900/50 bg-emerald-950/20 px-4 py-3 text-xs font-medium text-emerald-300">
-                  Project created successfully!
-                </div>
-              )}
-
-              {/* Error */}
-              {error && (
-                <div className="rounded-xl border border-rose-900/50 bg-rose-950/20 px-4 py-3 text-xs font-medium text-rose-300">
-                  {error}
-                </div>
-              )}
-
-              {/* Actions */}
-              <div className="flex gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setOpen(false)}
-                  className="flex-1 rounded-full border border-zinc-700 px-4 py-2.5 text-sm font-medium text-zinc-300 transition-colors hover:bg-zinc-800"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="flex-1 rounded-full bg-brand-primary px-4 py-2.5 text-sm font-medium text-white shadow-lg shadow-brand-primary/20 transition-all hover:opacity-90 disabled:opacity-60"
-                >
-                  {loading ? "Creating..." : "Create Project"}
-                </button>
-              </div>
-            </form>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Project Name */}
+          <div>
+            <label className="mb-1.5 block text-xs font-medium text-zinc-300">
+              Project Name <span className="text-rose-400">*</span>
+            </label>
+            <input
+              type="text"
+              required
+              placeholder="e.g. Website Redesign"
+              value={form.name}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, name: e.target.value }))
+              }
+              className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-sm text-zinc-50 outline-none transition-all placeholder:text-zinc-600 focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/50"
+            />
           </div>
-        </div>
-      )}
+
+          {/* Description */}
+          <div>
+            <label className="mb-1.5 block text-xs font-medium text-zinc-300">
+              Description
+            </label>
+            <textarea
+              rows={3}
+              placeholder="What's this project about?"
+              value={form.description}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, description: e.target.value }))
+              }
+              className="w-full resize-none rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-sm text-zinc-50 outline-none transition-all placeholder:text-zinc-600 focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/50"
+            />
+          </div>
+
+          {/* Color Picker */}
+          <div>
+            <label className="mb-1.5 flex items-center gap-1 text-xs font-medium text-zinc-300">
+              <Palette className="h-3 w-3" />
+              Project Color
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {PROJECT_COLORS.map((color) => (
+                <button
+                  key={color}
+                  type="button"
+                  onClick={() => setForm((f) => ({ ...f, color }))}
+                  className={`h-8 w-8 rounded-full transition-all hover:scale-110 ${
+                    form.color === color
+                      ? "ring-2 ring-white ring-offset-2 ring-offset-zinc-900 scale-110"
+                      : "ring-1 ring-zinc-700"
+                  }`}
+                  style={{ backgroundColor: color }}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Assign Client */}
+          {clientMembers.length > 0 && (
+            <div>
+              <label className="mb-1.5 block text-xs font-medium text-zinc-300">
+                Assign to Client (optional)
+              </label>
+              <select
+                value={form.clientUserId}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, clientUserId: e.target.value }))
+                }
+                className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-sm text-zinc-50 outline-none transition-all focus:border-brand-primary"
+              >
+                <option value="">No client assigned</option>
+                {clientMembers.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name} ({c.email})
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {/* Success */}
+          {success && (
+            <div className="rounded-xl border border-emerald-900/50 bg-emerald-950/20 px-4 py-3 text-xs font-medium text-emerald-300">
+              Project created successfully!
+            </div>
+          )}
+
+          {/* Error */}
+          {error && (
+            <div className="rounded-xl border border-rose-900/50 bg-rose-950/20 px-4 py-3 text-xs font-medium text-rose-300">
+              {error}
+            </div>
+          )}
+
+          {/* Actions */}
+          <div className="flex gap-3 pt-2">
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              className="flex-1 rounded-full border border-zinc-700 px-4 py-2.5 text-sm font-medium text-zinc-300 transition-colors hover:bg-zinc-800"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex-1 rounded-full bg-brand-primary px-4 py-2.5 text-sm font-medium text-white shadow-lg shadow-brand-primary/20 transition-all hover:opacity-90 disabled:opacity-60"
+            >
+              {loading ? "Creating..." : "Create Project"}
+            </button>
+          </div>
+        </form>
+      </Modal>
     </>
   );
 }

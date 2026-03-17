@@ -15,6 +15,7 @@ export default async function ChatPage() {
         id: session.user.id,
         name: session.user.name,
         role: session.user.role,
+        orgId: session.user.orgId,
       }}
     />
   );
