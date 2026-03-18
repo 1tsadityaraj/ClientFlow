@@ -188,28 +188,32 @@ export async function POST(request) {
     ];
 
     for (const p of projectData) {
-      const project = await prisma.project.upsert({
-        where: {
-          orgId_name: {
+      let project = await prisma.project.findFirst({
+        where: { orgId: pixelAgency.id, name: p.name }
+      });
+
+      if (project) {
+        project = await prisma.project.update({
+          where: { id: project.id },
+          update: {
+            progress: p.progress,
+            status: p.progress === 100 ? "completed" : "active",
+          }
+        });
+      } else {
+        project = await prisma.project.create({
+          data: {
             orgId: pixelAgency.id,
             name: p.name,
-          },
-        },
-        update: {
-          progress: p.progress,
-          status: p.progress === 100 ? "completed" : "active",
-        },
-        create: {
-          orgId: pixelAgency.id,
-          name: p.name,
-          progress: p.progress,
-          color: p.color,
-          status: p.progress === 100 ? "completed" : "active",
-          managerId: p.manager.id,
-          clientUserId: p.client.id,
-          description: `High-priority project for ${p.client.name}. Focus on ${p.name.toLowerCase()}.`,
-        },
-      });
+            progress: p.progress,
+            color: p.color,
+            status: p.progress === 100 ? "completed" : "active",
+            managerId: p.manager.id,
+            clientUserId: p.client.id,
+            description: `High-priority project for ${p.client.name}. Focus on ${p.name.toLowerCase()}.`,
+          }
+        });
+      }
 
       // Simple task creation logic
       const taskTitles = [
