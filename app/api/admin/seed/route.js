@@ -195,7 +195,7 @@ export async function POST(request) {
       if (project) {
         project = await prisma.project.update({
           where: { id: project.id },
-          update: {
+          data: {
             progress: p.progress,
             status: p.progress === 100 ? "completed" : "active",
           }
