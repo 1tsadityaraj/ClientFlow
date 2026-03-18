@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import CreateProjectButton from "./CreateProjectButton";
 import Sidebar from "@/components/Sidebar";
+import DashboardActivityFeed from "./DashboardActivityFeed";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -38,7 +39,7 @@ export default async function DashboardPage() {
     where.clientUserId = session.user.id;
   }
 
-  const [projects, members, tasks, recentLogs, org] = await Promise.all([
+  const [projects, members, tasks, org] = await Promise.all([
     prisma.project.findMany({
       where,
       orderBy: { createdAt: "desc" },
@@ -57,14 +58,6 @@ export default async function DashboardPage() {
       orderBy: { createdAt: "desc" },
       include: {
         assignee: { select: { id: true, name: true } },
-      },
-    }),
-    prisma.auditLog.findMany({
-      where: { orgId: session.user.orgId },
-      orderBy: { createdAt: "desc" },
-      take: 5,
-      include: {
-        user: { select: { name: true } },
       },
     }),
     prisma.org.findFirst({ where: { id: session.user.orgId } }),
@@ -544,58 +537,8 @@ export default async function DashboardPage() {
                   </ul>
                 </section>
 
-                {/* Recent Activity (Audit logs) */}
-                {PERMISSIONS[session.user.role]?.manageMembers && (
-                  <section className="rounded-2xl border border-zinc-800/80 bg-zinc-900/40 p-5">
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="flex items-center gap-2 text-sm font-semibold text-zinc-200">
-                        <Activity className="h-4 w-4 text-violet-400" />
-                        Quick Audit
-                      </h3>
-                      <Link
-                        href="/dashboard/settings/audit"
-                        className="text-[10px] font-medium text-brand-primary hover:text-brand-primary/80"
-                      >
-                        View all →
-                      </Link>
-                    </div>
-                    <ul className="space-y-3">
-                      {recentLogs.map((log) => {
-                        const meta = log.metadata ? JSON.parse(log.metadata) : {};
-                        const actionText = meta.message || `${log.user?.name || "User"} performed ${log.action} on ${log.entity}`;
-                        
-                        return (
-                          <li
-                            key={log.id}
-                            className="flex gap-3 rounded-xl border border-zinc-800/50 bg-zinc-900/30 p-3 transition-colors hover:bg-zinc-800/40"
-                          >
-                            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-primary/10 text-[10px] font-bold text-brand-primary">
-                              {(log.user?.name || "?").charAt(0).toUpperCase()}
-                            </div>
-                            <div className="min-w-0 flex-1">
-                              <div className="flex justify-between items-center mb-1">
-                                <span className="font-medium text-zinc-300 text-[10px]">
-                                  {log.user?.name}
-                                </span>
-                                <time className="text-[9px] text-zinc-500">
-                                  {new Date(log.createdAt).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
-                                </time>
-                              </div>
-                              <p className="line-clamp-2 text-xs text-zinc-400">
-                                {actionText}
-                              </p>
-                            </div>
-                          </li>
-                        );
-                      })}
-                      {recentLogs.length === 0 && (
-                        <li className="py-4 text-center text-xs text-zinc-500">
-                          No recent activity
-                        </li>
-                      )}
-                    </ul>
-                  </section>
-                )}
+                {/* Recent Activity Feed */}
+                <DashboardActivityFeed />
 
                 {/* Team Members Quick View */}
                 <section className="rounded-2xl border border-zinc-800/80 bg-zinc-900/40 p-5">

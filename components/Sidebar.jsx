@@ -11,6 +11,7 @@ import {
   Settings,
   X,
   PlusCircle,
+  Activity,
 } from "lucide-react";
 import { getPusherClient } from "@/lib/pusherClient";
 
@@ -80,6 +81,14 @@ export default function Sidebar({ org, session, projects = [] }) {
           label="Members"
           active={pathname === "/dashboard/members"}
         />
+        {(session?.user?.role === "admin" || session?.user?.role === "manager") && (
+          <SidebarLink
+            href="/dashboard/activity"
+            icon={<Activity className="h-4 w-4" />}
+            label="Activity"
+            active={pathname === "/dashboard/activity"}
+          />
+        )}
         <SidebarLink
           href="/dashboard/chat"
           icon={<MessageCircle className="h-4 w-4" />}

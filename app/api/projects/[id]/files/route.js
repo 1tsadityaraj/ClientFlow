@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic";
 import { auth } from "@/lib/auth.js";
 import { prisma } from "@/lib/prisma.js";
 import { assertPermission } from "@/lib/permissions.js";
+import { logActivity, ACTION_TYPES } from "@/lib/activity.js";
 import { generateDownloadUrl } from "@/lib/s3.js";
 import { z } from "zod";
 
@@ -105,6 +106,16 @@ export async function POST(request, { params }) {
       uploadedById: session.user.id,
     },
     include: { uploadedBy: { select: { name: true } } },
+  });
+
+  logActivity({
+    orgId: session.user.orgId,
+    userId: session.user.id,
+    projectId: project.id,
+    action: ACTION_TYPES.FILE_UPLOADED,
+    entityType: 'file',
+    entityId: file.id,
+    entityName: file.name
   });
 
   return Response.json(file, { status: 201 });

@@ -45,6 +45,7 @@ model User {
   tasks           Task[]
   auditLogs       AuditLog[]
   messages        Message[]
+  activityLogs    ActivityLog[]
 }
 
 model Project {
@@ -143,4 +144,21 @@ model Message {
   createdAt DateTime @default(now())
 
   @@index([orgId, createdAt])
+}
+
+model ActivityLog {
+  id         String   @id @default(cuid())
+  orgId      String
+  projectId  String?
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  action     String   // e.g. "created_project", "completed_task"
+  entityType String   // "project", "task", "file", "comment", "member"
+  entityId   String?
+  entityName String?  // human readable: "Brand Refresh", "Design mockups"
+  metadata   String?  // JSON string for extra context
+  createdAt  DateTime @default(now())
+
+  @@index([orgId, createdAt])
+  @@index([projectId, createdAt])
 }

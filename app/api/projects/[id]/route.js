@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth.js";
 import { prisma } from "@/lib/prisma.js";
 import { assertPermission } from "@/lib/permissions.js";
 import { logAudit, ACTIONS } from "@/lib/audit.js";
+import { logActivity, ACTION_TYPES } from "@/lib/activity.js";
 import { updateProjectSchema, validate } from "@/lib/validations.js";
 
 export async function GET(_request, { params }) {
@@ -74,6 +75,16 @@ export async function PATCH(request, { params }) {
     metadata: { name: project.name, changes: Object.keys(data) },
   });
 
+  logActivity({
+    orgId: session.user.orgId,
+    userId: session.user.id,
+    projectId: project.id,
+    action: ACTION_TYPES.PROJECT_UPDATED,
+    entityType: 'project',
+    entityId: project.id,
+    entityName: project.name
+  });
+
   return Response.json(project);
 }
 
@@ -113,6 +124,16 @@ export async function DELETE(_request, { params }) {
     entity: "Project",
     entityId: existing.id,
     metadata: { name: existing.name },
+  });
+
+  logActivity({
+    orgId: session.user.orgId,
+    userId: session.user.id,
+    projectId: existing.id,
+    action: ACTION_TYPES.PROJECT_DELETED,
+    entityType: 'project',
+    entityId: existing.id,
+    entityName: existing.name
   });
 
   return Response.json({ success: true });

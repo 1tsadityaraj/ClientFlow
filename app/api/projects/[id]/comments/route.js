@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth.js";
 import { prisma } from "@/lib/prisma.js";
 import { assertPermission } from "@/lib/permissions.js";
 import { logAudit, ACTIONS } from "@/lib/audit.js";
+import { logActivity, ACTION_TYPES } from "@/lib/activity.js";
 import { createCommentSchema, validate } from "@/lib/validations.js";
 
 export async function GET(_request, { params }) {
@@ -93,6 +94,16 @@ export async function POST(request, { params }) {
     entity: "Comment",
     entityId: comment.id,
     metadata: { project: project.name },
+  });
+
+  logActivity({
+    orgId: session.user.orgId,
+    userId: session.user.id,
+    projectId: project.id,
+    action: ACTION_TYPES.COMMENT_ADDED,
+    entityType: 'comment',
+    entityId: comment.id,
+    entityName: project.name
   });
 
   return Response.json(comment, { status: 201 });

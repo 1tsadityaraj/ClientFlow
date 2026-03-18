@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth.js";
 import { prisma } from "@/lib/prisma.js";
 import { assertPermission } from "@/lib/permissions.js";
 import { logAudit, ACTIONS } from "@/lib/audit.js";
+import { logActivity, ACTION_TYPES } from "@/lib/activity.js";
 import { createProjectSchema, validate } from "@/lib/validations.js";
 import { revalidatePath } from "next/cache";
 
@@ -73,6 +74,16 @@ export async function POST(request) {
       entity: "Project",
       entityId: project.id,
       metadata: { name: project.name },
+    });
+
+    logActivity({
+      orgId: session.user.orgId,
+      userId: session.user.id,
+      projectId: project.id,
+      action: ACTION_TYPES.PROJECT_CREATED,
+      entityType: 'project',
+      entityId: project.id,
+      entityName: project.name
     });
 
     revalidatePath("/dashboard");

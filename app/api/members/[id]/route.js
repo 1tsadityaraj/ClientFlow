@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth.js";
 import { prisma } from "@/lib/prisma.js";
 import { assertPermission } from "@/lib/permissions.js";
 import { logAudit, ACTIONS } from "@/lib/audit.js";
+import { logActivity, ACTION_TYPES } from "@/lib/activity.js";
 import { z } from "zod";
 
 const updateRoleSchema = z.object({
@@ -82,6 +83,15 @@ export async function DELETE(_request, { params }) {
     },
   });
 
+  logActivity({
+    orgId: session.user.orgId,
+    userId: session.user.id,
+    action: ACTION_TYPES.MEMBER_REMOVED,
+    entityType: 'member',
+    entityId: user.id,
+    entityName: user.name
+  });
+
   return Response.json({ success: true });
 }
 
@@ -135,6 +145,16 @@ export async function PATCH(request, { params }) {
       to: parsed.data.role,
       message: `${session.user.name || "Admin"} changed ${user.name}'s role from ${previousRole} to ${parsed.data.role}`,
     },
+  });
+
+  logActivity({
+    orgId: session.user.orgId,
+    userId: session.user.id,
+    action: ACTION_TYPES.ROLE_CHANGED,
+    entityType: 'member',
+    entityId: user.id,
+    entityName: user.name,
+    metadata: { oldRole: previousRole, newRole: parsed.data.role }
   });
 
   return Response.json(updated);

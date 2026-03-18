@@ -249,6 +249,23 @@ The test suite validates **multitenancy isolation** — ensuring that a user fro
 
 ---
 
+## 🚀 Production Setup
+
+1. **Set Environment Variables**: Add all variables from `scripts/vercel-env-list.sh` to your Vercel project settings.
+2. **Setup Database**: From your local terminal (ensure `DATABASE_URL` points to production), run:
+   ```bash
+   npm run db:prod:setup
+   ```
+3. **Verify Seed**: Log in as an admin and visit `/api/admin/seed-check` to confirm the database is correctly populated.
+4. **Deploy**: Push your changes to the `main` branch:
+   ```bash
+   git add .
+   git commit -m "feat: complete activity log and production setup"
+   git push origin main
+   ```
+
+---
+
 ## 📄 License
 
 MIT

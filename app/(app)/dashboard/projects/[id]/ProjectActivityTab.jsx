@@ -1,39 +1,67 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Can } from "../../../../../components/Can";
-import { Clock } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { getActivityDescription, getActivityMeta } from "@/lib/activity";
+import { Clock, User } from "lucide-react";
 
 export default function ProjectActivityTab({ projectId }) {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  async function loadLogs() {
-    const res = await fetch(`/api/projects/${projectId}/audit`, {
-      cache: "no-store",
-    });
-    if (!res.ok) {
-      setError("Failed to load audit logs");
-      return;
+  const fetchActivity = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/activity?projectId=${projectId}&limit=50`);
+      if (!res.ok) throw new Error("Failed to fetch activity");
+      const data = await res.json();
+      setLogs(data.logs || []);
+    } catch (err) {
+      console.error(err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
-    const data = await res.json();
-    setLogs(Array.isArray(data) ? data : []);
-  }
-
-  useEffect(() => {
-    setLoading(true);
-    setError(null);
-    loadLogs().finally(() => setLoading(false));
   }, [projectId]);
 
-  if (loading) {
+  useEffect(() => {
+    fetchActivity();
+    
+    // Auto-refresh every 30 seconds
+    const interval = setInterval(fetchActivity, 30000);
+    return () => clearInterval(interval);
+  }, [fetchActivity]);
+
+  function formatTime(dateString) {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInSeconds = Math.floor((now - date) / 1000);
+    
+    if (diffInSeconds < 60) return "Just now";
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
+    if (diffInSeconds < 86400) {
+      const hours = Math.floor(diffInSeconds / 3600);
+      return hours === 1 ? "1 hour ago" : `${hours} hours ago`;
+    }
+    
+    // Yesterday logic
+    const yesterday = new Date(now);
+    yesterday.setDate(now.getDate() - 1);
+    if (date.toDateString() === yesterday.toDateString()) return "Yesterday";
+    
+    // Mar 14 logic
+    return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  }
+
+  if (loading && logs.length === 0) {
     return (
-      <div className="space-y-4 animate-pulse">
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="flex gap-4">
-            <div className="h-8 w-8 rounded-full bg-zinc-800" />
-            <div className="h-16 flex-1 rounded-2xl border border-zinc-800 bg-zinc-900/40 p-4" />
+      <div className="space-y-8 py-4">
+        {[1, 2, 3, 4, 5].map((i) => (
+          <div key={i} className="flex gap-4 animate-pulse">
+            <div className="h-8 w-8 shrink-0 rounded-full bg-zinc-800" />
+            <div className="flex-1 space-y-2">
+              <div className="h-4 w-1/4 rounded bg-zinc-800" />
+              <div className="h-4 w-3/4 rounded bg-zinc-900" />
+            </div>
           </div>
         ))}
       </div>
@@ -42,59 +70,69 @@ export default function ProjectActivityTab({ projectId }) {
 
   if (error) {
     return (
-      <div className="rounded-xl border border-rose-900/50 bg-rose-950/20 p-4 text-sm text-rose-200">
+      <div className="rounded-xl border border-rose-900/50 bg-rose-950/20 p-4 text-sm text-rose-400">
         {error}
       </div>
     );
   }
 
-  return (
-    <Can permission="manageMembers">
-      <div className="space-y-6">
-        <div className="flex items-center gap-2 mb-4">
-          <Clock className="h-4 w-4 text-brand-primary" />
-          <h2 className="text-sm font-medium text-zinc-300">Activity Timeline</h2>
+  if (logs.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 text-center">
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-zinc-900">
+          <Clock className="h-6 w-6 text-zinc-600" />
         </div>
-
-        <div className="space-y-4 relative before:absolute before:inset-0 before:ml-4 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-zinc-800 before:to-transparent">
-          {logs.map((log) => {
-            const meta = log.metadata ? JSON.parse(log.metadata) : {};
-            const actionText = meta.message || `${log.user?.name || "User"} performed ${log.action} on ${log.entity}`;
-
-            return (
-              <div key={log.id} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
-                <div className="flex items-center justify-center w-8 h-8 rounded-full border border-zinc-800 bg-zinc-900 text-zinc-500 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2">
-                  <span className="text-[10px] font-bold text-zinc-400">
-                    {(log.user?.name || "U")[0].toUpperCase()}
-                  </span>
-                </div>
-                <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-4 rounded-xl border border-zinc-800/80 bg-zinc-900/60 shadow-sm transition-all hover:border-brand-primary/50">
-                  <div className="flex items-center justify-between space-x-2 mb-1">
-                    <div className="font-bold text-zinc-200 text-xs">{log.user?.name}</div>
-                    <time className="text-[10px] text-zinc-500">
-                      {new Date(log.createdAt).toLocaleString(undefined, {
-                        month: "short",
-                        day: "numeric",
-                        hour: "numeric",
-                        minute: "2-digit"
-                      })}
-                    </time>
-                  </div>
-                  <div className="text-sm text-zinc-400">
-                    {actionText}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-
-          {logs.length === 0 && (
-            <div className="relative text-center py-6">
-              <p className="text-xs text-zinc-500">No recent activity.</p>
-            </div>
-          )}
-        </div>
+        <h3 className="mt-4 text-sm font-medium text-zinc-300">No activity yet</h3>
+        <p className="mt-1 text-xs text-zinc-500">Start by creating a task or adding a comment</p>
       </div>
-    </Can>
+    );
+  }
+
+  return (
+    <div className="relative space-y-8 py-4">
+      {/* Vertical line connecting entries */}
+      <div className="absolute left-[15px] top-4 bottom-4 w-px bg-zinc-800" />
+
+      {logs.map((log) => {
+        const { icon, color } = getActivityMeta(log.action);
+        const description = getActivityDescription(log);
+
+        return (
+          <div key={log.id} className="relative flex gap-4">
+            {/* Action Icon */}
+            <div 
+              className="relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-zinc-900 bg-zinc-950 shadow-sm"
+              style={{ color }}
+            >
+              <span className="text-[10px] font-bold">{icon}</span>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 pt-0.5">
+              <div className="flex items-center gap-2">
+                {log.user?.avatar ? (
+                  <img 
+                    src={log.user.avatar} 
+                    alt={log.user.name} 
+                    className="h-5 w-5 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="flex h-5 w-5 items-center justify-center rounded-full bg-zinc-800 text-[10px] text-zinc-400">
+                    <User className="h-3 w-3" />
+                  </div>
+                )}
+                <span className="text-xs font-semibold text-zinc-200">{log.user?.name}</span>
+                <span className="text-[10px] text-zinc-500">•</span>
+                <time className="text-[10px] text-zinc-500">{formatTime(log.createdAt)}</time>
+              </div>
+              <p className="mt-1 text-sm text-zinc-400">
+                {description}
+              </p>
+              <div className="mt-4 border-b border-zinc-900/50" />
+            </div>
+          </div>
+        );
+      })}
+    </div>
   );
 }

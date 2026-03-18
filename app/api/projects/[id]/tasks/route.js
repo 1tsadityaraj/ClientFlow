@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth.js";
 import { prisma } from "@/lib/prisma.js";
 import { assertPermission } from "@/lib/permissions.js";
 import { logAudit, ACTIONS } from "@/lib/audit.js";
+import { logActivity, ACTION_TYPES } from "@/lib/activity.js";
 import { createTaskSchema, validate } from "@/lib/validations.js";
 
 export async function GET(_request, { params }) {
@@ -88,6 +89,16 @@ export async function POST(request, { params }) {
     entity: "Task",
     entityId: task.id,
     metadata: { title: task.title, project: project.name },
+  });
+
+  logActivity({
+    orgId: session.user.orgId,
+    userId: session.user.id,
+    projectId: project.id,
+    action: ACTION_TYPES.TASK_CREATED,
+    entityType: 'task',
+    entityId: task.id,
+    entityName: task.title
   });
 
   return Response.json(task, { status: 201 });

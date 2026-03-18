@@ -9,6 +9,7 @@ async function main() {
   const hashedPassword = await bcrypt.hash("password123", 10);
 
   // Clean up existing data
+  await prisma.activityLog.deleteMany({});
   await prisma.auditLog.deleteMany({});
   await prisma.comment.deleteMany({});
   await prisma.file.deleteMany({});
@@ -151,6 +152,50 @@ async function main() {
         }
     });
   }
+
+  console.log("Created Messages.");
+  
+  // 5. Activity Logs
+  const activityActions = [
+    { action: 'project_created', type: 'project', userId: alice.id, project: projects[0] },
+    { action: 'task_created', type: 'task', userId: bob.id, project: projects[0], name: "Design mockups" },
+    { action: 'task_completed', type: 'task', userId: carol.id, project: projects[0], name: "Research & Discovery" },
+    { action: 'comment_added', type: 'comment', userId: dave.id, project: projects[0], name: projects[0].name },
+    { action: 'file_uploaded', type: 'file', userId: alice.id, project: projects[0], name: "Styleguide.pdf" },
+    { action: 'project_updated', type: 'project', userId: bob.id, project: projects[1] },
+    { action: 'task_created', type: 'task', userId: emma.id, project: projects[1], name: "API Integration" },
+    { action: 'task_assigned', type: 'task', userId: alice.id, project: projects[1], name: "API Integration" },
+    { action: 'comment_added', type: 'comment', userId: sarah.id, project: projects[1], name: projects[1].name },
+    { action: 'member_invited', type: 'member', userId: alice.id, name: "new-hire@pixel.co" },
+    { action: 'project_completed', type: 'project', userId: bob.id, project: projects[2] },
+    { action: 'task_completed', type: 'task', userId: carol.id, project: projects[0], name: "Initial Concepts" },
+    { action: 'comment_added', type: 'comment', userId: emma.id, project: projects[3], name: projects[3].name },
+    { action: 'file_uploaded', type: 'file', userId: alice.id, project: projects[3], name: "AppAssets.zip" },
+    { action: 'task_created', type: 'task', userId: bob.id, project: projects[4], name: "SEO Audit" },
+    { action: 'role_changed', type: 'member', userId: alice.id, name: carol.name, metadata: { oldRole: 'member', newRole: 'manager' } },
+  ];
+
+  for (let i = 0; i < activityActions.length; i++) {
+    const act = activityActions[i];
+    const createdAt = new Date();
+    createdAt.setDate(createdAt.getDate() - (activityActions.length - i) * 1.5); // Spread over ~24 days
+
+    await prisma.activityLog.create({
+      data: {
+        orgId: pixelAgency.id,
+        projectId: act.project?.id || null,
+        userId: act.userId,
+        action: act.action,
+        entityType: act.type,
+        entityId: act.project?.id || 'demo-id', // Simplified
+        entityName: act.name || act.project?.name || "Demo Item",
+        metadata: act.metadata ? JSON.stringify(act.metadata) : null,
+        createdAt,
+      }
+    });
+  }
+
+  console.log("Created Activity Logs.");
 
   console.log("Seed process completed successfully!");
 }

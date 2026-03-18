@@ -5,6 +5,7 @@ import { assertPermission } from "@/lib/permissions.js";
 import { inviteLimiter, checkRateLimit } from "@/lib/rateLimit.js";
 import { sendInviteEmail } from "@/lib/email.js";
 import { logAudit, ACTIONS } from "@/lib/audit.js";
+import { logActivity, ACTION_TYPES } from "@/lib/activity.js";
 import { z } from "zod";
 import crypto from "crypto";
 
@@ -82,6 +83,15 @@ export async function POST(request) {
     entity: "Invite",
     entityId: invite.id,
     metadata: { email: data.email, role: data.role },
+  });
+
+  logActivity({
+    orgId: session.user.orgId,
+    userId: session.user.id,
+    action: ACTION_TYPES.MEMBER_INVITED,
+    entityType: 'member',
+    entityId: invite.id,
+    entityName: data.email
   });
 
   return Response.json(
