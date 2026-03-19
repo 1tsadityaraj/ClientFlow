@@ -70,6 +70,10 @@ export default function ChatClient({ currentUser }) {
   const chatContainerRef = useRef(null);
   const typingTimeoutRef = useRef(null);
 
+  const scrollToBottom = useCallback((behavior = "smooth") => {
+    messagesEndRef.current?.scrollIntoView({ behavior });
+  }, []);
+
   const orgId = currentUser.orgId; // Assuming orgId is passed or available via session
 
   const [onlineMembers, setOnlineMembers] = useState(new Set());
@@ -174,7 +178,7 @@ export default function ChatClient({ currentUser }) {
   }, [orgId]);
 
   const handleSend = async (e) => {
-    e.preventDefault();
+    e?.preventDefault?.();
     const text = input.trim();
     if (!text || sending) return;
 
@@ -192,6 +196,13 @@ export default function ChatClient({ currentUser }) {
       setInput(text);
     } finally {
       setSending(false);
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend(e);
     }
   };
 
