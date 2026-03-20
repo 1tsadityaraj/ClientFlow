@@ -13,6 +13,28 @@ export default function SignupPage() {
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showLoginLink, setShowLoginLink] = useState(false);
+  const [slugAvailable, setSlugAvailable] = useState(null);
+  const [checkingSlug, setCheckingSlug] = useState(false);
+
+  const checkSlug = async (currentSlug) => {
+    if (!currentSlug) {
+      setSlugAvailable(null);
+      return;
+    }
+    setCheckingSlug(true);
+    try {
+      const res = await fetch(`/api/orgs/check-slug?slug=${currentSlug}`);
+      if (res.ok) {
+        const data = await res.json();
+        setSlugAvailable(data.available);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setCheckingSlug(false);
+    }
+  };
 
   function updateField(field, value) {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -33,15 +55,12 @@ export default function SignupPage() {
 
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
-      let errorMessage = data.message || data.error || "Something went wrong";
+      setError(data.error || "Something went wrong. Please try again.");
       
-      if (res.status === 409) {
-        errorMessage = "An account with this email/slug already exists";
-      } else if (res.status === 503) {
-        errorMessage = "Service temporarily unavailable, please try again later";
+      if (res.status === 409 && data.error?.includes('email')) {
+        setError('An account with this email already exists.');
+        setShowLoginLink(true);
       }
-      
-      setError(errorMessage);
       return;
     }
 
@@ -71,7 +90,13 @@ export default function SignupPage() {
                   type="text"
                   required
                   value={form.orgName}
-                  onChange={(e) => updateField("orgName", e.target.value)}
+                  onChange={(e) => {
+                    updateField("orgName", e.target.value);
+                    const generated = e.target.value.toLowerCase().trim().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').substring(0, 30);
+                    updateField("orgSlug", generated);
+                    setSlugAvailable(null);
+                  }}
+                  onBlur={() => checkSlug(form.orgSlug)}
                   className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-zinc-50 outline-none focus:border-indigo-500"
                 />
               </div>
@@ -87,14 +112,19 @@ export default function SignupPage() {
                     type="text"
                     required
                     value={form.orgSlug}
-                    onChange={(e) =>
+                    onChange={(e) => {
                       updateField(
                         "orgSlug",
                         e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "")
-                      )
-                    }
+                      );
+                      setSlugAvailable(null);
+                    }}
+                    onBlur={(e) => checkSlug(e.target.value)}
                     className="flex-1 border-none bg-transparent text-sm text-zinc-50 outline-none"
                   />
+                  {checkingSlug && <span className="text-xs text-zinc-400">checking...</span>}
+                  {!checkingSlug && slugAvailable === true && <span className="text-xs text-emerald-500">✓ Available</span>}
+                  {!checkingSlug && slugAvailable === false && <span className="text-xs text-rose-500">✗ Already taken</span>}
                 </div>
               </div>
             </>
@@ -143,7 +173,25 @@ export default function SignupPage() {
           )}
 
           {error && (
-            <p className="text-xs text-rose-400">{error}</p>
+            <div style={{
+              background: 'rgba(239,68,68,0.1)',
+              border: '1px solid rgba(239,68,68,0.25)',
+              borderRadius: 8,
+              padding: '10px 14px',
+              color: '#ef4444',
+              fontSize: 13,
+              marginBottom: 12,
+            }}>
+              {error}
+              {showLoginLink && (
+                <span>
+                  {' '}
+                  <a href="/login" style={{ color: '#7c6af7', fontWeight: 600 }}>
+                    Sign in instead →
+                  </a>
+                </span>
+              )}
+            </div>
           )}
 
           <div className="flex items-center justify-between pt-2">
@@ -160,7 +208,7 @@ export default function SignupPage() {
             )}
             <button
               type={step === 2 ? "submit" : "button"}
-              disabled={loading}
+              disabled={loading || (step === 1 && slugAvailable === false)}
               onClick={step === 1 ? () => setStep(2) : undefined}
               className="rounded-full bg-indigo-500 px-5 py-2 text-xs font-medium text-white hover:bg-indigo-400 disabled:cursor-not-allowed disabled:opacity-60"
             >

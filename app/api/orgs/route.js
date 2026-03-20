@@ -34,23 +34,27 @@ export async function POST(request) {
     if (!parsed.success) {
       console.log("[API/ORGS] Validation failed:", parsed.error.issues);
       return Response.json(
-        { error: "Validation failed", issues: parsed.error.issues },
+        { error: parsed.error.issues[0]?.message || "Validation failed", issues: parsed.error.issues },
         { status: 422 }
       );
     }
 
     const data = parsed.data;
 
-    // Check for existing org slug (though unique constraint will catch it too)
-    const existingSlug = await prisma.org.findUnique({
-      where: { slug: data.orgSlug },
-    });
+    const generateSlug = (name) => {
+      return name
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9\s-]/g, '')  // remove special chars
+        .replace(/\s+/g, '-')           // spaces to hyphens
+        .replace(/-+/g, '-')            // collapse multiple hyphens
+        .substring(0, 30)               // max 30 chars
+    }
 
-    if (existingSlug) {
-      return Response.json(
-        { error: "Workspace slug already taken" },
-        { status: 409 }
-      );
+    let slug = data.orgSlug || generateSlug(data.orgName);
+    let counter = 1;
+    while (await prisma.org.findUnique({ where: { slug } })) {
+      slug = `${generateSlug(data.orgName)}-${++counter}`;
     }
 
     // Check for existing user email
@@ -71,7 +75,7 @@ export async function POST(request) {
       const org = await tx.org.create({
         data: {
           name: data.orgName,
-          slug: data.orgSlug,
+          slug: slug,
         },
       });
 
@@ -105,11 +109,25 @@ export async function POST(request) {
     console.error("POST /api/orgs error:", error);
 
     // Prisma specific error codes
-    if (error.code === "P2002") {
+    if (error.code === 'P2002' && error.meta?.target?.includes('email')) {
       return Response.json(
-        { error: "Unique constraint failed", message: "Email or slug already exists" },
+        { error: 'An account with this email already exists. Please log in instead.' },
         { status: 409 }
-      );
+      )
+    }
+
+    if (error.code === 'P2002' && error.meta?.target?.includes('slug')) {
+      return Response.json(
+        { error: 'This workspace URL is already taken. Please choose a different name.' },
+        { status: 409 }
+      )
+    }
+
+    if (error.name === 'ZodError') {
+      return Response.json(
+        { error: error.errors[0].message },
+        { status: 422 }
+      )
     }
 
     if (error.code === "P1001") {
@@ -120,7 +138,7 @@ export async function POST(request) {
     }
 
     return Response.json(
-      { error: "Internal Server Error", message: error.message },
+      { error: error.message || 'Something went wrong. Please try again.' },
       { status: 500 }
     );
   }
