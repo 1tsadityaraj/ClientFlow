@@ -43,6 +43,9 @@ export default function MembersPageClient() {
   const [inviteOpen, setInviteOpen] = useState(false);
   const [toast, setToast] = useState(null);
   const [isPending, startTransition] = useTransition();
+  const [removingId, setRemovingId] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [removeError, setRemoveError] = useState(null);
 
   function showToast(message, type = "success") {
     setToast({ message, type });
@@ -87,25 +90,42 @@ export default function MembersPageClient() {
     });
   }
 
-  // ── Server Action: Remove Member ────────────────────────
-  function handleRemove(memberId) {
-    const target = members.find((m) => m.id === memberId);
-    if (
-      !confirm(
-        `Remove ${target?.name || "this member"} from the workspace? This cannot be undone.`
-      )
+  const handleRemoveMember = async (memberId, memberName) => {
+    // Show confirmation dialog
+    const confirmed = window.confirm(
+      `Are you sure you want to remove ${memberName} from the workspace?\n\nThis action cannot be undone.`
     )
-      return;
+    if (!confirmed) return
 
-    startTransition(async () => {
-      const res = await manageMember(memberId, "DELETE");
-      if (res.success) {
-        setMembers((prev) => prev.filter((m) => m.id !== memberId));
-        showToast("Member removed");
-      } else {
-        showToast(res.error || "Failed to remove member", "error");
+    // Show loading state
+    setRemovingId(memberId)
+
+    try {
+      const res = await fetch(`/api/members/${memberId}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to remove member')
       }
-    });
+
+      // Remove from local state immediately (optimistic)
+      setMembers(prev => prev.filter(m => m.id !== memberId))
+      
+      // Show success message
+      setSuccessMessage(`${memberName} has been removed from the workspace`)
+      setTimeout(() => setSuccessMessage(null), 3000)
+
+    } catch (err) {
+      console.error('Remove error:', err)
+      setRemoveError(err.message)
+      setTimeout(() => setRemoveError(null), 5000)
+    } finally {
+      setRemovingId(null)
+    }
   }
 
   async function handleCancelInvite(inviteId) {
@@ -170,6 +190,39 @@ export default function MembersPageClient() {
             </button>
           </Can>
         </div>
+
+        {/* Banners */}
+        {successMessage && (
+          <div style={{
+            background: 'rgba(34,211,160,0.1)',
+            border: '1px solid rgba(34,211,160,0.25)',
+            borderRadius: 8,
+            padding: '10px 16px',
+            color: '#22d3a0',
+            fontSize: 13,
+            marginBottom: 16,
+            display: 'flex',
+            justifyContent: 'space-between'
+          }}>
+            ✓ {successMessage}
+            <button onClick={() => setSuccessMessage(null)} 
+              style={{ background: 'none', border: 'none', color: '#22d3a0', cursor: 'pointer' }}>×</button>
+          </div>
+        )}
+
+        {removeError && (
+          <div style={{
+            background: 'rgba(239,68,68,0.1)',
+            border: '1px solid rgba(239,68,68,0.25)',
+            borderRadius: 8,
+            padding: '10px 16px',
+            color: '#ef4444',
+            fontSize: 13,
+            marginBottom: 16,
+          }}>
+            ✗ {removeError}
+          </div>
+        )}
 
         {/* Members Table */}
         <div className="mt-6 overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/60">
@@ -238,16 +291,27 @@ export default function MembersPageClient() {
                       )}
                     </td>
                     <td className="px-4 py-3 text-right">
-                      {isAdmin && !isSelf ? (
-                        <button
-                          type="button"
-                          disabled={isPending}
-                          onClick={() => handleRemove(m.id)}
-                          className="inline-flex items-center gap-1.5 rounded-lg border border-rose-900/50 bg-rose-950/20 px-3 py-1.5 text-[11px] font-medium text-rose-400 transition-all hover:bg-rose-900/30 hover:text-rose-300 disabled:opacity-50"
-                        >
-                          <Trash2 className="h-3 w-3" />
-                          Remove
-                        </button>
+                      {m.id !== currentUserId ? (
+                        <Can permission="manageMembers">
+                          <button
+                            onClick={() => handleRemoveMember(m.id, m.name)}
+                            disabled={removingId === m.id}
+                            style={{
+                              padding: '5px 12px',
+                              borderRadius: 6,
+                              border: '1px solid rgba(239,68,68,0.3)',
+                              background: 'rgba(239,68,68,0.1)',
+                              color: removingId === m.id ? '#6b6b8a' : '#ef4444',
+                              cursor: removingId === m.id ? 'not-allowed' : 'pointer',
+                              fontSize: 12,
+                              fontWeight: 600,
+                              fontFamily: "'Syne', sans-serif",
+                              transition: 'all 0.15s',
+                            }}
+                          >
+                            {removingId === m.id ? 'Removing...' : 'Remove'}
+                          </button>
+                        </Can>
                       ) : (
                         <span className="text-zinc-600">—</span>
                       )}

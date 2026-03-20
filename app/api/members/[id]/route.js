@@ -9,90 +9,121 @@ const updateRoleSchema = z.object({
   role: z.enum(["admin", "manager", "member", "client"]),
 });
 
-export async function DELETE(_request, { params }) {
-  const session = await auth();
-  if (!session) {
-    return Response.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
+export async function DELETE(request, { params }) {
   try {
-    assertPermission(session, "manageMembers");
-  } catch {
-    return Response.json({ error: "Forbidden" }, { status: 403 });
-  }
+    const session = await auth();
+    if (!session) {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 })
+    }
 
-  const { id } = await params;
+    assertPermission(session, 'manageMembers')
 
-  if (id === session.user.id) {
+    const { id: memberId } = await params;
+
+    // Prevent self-removal
+    if (memberId === session.user.id) {
+      return Response.json(
+        { error: 'You cannot remove yourself' },
+        { status: 400 }
+      )
+    }
+
+    // Find member and verify same org (tenant isolation)
+    const member = await prisma.user.findFirst({
+      where: {
+        id: memberId,
+        orgId: session.user.orgId,  // CRITICAL: must be same org
+      }
+    })
+
+    if (!member) {
+      return Response.json(
+        { error: 'Member not found or access denied' },
+        { status: 404 }
+      )
+    }
+
+    // Delete in correct order to avoid foreign key violations
+    await prisma.$transaction([
+      // Delete their files
+      prisma.file.deleteMany({
+        where: { uploadedById: memberId }
+      }),
+      // Delete their audit logs
+      prisma.auditLog.deleteMany({
+        where: { userId: memberId }
+      }),
+      // Delete their activity logs
+      prisma.activityLog.deleteMany({
+        where: { userId: memberId, orgId: session.user.orgId }
+      }),
+      // Delete their messages
+      prisma.message.deleteMany({
+        where: { userId: memberId, orgId: session.user.orgId }
+      }),
+      // Delete their comments
+      prisma.comment.deleteMany({
+        where: { userId: memberId, orgId: session.user.orgId }
+      }),
+      // Unassign their tasks (don't delete, just unassign)
+      prisma.task.updateMany({
+        where: { assigneeId: memberId, orgId: session.user.orgId },
+        data: { assigneeId: null }
+      }),
+      // Remove as project manager (set to current user)
+      prisma.project.updateMany({
+        where: { managerId: memberId, orgId: session.user.orgId },
+        data: { managerId: session.user.id }
+      }),
+      // Remove as client from projects
+      prisma.project.updateMany({
+        where: { clientUserId: memberId, orgId: session.user.orgId },
+        data: { clientUserId: null }
+      }),
+      // Finally delete the user
+      prisma.user.delete({
+        where: { id: memberId }
+      })
+    ])
+
+    await logAudit({
+      orgId: session.user.orgId,
+      userId: session.user.id,
+      action: ACTIONS.MEMBER_REMOVED,
+      entity: "User",
+      entityId: memberId,
+      metadata: {
+        name: member.name,
+        email: member.email,
+        role: member.role,
+        message: `${session.user.name || "Admin"} removed ${member.name} (${member.email}) from the workspace`,
+      },
+    });
+
+    // Log the activity
+    await logActivity({
+      orgId: session.user.orgId,
+      userId: session.user.id,
+      action: ACTION_TYPES.MEMBER_REMOVED,
+      entityType: 'member',
+      entityId: memberId,
+      entityName: member.name,
+    })
+
+    return Response.json({ success: true, message: 'Member removed successfully' })
+
+  } catch (err) {
+    console.error('Remove member error:', err)
+    
+    if (err.message === 'FORBIDDEN') {
+      return Response.json({ error: 'Permission denied' }, { status: 403 })
+    }
+    
     return Response.json(
-      { error: "Cannot remove yourself" },
-      { status: 400 }
-    );
+      { error: 'Failed to remove member', details: err.message },
+      { status: 500 }
+    )
   }
-
-  const user = await prisma.user.findFirst({
-    where: { id, orgId: session.user.orgId },
-  });
-
-  if (!user) {
-    return Response.json({ error: "Not found" }, { status: 404 });
-  }
-
-  // Cascade: delete all related records before deleting the user
-  // Use a transaction for data integrity
-  await prisma.$transaction([
-    // Delete comments by this user
-    prisma.comment.deleteMany({ where: { userId: user.id } }),
-    // Delete tasks assigned to this user (unassign instead of delete)
-    prisma.task.updateMany({
-      where: { assigneeId: user.id },
-      data: { assigneeId: null },
-    }),
-    // Delete files uploaded by this user
-    prisma.file.deleteMany({ where: { uploadedById: user.id } }),
-    // Delete audit logs by this user
-    prisma.auditLog.deleteMany({ where: { userId: user.id } }),
-    // Delete messages by this user
-    prisma.message.deleteMany({ where: { userId: user.id } }),
-    // Unassign from managed projects
-    prisma.project.updateMany({
-      where: { managerId: user.id, orgId: session.user.orgId },
-      data: { managerId: session.user.id }, // Transfer to current admin
-    }),
-    // Unassign from client projects
-    prisma.project.updateMany({
-      where: { clientUserId: user.id },
-      data: { clientUserId: null },
-    }),
-    // Finally, delete the user
-    prisma.user.delete({ where: { id: user.id } }),
-  ]);
-
-  // Log after transaction succeeds (with the session user, since the removed user's logs are deleted)
-  await logAudit({
-    orgId: session.user.orgId,
-    userId: session.user.id,
-    action: ACTIONS.MEMBER_REMOVED,
-    entity: "User",
-    entityId: user.id,
-    metadata: {
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      message: `${session.user.name || "Admin"} removed ${user.name} (${user.email}) from the workspace`,
-    },
-  });
-
-  logActivity({
-    orgId: session.user.orgId,
-    userId: session.user.id,
-    action: ACTION_TYPES.MEMBER_REMOVED,
-    entityType: 'member',
-    entityId: user.id,
-    entityName: user.name
-  });
-
-  return Response.json({ success: true });
 }
 
 export async function PATCH(request, { params }) {
