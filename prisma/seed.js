@@ -199,6 +199,29 @@ async function main() {
   }
 
   console.log("✅ Seed process completed successfully!");
+
+  // Seed UserStatus records
+  const statusData = [
+    { userId: alice.id, orgId: pixelAgency.id, status: "busy", currentWork: "Reviewing Q2 project proposals" },
+    { userId: bob.id, orgId: pixelAgency.id, status: "available", currentWork: "Working on Brand Refresh deck" },
+    { userId: carol.id, orgId: pixelAgency.id, status: "busy", currentWork: "Designing logo concepts" },
+    { userId: emma.id, orgId: pixelAgency.id, status: "away", currentWork: "" },
+    { userId: dave.id, orgId: pixelAgency.id, status: "available", currentWork: "" },
+  ];
+
+  for (const s of statusData) {
+    await prisma.userStatus.upsert({
+      where: { userId: s.userId },
+      update: { status: s.status, currentWork: s.currentWork || null },
+      create: {
+        orgId: s.orgId,
+        userId: s.userId,
+        status: s.status,
+        currentWork: s.currentWork || null,
+      },
+    });
+  }
+  console.log("✅ Created/Verified UserStatus records.");
 }
 
 main()

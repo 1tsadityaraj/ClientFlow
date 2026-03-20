@@ -46,6 +46,7 @@ model User {
   auditLogs       AuditLog[]
   messages        Message[]
   activityLogs    ActivityLog[]
+  status          UserStatus?
 }
 
 model Project {
@@ -161,4 +162,14 @@ model ActivityLog {
 
   @@index([orgId, createdAt])
   @@index([projectId, createdAt])
+}
+
+model UserStatus {
+  id          String   @id @default(cuid())
+  orgId       String
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status      String   @default("available") // available, busy, away, offline
+  currentWork String?  // "Working on Brand Refresh homepage"
+  updatedAt   DateTime @updatedAt
 }

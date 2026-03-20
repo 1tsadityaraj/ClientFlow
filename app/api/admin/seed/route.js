@@ -249,10 +249,32 @@ export async function POST(request) {
       }
     }
 
+    // Seed UserStatus records
+    const statusData = [
+      { userId: alice.id, orgId: pixelAgency.id, status: "busy", currentWork: "Reviewing Q2 project proposals" },
+      { userId: bob.id, orgId: pixelAgency.id, status: "available", currentWork: "Working on Brand Refresh deck" },
+      { userId: carol.id, orgId: pixelAgency.id, status: "busy", currentWork: "Designing logo concepts" },
+      { userId: emma.id, orgId: pixelAgency.id, status: "away", currentWork: "" },
+      { userId: dave.id, orgId: pixelAgency.id, status: "available", currentWork: "" },
+    ];
+
+    for (const s of statusData) {
+      await prisma.userStatus.upsert({
+        where: { userId: s.userId },
+        update: { status: s.status, currentWork: s.currentWork || null },
+        create: {
+          orgId: s.orgId,
+          userId: s.userId,
+          status: s.status,
+          currentWork: s.currentWork || null,
+        },
+      });
+    }
+
     return Response.json({
       success: true,
       message: "Database seeded successfully",
-      created: { orgs: 2, users: 7, projects: projectData.length },
+      created: { orgs: 2, users: 7, projects: projectData.length, statuses: statusData.length },
     });
   } catch (err) {
     console.error("Seed API error:", err);

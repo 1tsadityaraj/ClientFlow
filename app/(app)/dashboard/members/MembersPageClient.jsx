@@ -5,9 +5,10 @@ import Link from "next/link";
 import { Can } from "../../../../components/Can";
 import { manageMember } from "@/actions/member";
 import { useSession } from "next-auth/react";
-import { Shield, Trash2, UserCog, CheckCircle2 } from "lucide-react";
+import { Shield, Trash2, UserCog, CheckCircle2, LayoutGrid, Table2 } from "lucide-react";
 import Modal from "../../../../components/Modal";
 import Breadcrumb from "../../../../components/Breadcrumb";
+import WorkloadView from "../../../../components/WorkloadView";
 
 const ROLES = ["admin", "manager", "member", "client"];
 
@@ -47,6 +48,7 @@ export default function MembersPageClient() {
   const [removingId, setRemovingId] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
   const [removeError, setRemoveError] = useState(null);
+  const [viewMode, setViewMode] = useState("table"); // "table" or "workload"
 
   function showToast(message, type = "success") {
     setToast({ message, type });
@@ -193,6 +195,32 @@ export default function MembersPageClient() {
           </Can>
         </div>
 
+        {/* View Toggle */}
+        <div className="mt-4 flex items-center gap-2">
+          <button
+            onClick={() => setViewMode("table")}
+            className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
+              viewMode === "table"
+                ? "bg-brand-primary/15 text-brand-primary border border-brand-primary/30"
+                : "text-zinc-400 hover:text-zinc-200 border border-zinc-800"
+            }`}
+          >
+            <Table2 className="h-3.5 w-3.5" />
+            Table
+          </button>
+          <button
+            onClick={() => setViewMode("workload")}
+            className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
+              viewMode === "workload"
+                ? "bg-brand-primary/15 text-brand-primary border border-brand-primary/30"
+                : "text-zinc-400 hover:text-zinc-200 border border-zinc-800"
+            }`}
+          >
+            <LayoutGrid className="h-3.5 w-3.5" />
+            Workload
+          </button>
+        </div>
+
         {/* Banners */}
         {successMessage && (
           <div style={{
@@ -226,6 +254,12 @@ export default function MembersPageClient() {
           </div>
         )}
 
+        {viewMode === "workload" ? (
+          <div className="mt-6">
+            <WorkloadView orgId={session?.user?.orgId} />
+          </div>
+        ) : (
+        <>
         {/* Members Table */}
         <div className="mt-6 overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/60">
           <table className="min-w-full text-left text-xs">
@@ -251,14 +285,14 @@ export default function MembersPageClient() {
                           {m.name.charAt(0).toUpperCase()}
                         </div>
                         <div>
-                          <p className="text-sm font-medium text-zinc-50">
+                          <Link href={`/dashboard/members/${m.id}`} className="text-sm font-medium text-zinc-50 hover:text-brand-primary transition-colors">
                             {m.name}
                             {isSelf && (
                               <span className="ml-1.5 text-[10px] text-zinc-500">
                                 (you)
                               </span>
                             )}
-                          </p>
+                          </Link>
                         </div>
                       </div>
                     </td>
@@ -403,6 +437,8 @@ export default function MembersPageClient() {
             <CheckCircle2 className="h-4 w-4" />
             {toast.message}
           </div>
+        )}
+        </>
         )}
       </div>
     </main>
