@@ -48,21 +48,21 @@ export default async function InvitePage({ params }) {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-zinc-950 text-zinc-50">
-      <div className="w-full max-w-md rounded-3xl border border-zinc-800 bg-zinc-900/60 p-8 text-sm">
+    <main className="flex min-h-screen items-center justify-center bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-900 dark:text-zinc-50">
+      <div className="w-full max-w-md rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/90 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/60 p-8 text-sm">
         <h1 className="text-lg font-semibold">
           You&apos;ve been invited
         </h1>
-        <p className="mt-1 text-xs text-zinc-400">
+        <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">
           Accept this invite to join the workspace as{" "}
           <span className="font-medium text-zinc-100">
             {invite.role}
           </span>
           .
         </p>
-        <p className="mt-2 text-xs text-zinc-400">
+        <p className="mt-2 text-xs text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">
           Invited email:{" "}
-          <span className="font-mono text-zinc-200">
+          <span className="font-mono text-zinc-800 dark:text-zinc-200">
             {invite.email}
           </span>
         </p>
@@ -74,9 +74,9 @@ export default async function InvitePage({ params }) {
 
 function InviteStatusScreen({ message }) {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-zinc-950 text-zinc-50">
-      <div className="w-full max-w-md rounded-3xl border border-zinc-800 bg-zinc-900/60 p-8 text-sm">
-        <p className="text-zinc-300">{message}</p>
+    <main className="flex min-h-screen items-center justify-center bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-900 dark:text-zinc-50">
+      <div className="w-full max-w-md rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/90 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/60 p-8 text-sm">
+        <p className="text-zinc-700 dark:text-zinc-700 dark:text-zinc-300">{message}</p>
       </div>
     </main>
   );

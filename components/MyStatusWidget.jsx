@@ -91,9 +91,9 @@ export default function MyStatusWidget() {
     STATUS_OPTIONS.find((o) => o.value === status) || STATUS_OPTIONS[0];
 
   return (
-    <section className="rounded-2xl border border-zinc-800/80 bg-zinc-900/40 p-5">
+    <section className="rounded-2xl border border-zinc-200 dark:border-zinc-800/80 bg-zinc-50/80 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/40 p-5">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-semibold text-zinc-200">My Status</h3>
+        <h3 className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">My Status</h3>
         {updatedAt && (
           <span className="text-[10px] text-zinc-500">
             Updated {timeAgo(updatedAt)}
@@ -111,7 +111,7 @@ export default function MyStatusWidget() {
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value)}
-            className="flex-1 rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-zinc-200 outline-none transition-all focus:border-brand-primary"
+            className="flex-1 rounded-lg border border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-3 py-2 text-sm text-zinc-800 dark:text-zinc-200 outline-none transition-all focus:border-brand-primary"
           >
             {STATUS_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>
@@ -131,7 +131,7 @@ export default function MyStatusWidget() {
             value={currentWork}
             onChange={(e) => setCurrentWork(e.target.value)}
             placeholder="e.g. Working on homepage design"
-            className="mt-1.5 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-zinc-200 placeholder:text-zinc-600 outline-none transition-all focus:border-brand-primary"
+            className="mt-1.5 w-full rounded-lg border border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-3 py-2 text-sm text-zinc-800 dark:text-zinc-200 placeholder:text-zinc-600 outline-none transition-all focus:border-brand-primary"
             onKeyDown={(e) => {
               if (e.key === "Enter") handleUpdate();
             }}

@@ -62,13 +62,13 @@ export default function ProjectTabs({ project, userRole }) {
   }
 
   return (
-    <main className="min-h-screen bg-zinc-950 text-zinc-50">
+    <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-900 dark:text-zinc-50">
       <div className="mx-auto max-w-5xl px-6 py-10">
         <Breadcrumb project={project} />
         {/* Back link */}
         <Link
           href="/dashboard"
-          className="inline-flex items-center gap-1.5 text-xs text-zinc-400 hover:text-zinc-200 transition-colors"
+          className="inline-flex items-center gap-1.5 text-xs text-zinc-600 dark:text-zinc-600 dark:text-zinc-400 hover:text-zinc-800 dark:text-zinc-200 transition-colors"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
           Back to dashboard
@@ -94,7 +94,7 @@ export default function ProjectTabs({ project, userRole }) {
               </span>
             </div>
             {project.description && (
-              <p className="mt-1.5 text-sm text-zinc-400 max-w-2xl">
+              <p className="mt-1.5 text-sm text-zinc-600 dark:text-zinc-600 dark:text-zinc-400 max-w-2xl">
                 {project.description}
               </p>
             )}
@@ -132,19 +132,19 @@ export default function ProjectTabs({ project, userRole }) {
         </div>
 
         {/* Dynamic Progress Bar */}
-        <div className="mt-5 rounded-xl border border-zinc-800/80 bg-zinc-900/40 p-4">
+        <div className="mt-5 rounded-xl border border-zinc-200 dark:border-zinc-800/80 bg-zinc-50/80 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/40 p-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-medium text-zinc-400">
+            <span className="text-xs font-medium text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">
               Progress
             </span>
-            <span className="text-xs font-semibold text-zinc-200">
+            <span className="text-xs font-semibold text-zinc-800 dark:text-zinc-200">
               {project.progress}%
               <span className="ml-2 font-normal text-zinc-500">
                 ({project.doneTasks}/{project.totalTasks} tasks done)
               </span>
             </span>
           </div>
-          <div className="h-2.5 overflow-hidden rounded-full bg-zinc-800">
+          <div className="h-2.5 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800">
             <div
               className="h-full rounded-full transition-all duration-700"
               style={{
@@ -156,7 +156,7 @@ export default function ProjectTabs({ project, userRole }) {
         </div>
 
         {/* Tab Navigation */}
-        <div className="mt-6 flex gap-1 border-b border-zinc-800 overflow-x-auto">
+        <div className="mt-6 flex gap-1 border-b border-zinc-200 dark:border-zinc-800 overflow-x-auto">
           {TABS.map((tab) => {
             const Icon = tab.icon;
             const Button = (
@@ -167,7 +167,7 @@ export default function ProjectTabs({ project, userRole }) {
                 className={`flex items-center gap-1.5 whitespace-nowrap border-b-2 px-4 py-2.5 text-sm font-medium transition-colors ${
                   activeTab === tab.id
                     ? "border-brand-primary text-brand-primary"
-                    : "border-transparent text-zinc-400 hover:text-zinc-200"
+                    : "border-transparent text-zinc-600 dark:text-zinc-600 dark:text-zinc-400 hover:text-zinc-800 dark:text-zinc-200"
                 }`}
               >
                 {Icon && <Icon className="h-3.5 w-3.5" />}
@@ -221,9 +221,9 @@ export default function ProjectTabs({ project, userRole }) {
             </div>
           </div>
           
-          <p className="text-sm text-zinc-400">
+          <p className="text-sm text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">
             Are you sure you want to delete{" "}
-            <strong className="text-zinc-200">{project.name}</strong>? All
+            <strong className="text-zinc-800 dark:text-zinc-200">{project.name}</strong>? All
             tasks, comments, and files associated with this project will be
             permanently removed.
           </p>
@@ -233,7 +233,7 @@ export default function ProjectTabs({ project, userRole }) {
               type="button"
               onClick={() => setShowDeleteConfirm(false)}
               disabled={deleting}
-              className="flex-1 rounded-full border border-zinc-700 px-4 py-2.5 text-sm font-medium text-zinc-300 transition-colors hover:bg-zinc-800"
+              className="flex-1 rounded-full border border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 px-4 py-2.5 text-sm font-medium text-zinc-700 dark:text-zinc-700 dark:text-zinc-300 transition-colors hover:bg-zinc-200 dark:bg-zinc-800"
             >
               Cancel
             </button>

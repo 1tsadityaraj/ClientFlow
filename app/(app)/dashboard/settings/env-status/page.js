@@ -27,7 +27,7 @@ export default function EnvStatusPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-zinc-950">
+      <div className="flex min-h-screen items-center justify-center bg-white dark:bg-zinc-950">
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-brand-primary border-t-transparent" />
       </div>
     );
@@ -35,10 +35,10 @@ export default function EnvStatusPage() {
 
   if (error) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-zinc-950 px-6">
+      <div className="flex min-h-screen items-center justify-center bg-white dark:bg-zinc-950 px-6">
         <div className="text-center">
           <p className="text-rose-400">Error: {error}</p>
-          <Link href="/dashboard/settings" className="mt-4 inline-block text-sm text-zinc-500 hover:text-zinc-300">
+          <Link href="/dashboard/settings" className="mt-4 inline-block text-sm text-zinc-500 hover:text-zinc-700 dark:text-zinc-700 dark:text-zinc-300">
             ← Back to Settings
           </Link>
         </div>
@@ -47,11 +47,11 @@ export default function EnvStatusPage() {
   }
 
   return (
-    <main className="min-h-screen bg-zinc-950 text-zinc-50">
+    <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-900 dark:text-zinc-50">
       <div className="mx-auto max-w-2xl px-6 py-10">
         <Link 
           href="/dashboard/settings" 
-          className="inline-flex items-center gap-2 text-sm text-zinc-500 hover:text-zinc-300"
+          className="inline-flex items-center gap-2 text-sm text-zinc-500 hover:text-zinc-700 dark:text-zinc-700 dark:text-zinc-300"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Settings
@@ -60,11 +60,11 @@ export default function EnvStatusPage() {
         <header className="mt-8">
           <div className="flex items-center gap-3">
             <h1 className="text-2xl font-semibold tracking-tight">System Status</h1>
-            <span className="rounded-full bg-zinc-800 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-zinc-400">
+            <span className="rounded-full bg-zinc-200 dark:bg-zinc-800 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">
               Admin Only
             </span>
           </div>
-          <p className="mt-1 text-sm text-zinc-400">
+          <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">
             Check the connection status of external services.
           </p>
         </header>
@@ -73,7 +73,7 @@ export default function EnvStatusPage() {
           {Object.entries(status).map(([key, service]) => (
             <div 
               key={key}
-              className="flex items-center justify-between rounded-2xl border border-zinc-800 bg-zinc-900/40 p-5"
+              className="flex items-center justify-between rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/80 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/40 p-5"
             >
               <div className="flex items-center gap-4">
                 <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${
@@ -82,14 +82,14 @@ export default function EnvStatusPage() {
                   {service.status ? <CheckCircle2 className="h-5 w-5" /> : <AlertTriangle className="h-5 w-5" />}
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-zinc-200">{service.name}</h3>
+                  <h3 className="text-sm font-medium text-zinc-800 dark:text-zinc-200">{service.name}</h3>
                   <div className="text-[10px] text-zinc-500">
                     {service.status ? (
                       <div className="space-y-0.5">
                         <p>Service is operational and configured</p>
                         {key === 'resend' && (
-                          <div className="flex flex-col gap-0.5 mt-1 border-t border-zinc-800 pt-1">
-                            <p className="text-zinc-400">From: <span className="text-zinc-300">{service.fromEmail}</span></p>
+                          <div className="flex flex-col gap-0.5 mt-1 border-t border-zinc-200 dark:border-zinc-800 pt-1">
+                            <p className="text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">From: <span className="text-zinc-700 dark:text-zinc-700 dark:text-zinc-300">{service.fromEmail}</span></p>
                             {service.usingTestDomain ? (
                               <p className="text-amber-500/80 italic font-medium">⚠️ Using resend.dev test domain (verify addresses!)</p>
                             ) : (
@@ -98,8 +98,8 @@ export default function EnvStatusPage() {
                           </div>
                         )}
                         {key === 's3' && (
-                          <div className="flex flex-col gap-0.5 mt-1 border-t border-zinc-800 pt-1">
-                            <p className="text-zinc-400">Bucket: <span className="text-zinc-300">{service.bucket}</span></p>
+                          <div className="flex flex-col gap-0.5 mt-1 border-t border-zinc-200 dark:border-zinc-800 pt-1">
+                            <p className="text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">Bucket: <span className="text-zinc-700 dark:text-zinc-700 dark:text-zinc-300">{service.bucket}</span></p>
                             <p className="text-emerald-500/80 font-medium">✅ {service.isR2 ? "Cloudflare R2" : "AWS S3"} Configured</p>
                           </div>
                         )}
@@ -119,11 +119,11 @@ export default function EnvStatusPage() {
           ))}
         </div>
 
-        <div className="mt-10 rounded-2xl border border-dashed border-zinc-800 p-6">
+        <div className="mt-10 rounded-2xl border border-dashed border-zinc-200 dark:border-zinc-800 p-6">
           <div className="flex gap-3">
             <ShieldCheck className="h-5 w-5 shrink-0 text-brand-primary" />
             <div className="text-xs leading-relaxed text-zinc-500">
-              <p className="font-medium text-zinc-300">Graceful Degradation Note</p>
+              <p className="font-medium text-zinc-700 dark:text-zinc-700 dark:text-zinc-300">Graceful Degradation Note</p>
               <p className="mt-1">
                 When a service is not configured, the app will automatically disable the relevant features 
                 (Billing, Email, or S3 Uploads) and provide a "Demo Mode" fallback instead of crashing.

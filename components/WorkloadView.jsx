@@ -57,11 +57,11 @@ export default function WorkloadView({ orgId }) {
         {COLUMNS.map((col) => (
           <div
             key={col.key}
-            className="rounded-2xl border border-zinc-800/80 bg-zinc-900/40 p-4 animate-pulse"
+            className="rounded-2xl border border-zinc-200 dark:border-zinc-800/80 bg-zinc-50/80 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/40 p-4 animate-pulse"
           >
-            <div className="h-6 w-20 rounded bg-zinc-800 mb-4" />
+            <div className="h-6 w-20 rounded bg-zinc-200 dark:bg-zinc-800 mb-4" />
             <div className="space-y-3">
-              <div className="h-20 rounded-xl bg-zinc-800/50" />
+              <div className="h-20 rounded-xl bg-zinc-200 dark:bg-zinc-800/50" />
             </div>
           </div>
         ))}
@@ -79,14 +79,14 @@ export default function WorkloadView({ orgId }) {
         return (
           <div
             key={col.key}
-            className="rounded-2xl border border-zinc-800/80 bg-zinc-900/40 p-4"
+            className="rounded-2xl border border-zinc-200 dark:border-zinc-800/80 bg-zinc-50/80 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/40 p-4"
           >
             <div className="flex items-center gap-2 mb-4">
               <span
                 className="h-2.5 w-2.5 rounded-full"
                 style={{ backgroundColor: col.color }}
               />
-              <h3 className="text-sm font-semibold text-zinc-200">{col.label}</h3>
+              <h3 className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">{col.label}</h3>
               <span className="ml-auto text-[10px] text-zinc-500">
                 {colMembers.length}
               </span>
@@ -102,14 +102,14 @@ export default function WorkloadView({ orgId }) {
                 <Link
                   key={m.id}
                   href={`/dashboard/members/${m.id}`}
-                  className="block rounded-xl border border-zinc-800/50 bg-zinc-950/40 p-3 transition-all hover:border-zinc-700 hover:bg-zinc-900/60"
+                  className="block rounded-xl border border-zinc-200 dark:border-zinc-800/50 bg-white dark:bg-zinc-950/40 p-3 transition-all hover:border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 hover:bg-zinc-50/90 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/60"
                 >
                   <div className="flex items-center gap-2.5">
                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-violet-500/30 to-purple-500/30 text-xs font-bold text-violet-300">
                       {m.name.charAt(0).toUpperCase()}
                     </div>
                     <div className="min-w-0">
-                      <p className="truncate text-xs font-medium text-zinc-200">
+                      <p className="truncate text-xs font-medium text-zinc-800 dark:text-zinc-200">
                         {m.name}
                       </p>
                       <p className="truncate text-[10px] text-zinc-500 capitalize">

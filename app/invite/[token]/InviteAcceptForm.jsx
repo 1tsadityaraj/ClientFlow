@@ -47,7 +47,7 @@ export default function InviteAcceptForm({ token, email }) {
   return (
     <form onSubmit={handleSubmit} className="mt-6 space-y-4">
       <div>
-        <label className="text-xs font-medium text-zinc-300">
+        <label className="text-xs font-medium text-zinc-700 dark:text-zinc-700 dark:text-zinc-300">
           Full name
         </label>
         <input
@@ -55,11 +55,11 @@ export default function InviteAcceptForm({ token, email }) {
           required
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="mt-1 w-full rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-zinc-50 outline-none focus:border-indigo-500"
+          className="mt-1 w-full rounded-lg border border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900 px-3 py-2 text-sm text-zinc-900 dark:text-zinc-900 dark:text-zinc-50 outline-none focus:border-indigo-500"
         />
       </div>
       <div>
-        <label className="text-xs font-medium text-zinc-300">
+        <label className="text-xs font-medium text-zinc-700 dark:text-zinc-700 dark:text-zinc-300">
           Password
         </label>
         <input
@@ -68,7 +68,7 @@ export default function InviteAcceptForm({ token, email }) {
           minLength={8}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="mt-1 w-full rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-zinc-50 outline-none focus:border-indigo-500"
+          className="mt-1 w-full rounded-lg border border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900 px-3 py-2 text-sm text-zinc-900 dark:text-zinc-900 dark:text-zinc-50 outline-none focus:border-indigo-500"
         />
         <p className="mt-1 text-[10px] text-zinc-500">
           Minimum 8 characters.

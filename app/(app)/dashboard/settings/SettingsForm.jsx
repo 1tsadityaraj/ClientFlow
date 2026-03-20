@@ -10,9 +10,9 @@ import Breadcrumb from "../../../../components/Breadcrumb";
 function SettingsSkeleton() {
   return (
     <div className="space-y-6 animate-pulse">
-      <div className="h-8 w-48 rounded bg-zinc-800" />
-      <div className="h-24 rounded-2xl border border-zinc-800 bg-zinc-900/40" />
-      <div className="h-24 rounded-2xl border border-zinc-800 bg-zinc-900/40" />
+      <div className="h-8 w-48 rounded bg-zinc-200 dark:bg-zinc-800" />
+      <div className="h-24 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/80 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/40" />
+      <div className="h-24 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/80 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/40" />
     </div>
   );
 }
@@ -124,7 +124,7 @@ export default function SettingsForm({ org }) {
 
   if (!org) {
     return (
-      <main className="min-h-screen bg-zinc-950 text-zinc-50">
+      <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-900 dark:text-zinc-50">
         <div className="mx-auto max-w-4xl px-6 py-10">
           <SettingsSkeleton />
         </div>
@@ -133,7 +133,7 @@ export default function SettingsForm({ org }) {
   }
 
   return (
-    <main className="min-h-screen bg-zinc-950 text-zinc-50">
+    <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-900 dark:text-zinc-50">
       <div className="mx-auto max-w-4xl space-y-8 px-6 py-10">
         <Breadcrumb />
         {upgradedToast && (
@@ -152,14 +152,14 @@ export default function SettingsForm({ org }) {
         <section className="flex items-center justify-between">
           <div>
             <h1 className="text-xl font-semibold">Workspace settings</h1>
-            <p className="mt-1 text-sm text-zinc-400">
+            <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">
               Organization profile and danger zone.
             </p>
           </div>
           <Can permission="deleteOrg">
             <a 
               href="/dashboard/settings/audit" 
-              className="rounded-full border border-zinc-700 bg-zinc-900 px-4 py-2 text-sm font-medium text-zinc-300 hover:bg-zinc-800 transition-colors"
+              className="rounded-full border border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900 px-4 py-2 text-sm font-medium text-zinc-700 dark:text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:bg-zinc-800 transition-colors"
             >
               View Audit Logs
             </a>
@@ -167,25 +167,25 @@ export default function SettingsForm({ org }) {
         </section>
 
         <Can permission="updateOrg">
-          <section className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-6">
-            <h2 className="font-medium text-zinc-200">Organization</h2>
-            <p className="mt-1 text-xs text-zinc-400">
+          <section className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/90 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/60 p-6">
+            <h2 className="font-medium text-zinc-800 dark:text-zinc-200">Organization</h2>
+            <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">
               Update your workspace name and slug.
             </p>
             <form onSubmit={handleSaveOrg} className="mt-4 space-y-4">
               <div>
-                <label className="text-xs font-medium text-zinc-300">
+                <label className="text-xs font-medium text-zinc-700 dark:text-zinc-700 dark:text-zinc-300">
                   Name
                 </label>
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-zinc-50 outline-none focus:border-brand-primary"
+                  className="mt-1 w-full rounded-lg border border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-3 py-2 text-sm text-zinc-900 dark:text-zinc-900 dark:text-zinc-50 outline-none focus:border-brand-primary"
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-zinc-300">
+                <label className="text-xs font-medium text-zinc-700 dark:text-zinc-700 dark:text-zinc-300">
                   Slug
                 </label>
                 <input
@@ -194,11 +194,11 @@ export default function SettingsForm({ org }) {
                   onChange={(e) =>
                     setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))
                   }
-                  className="mt-1 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-zinc-50 outline-none focus:border-brand-primary"
+                  className="mt-1 w-full rounded-lg border border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-3 py-2 text-sm text-zinc-900 dark:text-zinc-900 dark:text-zinc-50 outline-none focus:border-brand-primary"
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-zinc-300">
+                <label className="text-xs font-medium text-zinc-700 dark:text-zinc-700 dark:text-zinc-300">
                   Brand Theme Color
                 </label>
                 <div className="mt-1 flex items-center gap-3">
@@ -206,14 +206,14 @@ export default function SettingsForm({ org }) {
                     type="color"
                     value={primaryColor}
                     onChange={(e) => setPrimaryColor(e.target.value)}
-                    className="h-9 w-9 cursor-pointer rounded-lg border border-zinc-700 bg-zinc-950 p-1 outline-none"
+                    className="h-9 w-9 cursor-pointer rounded-lg border border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 p-1 outline-none"
                   />
                   <input
                     type="text"
                     value={primaryColor}
                     onChange={(e) => setPrimaryColor(e.target.value)}
                     pattern="^#[0-9a-fA-F]{6}$"
-                    className="flex-1 rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm uppercase text-zinc-50 outline-none focus:border-brand-primary"
+                    className="flex-1 rounded-lg border border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-3 py-2 text-sm uppercase text-zinc-900 dark:text-zinc-900 dark:text-zinc-50 outline-none focus:border-brand-primary"
                   />
                 </div>
               </div>
@@ -232,25 +232,25 @@ export default function SettingsForm({ org }) {
         </Can>
 
         <Can permission="viewBilling">
-          <section className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-6 text-sm">
-            <h2 className="font-medium text-zinc-200">Billing</h2>
-            <p className="mt-1 text-xs text-zinc-400">
+          <section className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/90 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/60 p-6 text-sm">
+            <h2 className="font-medium text-zinc-800 dark:text-zinc-200">Billing</h2>
+            <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">
               Current plan and subscription management.
             </p>
             {(() => {
               if (!billingEnabled) {
                 return (
-                  <div className="mt-4 rounded-xl border border-dashed border-zinc-700 p-6 text-center">
-                    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-zinc-900 text-zinc-400">
+                  <div className="mt-4 rounded-xl border border-dashed border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 p-6 text-center">
+                    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">
                       <span className="text-xl">💳</span>
                     </div>
-                    <h3 className="mt-4 font-medium text-zinc-200">Billing not configured</h3>
+                    <h3 className="mt-4 font-medium text-zinc-800 dark:text-zinc-200">Billing not configured</h3>
                     <p className="mt-1 text-xs text-zinc-500">
                       Stripe is not configured. Add STRIPE_SECRET_KEY to enable payment processing.
                     </p>
-                    <div className="mt-6 border-t border-zinc-800 pt-4">
+                    <div className="mt-6 border-t border-zinc-200 dark:border-zinc-800 pt-4">
                        <p className="text-[10px] text-zinc-500 uppercase tracking-widest font-semibold">Current plan</p>
-                       <p className="mt-1 font-medium text-zinc-300 capitalize">{org.plan}</p>
+                       <p className="mt-1 font-medium text-zinc-700 dark:text-zinc-700 dark:text-zinc-300 capitalize">{org.plan}</p>
                     </div>
                   </div>
                 );
@@ -259,11 +259,11 @@ export default function SettingsForm({ org }) {
               const plan = getPlan(org.plan);
               return (
                 <div className="mt-4">
-                  <p className="font-medium text-zinc-50">{plan.name}</p>
-                  <p className="mt-1 text-xs text-zinc-400">
+                  <p className="font-medium text-zinc-900 dark:text-zinc-900 dark:text-zinc-50">{plan.name}</p>
+                  <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">
                     {plan.price === 0 ? "Free" : `$${plan.price}/month`}
                   </p>
-                  <ul className="mt-2 list-inside list-disc space-y-0.5 text-xs text-zinc-400">
+                  <ul className="mt-2 list-inside list-disc space-y-0.5 text-xs text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">
                     {plan.features.map((f, i) => (
                       <li key={i}>{f}</li>
                     ))}
@@ -286,7 +286,7 @@ export default function SettingsForm({ org }) {
                         type="button"
                         disabled={billingLoading}
                         onClick={handleBillingPortal}
-                        className="rounded-full border border-zinc-600 px-4 py-2 text-sm font-medium text-zinc-200 hover:bg-zinc-800 disabled:opacity-60"
+                        className="rounded-full border border-zinc-600 px-4 py-2 text-sm font-medium text-zinc-800 dark:text-zinc-200 hover:bg-zinc-200 dark:bg-zinc-800 disabled:opacity-60"
                       >
                         {billingLoading ? "Loading..." : "Manage Subscription"}
                       </button>
@@ -299,15 +299,15 @@ export default function SettingsForm({ org }) {
         </Can>
 
         <Can permission="deleteOrg">
-          <section className="rounded-2xl border border-rose-900/50 bg-zinc-900/60 p-6">
+          <section className="rounded-2xl border border-rose-900/50 bg-zinc-50/90 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/60 p-6">
             <h2 className="font-medium text-rose-200">Danger zone</h2>
-            <p className="mt-1 text-xs text-zinc-400">
+            <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">
               Permanently delete this organization and all its data. This cannot
               be undone.
             </p>
             <form onSubmit={handleDeleteOrg} className="mt-4 space-y-3">
               <div>
-                <label className="text-xs font-medium text-zinc-300">
+                <label className="text-xs font-medium text-zinc-700 dark:text-zinc-700 dark:text-zinc-300">
                   Type <strong>{org.name}</strong> to confirm
                 </label>
                 <input
@@ -318,7 +318,7 @@ export default function SettingsForm({ org }) {
                     setDeleteError("");
                   }}
                   placeholder={org.name}
-                  className="mt-1 w-full max-w-xs rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-zinc-50 placeholder:text-zinc-500 outline-none focus:border-rose-500"
+                  className="mt-1 w-full max-w-xs rounded-lg border border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-3 py-2 text-sm text-zinc-900 dark:text-zinc-900 dark:text-zinc-50 placeholder:text-zinc-500 outline-none focus:border-rose-500"
                 />
               </div>
               {deleteError && (
@@ -338,7 +338,7 @@ export default function SettingsForm({ org }) {
         <div className="flex justify-center pt-8">
           <Link 
             href="/dashboard/settings/env-status" 
-            className="text-xs font-medium text-zinc-500 hover:text-zinc-300 transition-colors"
+            className="text-xs font-medium text-zinc-500 hover:text-zinc-700 dark:text-zinc-700 dark:text-zinc-300 transition-colors"
           >
             View System Status →
           </Link>

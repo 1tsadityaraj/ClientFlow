@@ -32,7 +32,7 @@ export default async function DashboardPage() {
 
   if (!session) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-zinc-950 text-zinc-50">
+      <main className="flex min-h-screen items-center justify-center bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-900 dark:text-zinc-50">
         <p>Please sign in.</p>
       </main>
     );
@@ -115,7 +115,7 @@ export default async function DashboardPage() {
       case "on_hold":
         return "bg-amber-500/15 text-amber-400 border-amber-500/30";
       default:
-        return "bg-zinc-500/15 text-zinc-400 border-zinc-500/30";
+        return "bg-zinc-500/15 text-zinc-600 dark:text-zinc-600 dark:text-zinc-400 border-zinc-500/30";
     }
   };
 
@@ -128,7 +128,7 @@ export default async function DashboardPage() {
       case "LOW":
         return "text-emerald-400";
       default:
-        return "text-zinc-400";
+        return "text-zinc-600 dark:text-zinc-600 dark:text-zinc-400";
     }
   };
 
@@ -147,7 +147,7 @@ export default async function DashboardPage() {
   console.log("[DASHBOARD] canCreateProject:", canCreateProject, "canSendMessage:", canSendMessage);
 
   return (
-    <main className="min-h-screen bg-zinc-950 text-zinc-50">
+    <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-900 dark:text-zinc-50">
       {/* Sidebar + Content Layout */}
       <div className="flex">
         {/* Sidebar */}
@@ -157,7 +157,7 @@ export default async function DashboardPage() {
         <div className="flex-1 overflow-auto">
           <Breadcrumb />
           {/* Top Bar */}
-          <header className="sticky top-0 z-10 flex items-center justify-between border-b border-zinc-800/80 bg-zinc-950/80 px-6 py-4 backdrop-blur-xl lg:px-8">
+          <header className="sticky top-0 z-10 flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800/80 bg-white dark:bg-zinc-950/80 px-6 py-4 backdrop-blur-xl lg:px-8">
             <div>
               <p className="text-[10px] font-semibold uppercase tracking-widest text-zinc-500">
                 Overview
@@ -172,21 +172,21 @@ export default async function DashboardPage() {
               )}
               <Link
                 href="/dashboard/chat"
-                className="flex items-center gap-2 rounded-full border border-zinc-700/80 px-4 py-2 text-xs font-medium text-zinc-300 transition-all hover:border-brand-primary/50 hover:bg-brand-primary/10 hover:text-brand-primary"
+                className="flex items-center gap-2 rounded-full border border-zinc-300 dark:border-zinc-300 dark:border-zinc-700/80 px-4 py-2 text-xs font-medium text-zinc-700 dark:text-zinc-700 dark:text-zinc-300 transition-all hover:border-brand-primary/50 hover:bg-brand-primary/10 hover:text-brand-primary"
               >
                 <MessageCircle className="h-3.5 w-3.5" />
                 Team Chat
               </Link>
               <Link
                 href="/dashboard/members"
-                className="flex items-center gap-2 rounded-full border border-zinc-700/80 px-4 py-2 text-xs font-medium text-zinc-300 transition-all hover:border-zinc-600 hover:bg-zinc-800/50 hover:text-white lg:hidden"
+                className="flex items-center gap-2 rounded-full border border-zinc-300 dark:border-zinc-300 dark:border-zinc-700/80 px-4 py-2 text-xs font-medium text-zinc-700 dark:text-zinc-700 dark:text-zinc-300 transition-all hover:border-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800/50 hover:text-white lg:hidden"
               >
                 <Users className="h-3.5 w-3.5" />
                 Members
               </Link>
               <Link
                 href="/dashboard/settings"
-                className="flex items-center gap-2 rounded-full border border-zinc-700/80 px-4 py-2 text-xs font-medium text-zinc-300 transition-all hover:border-zinc-600 hover:bg-zinc-800/50 hover:text-white lg:hidden"
+                className="flex items-center gap-2 rounded-full border border-zinc-300 dark:border-zinc-300 dark:border-zinc-700/80 px-4 py-2 text-xs font-medium text-zinc-700 dark:text-zinc-700 dark:text-zinc-300 transition-all hover:border-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800/50 hover:text-white lg:hidden"
               >
                 <Settings className="h-3.5 w-3.5" />
                 Settings
@@ -232,9 +232,9 @@ export default async function DashboardPage() {
             </section>
 
             {/* Task Progress Bar */}
-            <section className="rounded-2xl border border-zinc-800/80 bg-zinc-900/40 p-5">
+            <section className="rounded-2xl border border-zinc-200 dark:border-zinc-800/80 bg-zinc-50/80 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/40 p-5">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-medium text-zinc-200 flex items-center gap-2">
+                <h3 className="text-sm font-medium text-zinc-800 dark:text-zinc-200 flex items-center gap-2">
                   <Activity className="h-4 w-4 text-brand-primary" />
                   Task Progress Overview
                 </h3>
@@ -242,7 +242,7 @@ export default async function DashboardPage() {
                   {totalTasks} total tasks
                 </span>
               </div>
-              <div className="flex h-3 overflow-hidden rounded-full bg-zinc-800">
+              <div className="flex h-3 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800">
                 {doneTasks > 0 && (
                   <div
                     className="bg-gradient-to-r from-emerald-500 to-emerald-400 transition-all duration-500"
@@ -271,19 +271,19 @@ export default async function DashboardPage() {
               <div className="mt-3 flex gap-6 text-xs">
                 <span className="flex items-center gap-1.5">
                   <span className="h-2 w-2 rounded-full bg-emerald-500" />
-                  <span className="text-zinc-400">
+                  <span className="text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">
                     Done ({doneTasks})
                   </span>
                 </span>
                 <span className="flex items-center gap-1.5">
                   <span className="h-2 w-2 rounded-full bg-amber-500" />
-                  <span className="text-zinc-400">
+                  <span className="text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">
                     In Progress ({inProgressTasks})
                   </span>
                 </span>
                 <span className="flex items-center gap-1.5">
                   <span className="h-2 w-2 rounded-full bg-zinc-500" />
-                  <span className="text-zinc-400">
+                  <span className="text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">
                     To Do ({todoTasks})
                   </span>
                 </span>
@@ -298,7 +298,7 @@ export default async function DashboardPage() {
               {/* Projects Grid */}
               <section className="space-y-4 xl:col-span-2">
                 <div className="flex items-center justify-between">
-                  <h2 className="flex items-center gap-2 text-sm font-semibold text-zinc-200">
+                  <h2 className="flex items-center gap-2 text-sm font-semibold text-zinc-800 dark:text-zinc-200">
                     <FolderKanban className="h-4 w-4 text-brand-primary" />
                     Projects
                   </h2>
@@ -317,7 +317,7 @@ export default async function DashboardPage() {
                     <Link
                       key={project.id}
                       href={`/dashboard/projects/${project.id}`}
-                      className="group relative overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-900/40 p-5 transition-all duration-300 hover:border-zinc-700 hover:bg-zinc-900/60 hover:shadow-lg hover:shadow-black/20"
+                      className="group relative overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800/80 bg-zinc-50/80 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/40 p-5 transition-all duration-300 hover:border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 hover:bg-zinc-50/90 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/60 hover:shadow-lg hover:shadow-black/20"
                     >
                       {/* Color accent */}
                       <div
@@ -327,7 +327,7 @@ export default async function DashboardPage() {
 
                       <div className="flex items-start justify-between">
                         <div className="min-w-0 flex-1 pl-2">
-                          <h3 className="text-sm font-semibold text-zinc-50 group-hover:text-white">
+                          <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-900 dark:text-zinc-50 group-hover:text-white">
                             {project.name}
                           </h3>
                           <p className="mt-0.5 text-[10px] text-zinc-500">
@@ -345,7 +345,7 @@ export default async function DashboardPage() {
                       </div>
 
                       {project.description && (
-                        <p className="mt-2 line-clamp-2 pl-2 text-xs leading-relaxed text-zinc-400">
+                        <p className="mt-2 line-clamp-2 pl-2 text-xs leading-relaxed text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">
                           {project.description}
                         </p>
                       )}
@@ -356,11 +356,11 @@ export default async function DashboardPage() {
                           <span className="text-[10px] text-zinc-500">
                             Progress
                           </span>
-                          <span className="text-[10px] font-semibold text-zinc-300">
+                          <span className="text-[10px] font-semibold text-zinc-700 dark:text-zinc-700 dark:text-zinc-300">
                             {calculatedProgress}%
                           </span>
                         </div>
-                        <div className="h-1.5 overflow-hidden rounded-full bg-zinc-800">
+                        <div className="h-1.5 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800">
                           <div
                             className="h-full rounded-full transition-all duration-500"
                             style={{
@@ -384,15 +384,15 @@ export default async function DashboardPage() {
                       </div>
 
                       <div className="absolute bottom-4 right-4 opacity-0 transition-opacity group-hover:opacity-100">
-                        <ArrowRight className="h-4 w-4 text-zinc-400" />
+                        <ArrowRight className="h-4 w-4 text-zinc-600 dark:text-zinc-600 dark:text-zinc-400" />
                       </div>
                     </Link>
                   )})}
 
                   {projects.length === 0 && (
-                    <div className="col-span-2 rounded-2xl border border-dashed border-zinc-700 p-8 text-center">
+                    <div className="col-span-2 rounded-2xl border border-dashed border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 p-8 text-center">
                       <FolderKanban className="mx-auto h-8 w-8 text-zinc-600" />
-                      <p className="mt-2 text-sm text-zinc-400">
+                      <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">
                         No projects yet
                       </p>
                       <p className="mt-1 text-xs text-zinc-500">
@@ -412,8 +412,8 @@ export default async function DashboardPage() {
                 <MyTasksWidget />
 
                 {/* Upcoming Deadlines */}
-                <section className="rounded-2xl border border-zinc-800/80 bg-zinc-900/40 p-5">
-                  <h3 className="flex items-center gap-2 text-sm font-semibold text-zinc-200 mb-4">
+                <section className="rounded-2xl border border-zinc-200 dark:border-zinc-800/80 bg-zinc-50/80 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/40 p-5">
+                  <h3 className="flex items-center gap-2 text-sm font-semibold text-zinc-800 dark:text-zinc-200 mb-4">
                     <Clock className="h-4 w-4 text-amber-400" />
                     Upcoming Deadlines
                   </h3>
@@ -421,7 +421,7 @@ export default async function DashboardPage() {
                     {upcomingTasks.map((task) => (
                       <li
                         key={task.id}
-                        className="flex items-start gap-3 rounded-xl border border-zinc-800/50 bg-zinc-900/30 p-3 transition-colors hover:bg-zinc-800/40"
+                        className="flex items-start gap-3 rounded-xl border border-zinc-200 dark:border-zinc-800/50 bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/30 p-3 transition-colors hover:bg-zinc-200 dark:bg-zinc-800/40"
                       >
                         <span
                           className={`mt-0.5 text-lg leading-none ${priorityColor(
@@ -431,11 +431,11 @@ export default async function DashboardPage() {
                           •
                         </span>
                         <div className="min-w-0 flex-1">
-                          <p className="truncate text-xs font-medium text-zinc-200">
+                          <p className="truncate text-xs font-medium text-zinc-800 dark:text-zinc-200">
                             {task.title}
                           </p>
                           <div className="mt-1 flex items-center gap-2">
-                            <span className="rounded bg-zinc-800 px-1.5 py-0.5 text-[9px] font-semibold uppercase text-zinc-400">
+                            <span className="rounded bg-zinc-200 dark:bg-zinc-800 px-1.5 py-0.5 text-[9px] font-semibold uppercase text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">
                               {task.priority}
                             </span>
                             <span className="text-[10px] text-zinc-500">
@@ -457,9 +457,9 @@ export default async function DashboardPage() {
                 <DashboardActivityFeed />
 
                 {/* Team Members Quick View */}
-                <section className="rounded-2xl border border-zinc-800/80 bg-zinc-900/40 p-5">
+                <section className="rounded-2xl border border-zinc-200 dark:border-zinc-800/80 bg-zinc-50/80 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/40 p-5">
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="flex items-center gap-2 text-sm font-semibold text-zinc-200">
+                    <h3 className="flex items-center gap-2 text-sm font-semibold text-zinc-800 dark:text-zinc-200">
                       <Users className="h-4 w-4 text-sky-400" />
                       Team
                     </h3>
@@ -474,20 +474,20 @@ export default async function DashboardPage() {
                     {members.slice(0, 5).map((m) => (
                       <div
                         key={m.id}
-                        className="flex items-center gap-3 rounded-xl p-2 transition-colors hover:bg-zinc-800/40"
+                        className="flex items-center gap-3 rounded-xl p-2 transition-colors hover:bg-zinc-200 dark:bg-zinc-800/40"
                       >
                         <div className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-sky-500/30 to-blue-500/30 text-[10px] font-bold text-sky-300">
                           {m.name.charAt(0).toUpperCase()}
                         </div>
                         <div className="min-w-0 flex-1">
-                          <p className="truncate text-xs font-medium text-zinc-200">
+                          <p className="truncate text-xs font-medium text-zinc-800 dark:text-zinc-200">
                             {m.name}
                           </p>
                           <p className="truncate text-[10px] text-zinc-500">
                             {m.email}
                           </p>
                         </div>
-                        <span className="shrink-0 rounded-full bg-zinc-800 px-2 py-0.5 text-[9px] font-medium uppercase tracking-wide text-zinc-400">
+                        <span className="shrink-0 rounded-full bg-zinc-200 dark:bg-zinc-800 px-2 py-0.5 text-[9px] font-medium uppercase tracking-wide text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">
                           {m.role}
                         </span>
                       </div>
@@ -507,20 +507,20 @@ export default async function DashboardPage() {
 function StatCard({ icon, label, value, detail, gradient, iconColor }) {
   return (
     <div
-      className={`group relative overflow-hidden rounded-2xl border border-zinc-800/80 bg-gradient-to-br ${gradient} p-5 transition-all hover:border-zinc-700`}
+      className={`group relative overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800/80 bg-gradient-to-br ${gradient} p-5 transition-all hover:border-zinc-300 dark:border-zinc-300 dark:border-zinc-700`}
     >
       <div className="flex items-start justify-between">
         <div>
           <p className="text-[10px] font-semibold uppercase tracking-widest text-zinc-500">
             {label}
           </p>
-          <p className="mt-2 text-3xl font-bold tracking-tight text-zinc-50">
+          <p className="mt-2 text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-900 dark:text-zinc-50">
             {value}
           </p>
           <p className="mt-1 text-xs text-zinc-500">{detail}</p>
         </div>
         <div
-          className={`flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-900/60 ${iconColor}`}
+          className={`flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-50/90 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/60 ${iconColor}`}
         >
           {icon}
         </div>

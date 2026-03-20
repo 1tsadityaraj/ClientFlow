@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 
 function CommentSkeleton() {
   return (
-    <div className="animate-pulse rounded-xl border border-zinc-800 p-3">
+    <div className="animate-pulse rounded-xl border border-zinc-200 dark:border-zinc-800 p-3">
       <div className="flex gap-2">
         <div className="h-8 w-8 rounded-full bg-zinc-700" />
         <div className="flex-1 space-y-2">
@@ -106,32 +106,32 @@ export default function ProjectCommentsTab({ projectId }) {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-sm font-medium text-zinc-300">Comments</h2>
+      <h2 className="text-sm font-medium text-zinc-700 dark:text-zinc-700 dark:text-zinc-300">Comments</h2>
 
       <ul className="space-y-3">
         {comments.map((c) => (
           <li
             key={c.id}
-            className="flex gap-3 rounded-xl border border-zinc-800 bg-zinc-900/60 p-3"
+            className="flex gap-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/90 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/60 p-3"
           >
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-zinc-700 text-xs font-medium text-zinc-200">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-zinc-700 text-xs font-medium text-zinc-800 dark:text-zinc-200">
               {avatarLetter(c.user?.name)}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-xs font-medium text-zinc-300">
+              <p className="text-xs font-medium text-zinc-700 dark:text-zinc-700 dark:text-zinc-300">
                 {c.user?.name ?? "Unknown"}
                 <span className="ml-2 font-normal text-zinc-500">
                   {new Date(c.createdAt).toLocaleString()}
                 </span>
               </p>
-              <p className="mt-1 whitespace-pre-wrap text-sm text-zinc-200">
+              <p className="mt-1 whitespace-pre-wrap text-sm text-zinc-800 dark:text-zinc-200">
                 {c.body}
               </p>
             </div>
           </li>
         ))}
         {comments.length === 0 && (
-          <li className="rounded-xl border border-dashed border-zinc-700 p-6 text-center text-sm text-zinc-500">
+          <li className="rounded-xl border border-dashed border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 p-6 text-center text-sm text-zinc-500">
             No comments yet.
           </li>
         )}
@@ -144,7 +144,7 @@ export default function ProjectCommentsTab({ projectId }) {
             onChange={(e) => setBody(e.target.value)}
             placeholder="Add a comment..."
             rows={3}
-            className="w-full resize-none rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-zinc-50 placeholder:text-zinc-500 outline-none focus:border-brand-primary"
+            className="w-full resize-none rounded-xl border border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900 px-3 py-2 text-sm text-zinc-900 dark:text-zinc-900 dark:text-zinc-50 placeholder:text-zinc-500 outline-none focus:border-brand-primary"
           />
           {submitError && (
             <p className="text-xs text-rose-400">{submitError}</p>

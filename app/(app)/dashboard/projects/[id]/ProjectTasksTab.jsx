@@ -11,7 +11,7 @@ import { updateTaskStatus } from "@/actions/task";
  * Optimistic Kanban Board
  */
 const COLUMNS = [
-  { id: "TODO", title: "To Do", color: "border-zinc-700 bg-zinc-900/50" },
+  { id: "TODO", title: "To Do", color: "border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/50" },
   { id: "IN_PROGRESS", title: "In Progress", color: "border-brand-primary/50 bg-brand-primary/10" },
   { id: "DONE", title: "Done", color: "border-emerald-500/50 bg-emerald-500/10" },
 ];
@@ -132,7 +132,7 @@ export default function ProjectTasksTab({ projectId }) {
     return (
       <div className="flex animate-pulse gap-6">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="h-64 flex-1 rounded-2xl bg-zinc-900 border border-zinc-800" />
+          <div key={i} className="h-64 flex-1 rounded-2xl bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800" />
         ))}
       </div>
     );
@@ -149,7 +149,7 @@ export default function ProjectTasksTab({ projectId }) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-medium text-zinc-300">Kanban Board</h2>
+        <h2 className="text-sm font-medium text-zinc-700 dark:text-zinc-700 dark:text-zinc-300">Kanban Board</h2>
         <Can permission="createTask">
           <button
             type="button"
@@ -167,24 +167,24 @@ export default function ProjectTasksTab({ projectId }) {
           className="space-y-4"
         >
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-zinc-300">Task Title</label>
+            <label className="mb-1.5 block text-xs font-medium text-zinc-700 dark:text-zinc-700 dark:text-zinc-300">Task Title</label>
             <input
               type="text"
               required
               placeholder="What needs to be done?"
               value={form.title}
               onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
-              className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-sm text-zinc-50 outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/50"
+              className="w-full rounded-xl border border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-4 py-3 text-sm text-zinc-900 dark:text-zinc-900 dark:text-zinc-50 outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/50"
             />
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-1.5 block text-xs font-medium text-zinc-300">Priority</label>
+              <label className="mb-1.5 block text-xs font-medium text-zinc-700 dark:text-zinc-700 dark:text-zinc-300">Priority</label>
               <select
                 value={form.priority}
                 onChange={(e) => setForm((f) => ({ ...f, priority: e.target.value }))}
-                className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-2.5 text-sm text-zinc-50 outline-none transition-all focus:border-brand-primary"
+                className="w-full rounded-xl border border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-900 dark:text-zinc-50 outline-none transition-all focus:border-brand-primary"
               >
                 {PRIORITIES.map((p) => (
                   <option key={p} value={p}>{p}</option>
@@ -192,11 +192,11 @@ export default function ProjectTasksTab({ projectId }) {
               </select>
             </div>
             <div>
-              <label className="mb-1.5 block text-xs font-medium text-zinc-300">Assignee</label>
+              <label className="mb-1.5 block text-xs font-medium text-zinc-700 dark:text-zinc-700 dark:text-zinc-300">Assignee</label>
               <select
                 value={form.assigneeId}
                 onChange={(e) => setForm((f) => ({ ...f, assigneeId: e.target.value }))}
-                className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-2.5 text-sm text-zinc-50 outline-none transition-all focus:border-brand-primary"
+                className="w-full rounded-xl border border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-900 dark:text-zinc-50 outline-none transition-all focus:border-brand-primary"
               >
                 <option value="">Unassigned</option>
                 {members.map((m) => (
@@ -207,12 +207,12 @@ export default function ProjectTasksTab({ projectId }) {
           </div>
 
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-zinc-300">Due Date</label>
+            <label className="mb-1.5 block text-xs font-medium text-zinc-700 dark:text-zinc-700 dark:text-zinc-300">Due Date</label>
             <input
               type="date"
               value={form.dueDate ? form.dueDate.split('T')[0] : ''}
               onChange={(e) => setForm((f) => ({ ...f, dueDate: e.target.value }))}
-              className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-2.5 text-sm text-zinc-50 outline-none transition-all focus:border-brand-primary [&::-webkit-calendar-picker-indicator]:invert"
+              className="w-full rounded-xl border border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-900 dark:text-zinc-50 outline-none transition-all focus:border-brand-primary [&::-webkit-calendar-picker-indicator]:invert"
             />
           </div>
 
@@ -222,7 +222,7 @@ export default function ProjectTasksTab({ projectId }) {
             <button
               type="button"
               onClick={() => setShowForm(false)}
-              className="flex-1 rounded-full border border-zinc-700 px-4 py-2.5 text-sm font-medium text-zinc-300 transition-colors hover:bg-zinc-800"
+              className="flex-1 rounded-full border border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 px-4 py-2.5 text-sm font-medium text-zinc-700 dark:text-zinc-700 dark:text-zinc-300 transition-colors hover:bg-zinc-200 dark:bg-zinc-800"
             >
               Cancel
             </button>
@@ -250,8 +250,8 @@ export default function ProjectTasksTab({ projectId }) {
               onDrop={(e) => handleDrop(e, col.id)}
             >
               <div className="mb-4 flex items-center justify-between px-1">
-                <h3 className="text-sm font-semibold text-zinc-200">{col.title}</h3>
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-zinc-950/50 text-xs font-medium text-zinc-400">
+                <h3 className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">{col.title}</h3>
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white dark:bg-zinc-950/50 text-xs font-medium text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">
                   {columnTasks.length}
                 </span>
               </div>
@@ -262,7 +262,7 @@ export default function ProjectTasksTab({ projectId }) {
                     key={task.id}
                     draggable
                     onDragStart={() => setDraggedTaskId(task.id)}
-                    className="group relative cursor-grab active:cursor-grabbing rounded-xl border border-zinc-800/80 bg-zinc-950/80 p-4 shadow-sm transition-all hover:border-brand-primary/50 hover:shadow-brand-primary/10 hover:-translate-y-0.5"
+                    className="group relative cursor-grab active:cursor-grabbing rounded-xl border border-zinc-200 dark:border-zinc-800/80 bg-white dark:bg-zinc-950/80 p-4 shadow-sm transition-all hover:border-brand-primary/50 hover:shadow-brand-primary/10 hover:-translate-y-0.5"
                   >
                     <div className="mb-2 flex items-start justify-between gap-2">
                       <p className="text-sm font-medium leading-snug text-zinc-100">
@@ -293,7 +293,7 @@ export default function ProjectTasksTab({ projectId }) {
 
                       {task.assignee && (
                         <div 
-                          className="flex h-6 w-6 items-center justify-center rounded-full bg-zinc-800 text-[10px] font-bold text-zinc-300 ring-2 ring-zinc-950"
+                          className="flex h-6 w-6 items-center justify-center rounded-full bg-zinc-200 dark:bg-zinc-800 text-[10px] font-bold text-zinc-700 dark:text-zinc-700 dark:text-zinc-300 ring-2 ring-zinc-950"
                           title={task.assignee?.name}
                         >
                           {task.assignee?.name?.charAt(0).toUpperCase()}
@@ -304,7 +304,7 @@ export default function ProjectTasksTab({ projectId }) {
                 ))}
                 
                 {columnTasks.length === 0 && (
-                  <div className="flex h-24 items-center justify-center rounded-xl border border-dashed border-zinc-700/50 text-xs font-medium text-zinc-600">
+                  <div className="flex h-24 items-center justify-center rounded-xl border border-dashed border-zinc-300 dark:border-zinc-300 dark:border-zinc-700/50 text-xs font-medium text-zinc-600">
                     Drop tasks here
                   </div>
                 )}

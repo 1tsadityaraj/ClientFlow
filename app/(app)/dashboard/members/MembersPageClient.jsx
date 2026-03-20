@@ -16,7 +16,7 @@ const ROLE_BADGE = {
   admin: "bg-rose-500/15 text-rose-400 border-rose-500/30",
   manager: "bg-amber-500/15 text-amber-400 border-amber-500/30",
   member: "bg-sky-500/15 text-sky-400 border-sky-500/30",
-  client: "bg-zinc-500/15 text-zinc-400 border-zinc-500/30",
+  client: "bg-zinc-500/15 text-zinc-600 dark:text-zinc-600 dark:text-zinc-400 border-zinc-500/30",
 };
 
 function TableSkeleton() {
@@ -25,7 +25,7 @@ function TableSkeleton() {
       {[1, 2, 3, 4].map((i) => (
         <div
           key={i}
-          className="flex gap-4 rounded-xl border border-zinc-800 bg-zinc-900/40 px-4 py-3"
+          className="flex gap-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/80 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/40 px-4 py-3"
         >
           <div className="h-4 w-24 rounded bg-zinc-700" />
           <div className="h-4 w-32 rounded bg-zinc-700" />
@@ -144,10 +144,10 @@ export default function MembersPageClient() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-zinc-950 text-zinc-50">
+      <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-900 dark:text-zinc-50">
         <div className="mx-auto max-w-5xl px-6 py-10">
           <h1 className="text-xl font-semibold">Members</h1>
-          <p className="mt-1 text-sm text-zinc-400">
+          <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">
             Manage your workspace roles and invites.
           </p>
           <div className="mt-6">
@@ -160,7 +160,7 @@ export default function MembersPageClient() {
 
   if (error) {
     return (
-      <main className="min-h-screen bg-zinc-950 text-zinc-50">
+      <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-900 dark:text-zinc-50">
         <div className="mx-auto max-w-5xl px-6 py-10">
           <div className="rounded-xl border border-rose-900/50 bg-rose-950/20 p-4 text-sm text-rose-200">
             {error}
@@ -174,13 +174,13 @@ export default function MembersPageClient() {
   const currentUserId = session?.user?.id;
 
   return (
-    <main className="min-h-screen bg-zinc-950 text-zinc-50">
+    <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-900 dark:text-zinc-50">
       <div className="mx-auto max-w-5xl px-6 py-10">
         <Breadcrumb />
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-xl font-semibold">Members</h1>
-            <p className="mt-1 text-sm text-zinc-400">
+            <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">
               Manage your workspace roles and invites.
             </p>
           </div>
@@ -202,7 +202,7 @@ export default function MembersPageClient() {
             className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
               viewMode === "table"
                 ? "bg-brand-primary/15 text-brand-primary border border-brand-primary/30"
-                : "text-zinc-400 hover:text-zinc-200 border border-zinc-800"
+                : "text-zinc-600 dark:text-zinc-600 dark:text-zinc-400 hover:text-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-800"
             }`}
           >
             <Table2 className="h-3.5 w-3.5" />
@@ -213,7 +213,7 @@ export default function MembersPageClient() {
             className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
               viewMode === "workload"
                 ? "bg-brand-primary/15 text-brand-primary border border-brand-primary/30"
-                : "text-zinc-400 hover:text-zinc-200 border border-zinc-800"
+                : "text-zinc-600 dark:text-zinc-600 dark:text-zinc-400 hover:text-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-800"
             }`}
           >
             <LayoutGrid className="h-3.5 w-3.5" />
@@ -261,9 +261,9 @@ export default function MembersPageClient() {
         ) : (
         <>
         {/* Members Table */}
-        <div className="mt-6 overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/60">
+        <div className="mt-6 overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/90 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/60">
           <table className="min-w-full text-left text-xs">
-            <thead className="border-b border-zinc-800 bg-zinc-900/80 text-zinc-500">
+            <thead className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/80 text-zinc-500">
               <tr>
                 <th className="px-4 py-3 font-medium">Member</th>
                 <th className="px-4 py-3 font-medium">Email</th>
@@ -277,7 +277,7 @@ export default function MembersPageClient() {
                 return (
                   <tr
                     key={m.id}
-                    className="border-b border-zinc-800/80 last:border-0 transition-colors hover:bg-zinc-900/40"
+                    className="border-b border-zinc-200 dark:border-zinc-800/80 last:border-0 transition-colors hover:bg-zinc-50/80 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/40"
                   >
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
@@ -285,7 +285,7 @@ export default function MembersPageClient() {
                           {m.name.charAt(0).toUpperCase()}
                         </div>
                         <div>
-                          <Link href={`/dashboard/members/${m.id}`} className="text-sm font-medium text-zinc-50 hover:text-brand-primary transition-colors">
+                          <Link href={`/dashboard/members/${m.id}`} className="text-sm font-medium text-zinc-900 dark:text-zinc-900 dark:text-zinc-50 hover:text-brand-primary transition-colors">
                             {m.name}
                             {isSelf && (
                               <span className="ml-1.5 text-[10px] text-zinc-500">
@@ -296,7 +296,7 @@ export default function MembersPageClient() {
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-zinc-400">{m.email}</td>
+                    <td className="px-4 py-3 text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">{m.email}</td>
                     <td className="px-4 py-3">
                       {isAdmin && !isSelf ? (
                         <select
@@ -305,7 +305,7 @@ export default function MembersPageClient() {
                           onChange={(e) =>
                             handleRoleChange(m.id, e.target.value)
                           }
-                          className="cursor-pointer rounded-lg border border-zinc-700 bg-zinc-900 px-2.5 py-1.5 text-xs text-zinc-200 outline-none transition-all hover:border-zinc-600 focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/50"
+                          className="cursor-pointer rounded-lg border border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900 px-2.5 py-1.5 text-xs text-zinc-800 dark:text-zinc-200 outline-none transition-all hover:border-zinc-600 focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/50"
                         >
                           {ROLES.map((r) => (
                             <option key={r} value={r}>
@@ -360,7 +360,7 @@ export default function MembersPageClient() {
               {invites.map((i) => (
                 <tr
                   key={i.id}
-                  className="border-b border-zinc-800/80 last:border-0 bg-zinc-900/20"
+                  className="border-b border-zinc-200 dark:border-zinc-800/80 last:border-0 bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/20"
                 >
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
@@ -373,7 +373,7 @@ export default function MembersPageClient() {
                     </div>
                   </td>
                   <td className="px-4 py-3">
-                    <span className="text-zinc-400">{i.email}</span>
+                    <span className="text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">{i.email}</span>
                     <span className="ml-2 rounded-full bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-medium text-amber-500">
                       Invited
                     </span>
@@ -392,7 +392,7 @@ export default function MembersPageClient() {
                       <button
                         type="button"
                         onClick={() => handleCancelInvite(i.id)}
-                        className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
+                        className="text-xs text-zinc-500 hover:text-zinc-700 dark:text-zinc-700 dark:text-zinc-300 transition-colors"
                       >
                         Cancel
                       </button>
@@ -485,7 +485,7 @@ function InviteModal({ onClose, onSuccess }) {
               Email delivery failed (likely due to unauthorized domain in Resend test mode), but you can manually share this link instead:
             </p>
           ) : (
-            <p className="text-sm text-zinc-300">
+            <p className="text-sm text-zinc-700 dark:text-zinc-700 dark:text-zinc-300">
               An email has been sent to {successData.invite.email}. You can also share the link directly:
             </p>
           )}
@@ -493,14 +493,14 @@ function InviteModal({ onClose, onSuccess }) {
             <input
               readOnly
               value={inviteUrl}
-              className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-zinc-50 outline-none focus:border-brand-primary"
+              className="w-full rounded-lg border border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-3 py-2 text-sm text-zinc-900 dark:text-zinc-900 dark:text-zinc-50 outline-none focus:border-brand-primary"
             />
             <button
               onClick={() => {
                 navigator.clipboard.writeText(inviteUrl);
                 alert("Copied to clipboard!");
               }}
-              className="rounded-lg bg-zinc-800 px-4 py-2 text-sm text-zinc-300 hover:bg-zinc-700 transition-colors"
+              className="rounded-lg bg-zinc-200 dark:bg-zinc-800 px-4 py-2 text-sm text-zinc-700 dark:text-zinc-700 dark:text-zinc-300 hover:bg-zinc-700 transition-colors"
             >
               Copy
             </button>
@@ -520,21 +520,21 @@ function InviteModal({ onClose, onSuccess }) {
     <Modal open={true} onClose={onClose} title="Invite Member">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="text-xs font-medium text-zinc-300">Email</label>
+          <label className="text-xs font-medium text-zinc-700 dark:text-zinc-700 dark:text-zinc-300">Email</label>
           <input
             type="email"
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-zinc-50 outline-none focus:border-brand-primary"
+            className="mt-1 w-full rounded-lg border border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-3 py-2 text-sm text-zinc-900 dark:text-zinc-900 dark:text-zinc-50 outline-none focus:border-brand-primary"
           />
         </div>
         <div>
-          <label className="text-xs font-medium text-zinc-300">Role</label>
+          <label className="text-xs font-medium text-zinc-700 dark:text-zinc-700 dark:text-zinc-300">Role</label>
           <select
             value={role}
             onChange={(e) => setRole(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-zinc-50 outline-none transition-all focus:border-brand-primary"
+            className="mt-1 w-full rounded-lg border border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-3 py-2 text-sm text-zinc-900 dark:text-zinc-900 dark:text-zinc-50 outline-none transition-all focus:border-brand-primary"
           >
             {ROLES.map((r) => (
               <option key={r} value={r}>
@@ -548,7 +548,7 @@ function InviteModal({ onClose, onSuccess }) {
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 rounded-full border border-zinc-700 px-4 py-2 text-sm text-zinc-300 hover:bg-zinc-800 transition-colors"
+            className="flex-1 rounded-full border border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 px-4 py-2 text-sm text-zinc-700 dark:text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:bg-zinc-800 transition-colors"
           >
             Cancel
           </button>

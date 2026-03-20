@@ -226,13 +226,13 @@ export default function ChatClient({ currentUser }) {
   }, [messages]);
 
   return (
-    <main className="flex h-screen bg-zinc-950 text-zinc-50 overflow-hidden">
+    <main className="flex h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-900 dark:text-zinc-50 overflow-hidden">
       {/* Sidebar - Members List */}
-      <aside className="hidden w-64 flex-shrink-0 flex-col border-r border-zinc-800/80 bg-zinc-950 lg:flex">
-        <div className="flex items-center gap-3 border-b border-zinc-800/80 px-6 py-5">
+      <aside className="hidden w-64 flex-shrink-0 flex-col border-r border-zinc-200 dark:border-zinc-800/80 bg-white dark:bg-zinc-950 lg:flex">
+        <div className="flex items-center gap-3 border-b border-zinc-200 dark:border-zinc-800/80 px-6 py-5">
            <Link
             href="/dashboard"
-            className="flex h-8 w-8 items-center justify-center rounded-xl bg-zinc-900 text-zinc-400 transition-colors hover:text-white"
+            className="flex h-8 w-8 items-center justify-center rounded-xl bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-600 dark:text-zinc-400 transition-colors hover:text-white"
           >
             <ArrowLeft className="h-4 w-4" />
           </Link>
@@ -241,7 +241,7 @@ export default function ChatClient({ currentUser }) {
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           <div className="space-y-1">
             {allMembers.map((member) => (
-              <div key={member.id} className="flex items-center gap-3 rounded-xl px-2 py-2 transition-colors hover:bg-zinc-900/50">
+              <div key={member.id} className="flex items-center gap-3 rounded-xl px-2 py-2 transition-colors hover:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/50">
                 <div className="relative">
                   {member.avatar ? (
                     <img src={member.avatar} className="h-8 w-8 rounded-full object-cover" alt="" />
@@ -255,7 +255,7 @@ export default function ChatClient({ currentUser }) {
                   )}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-xs font-medium text-zinc-300">{member.name}</p>
+                  <p className="truncate text-xs font-medium text-zinc-700 dark:text-zinc-700 dark:text-zinc-300">{member.name}</p>
                   <p className="text-[10px] text-zinc-500 capitalize">{member.role}</p>
                 </div>
               </div>
@@ -267,11 +267,11 @@ export default function ChatClient({ currentUser }) {
       {/* Main Chat Area */}
       <div className="flex flex-1 flex-col min-w-0">
         <Breadcrumb />
-        <header className="flex h-16 shrink-0 items-center justify-between border-b border-zinc-800/80 bg-zinc-950/50 px-6 backdrop-blur-md">
+        <header className="flex h-16 shrink-0 items-center justify-between border-b border-zinc-200 dark:border-zinc-800/80 bg-white dark:bg-zinc-950/50 px-6 backdrop-blur-md">
           <div className="flex items-center gap-4">
             <Link
               href="/dashboard"
-              className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-900 text-zinc-400 transition-colors hover:text-white lg:hidden"
+              className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-600 dark:text-zinc-400 transition-colors hover:text-white lg:hidden"
             >
               <ArrowLeft className="h-5 w-5" />
             </Link>
@@ -298,10 +298,10 @@ export default function ChatClient({ currentUser }) {
           <div className="space-y-6">
             {[1, 2, 3, 4].map((i) => (
               <div key={i} className={`flex gap-3 ${i % 2 === 0 ? "flex-row-reverse" : ""}`}>
-                <div className="h-10 w-10 shrink-0 rounded-full bg-zinc-900 animate-pulse" />
+                <div className="h-10 w-10 shrink-0 rounded-full bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900 animate-pulse" />
                 <div className="space-y-2">
-                  <div className="h-4 w-24 rounded bg-zinc-900 animate-pulse" />
-                  <div className="h-16 w-64 rounded-2xl bg-zinc-900 animate-pulse" />
+                  <div className="h-4 w-24 rounded bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900 animate-pulse" />
+                  <div className="h-16 w-64 rounded-2xl bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900 animate-pulse" />
                 </div>
               </div>
             ))}
@@ -328,9 +328,9 @@ export default function ChatClient({ currentUser }) {
                 
                 return (
                   <div key={`date-${group.date}`} className="flex items-center gap-4 py-4">
-                    <div className="h-px flex-1 bg-zinc-800/50" />
+                    <div className="h-px flex-1 bg-zinc-200 dark:bg-zinc-800/50" />
                     <span className="text-[10px] font-semibold uppercase tracking-widest text-zinc-500">{dateLabel}</span>
-                    <div className="h-px flex-1 bg-zinc-800/50" />
+                    <div className="h-px flex-1 bg-zinc-200 dark:bg-zinc-800/50" />
                   </div>
                 );
               }
@@ -356,7 +356,7 @@ export default function ChatClient({ currentUser }) {
 
                   <div className={`flex max-w-[75%] flex-col space-y-1 ${isOwn ? "items-end" : "items-start"}`}>
                     {!isOwn && (
-                      <span className="ml-1 text-[11px] font-semibold text-zinc-400">
+                      <span className="ml-1 text-[11px] font-semibold text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">
                         {group.user.name}
                       </span>
                     )}
@@ -366,7 +366,7 @@ export default function ChatClient({ currentUser }) {
                           className={`rounded-2xl px-4 py-2.5 text-sm leading-relaxed shadow-sm transition-all hover:shadow-md ${
                             isOwn 
                               ? "bg-indigo-600 text-white rounded-tr-none" 
-                              : "bg-zinc-900 text-zinc-200 rounded-tl-none"
+                              : "bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900 text-zinc-800 dark:text-zinc-200 rounded-tl-none"
                           }`}
                         >
                           {msg.text || msg.body}
@@ -390,7 +390,7 @@ export default function ChatClient({ currentUser }) {
       </div>
 
       {/* Input Area */}
-      <div className="shrink-0 border-t border-zinc-800/80 bg-zinc-950/80 p-6 backdrop-blur-md">
+      <div className="shrink-0 border-t border-zinc-200 dark:border-zinc-800/80 bg-white dark:bg-zinc-950/80 p-6 backdrop-blur-md">
         <form onSubmit={handleSend} className="relative">
           <textarea
             value={input}
@@ -416,7 +416,7 @@ export default function ChatClient({ currentUser }) {
             onKeyDown={handleKeyDown}
             placeholder="Type a message..."
             rows={1}
-            className="w-full resize-none rounded-2xl border border-zinc-800 bg-zinc-900/40 py-3 pl-4 pr-16 text-sm text-zinc-100 outline-none transition-all placeholder:text-zinc-500 focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/10 sm:py-4"
+            className="w-full resize-none rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/80 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/40 py-3 pl-4 pr-16 text-sm text-zinc-100 outline-none transition-all placeholder:text-zinc-500 focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/10 sm:py-4"
             style={{ maxHeight: "160px" }}
             onInput={(e) => {
               e.target.style.height = "auto";

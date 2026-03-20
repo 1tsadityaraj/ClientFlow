@@ -100,7 +100,7 @@ export default function CreateProjectButton({ clientMembers = [] }) {
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Project Name */}
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-zinc-300">
+            <label className="mb-1.5 block text-xs font-medium text-zinc-700 dark:text-zinc-700 dark:text-zinc-300">
               Project Name <span className="text-rose-400">*</span>
             </label>
             <input
@@ -111,13 +111,13 @@ export default function CreateProjectButton({ clientMembers = [] }) {
               onChange={(e) =>
                 setForm((f) => ({ ...f, name: e.target.value }))
               }
-              className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-sm text-zinc-50 outline-none transition-all placeholder:text-zinc-600 focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/50"
+              className="w-full rounded-xl border border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-4 py-3 text-sm text-zinc-900 dark:text-zinc-900 dark:text-zinc-50 outline-none transition-all placeholder:text-zinc-600 focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/50"
             />
           </div>
 
           {/* Description */}
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-zinc-300">
+            <label className="mb-1.5 block text-xs font-medium text-zinc-700 dark:text-zinc-700 dark:text-zinc-300">
               Description
             </label>
             <textarea
@@ -127,13 +127,13 @@ export default function CreateProjectButton({ clientMembers = [] }) {
               onChange={(e) =>
                 setForm((f) => ({ ...f, description: e.target.value }))
               }
-              className="w-full resize-none rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-sm text-zinc-50 outline-none transition-all placeholder:text-zinc-600 focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/50"
+              className="w-full resize-none rounded-xl border border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-4 py-3 text-sm text-zinc-900 dark:text-zinc-900 dark:text-zinc-50 outline-none transition-all placeholder:text-zinc-600 focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/50"
             />
           </div>
 
           {/* Color Picker */}
           <div>
-            <label className="mb-1.5 flex items-center gap-1 text-xs font-medium text-zinc-300">
+            <label className="mb-1.5 flex items-center gap-1 text-xs font-medium text-zinc-700 dark:text-zinc-700 dark:text-zinc-300">
               <Palette className="h-3 w-3" />
               Project Color
             </label>
@@ -157,7 +157,7 @@ export default function CreateProjectButton({ clientMembers = [] }) {
           {/* Assign Client */}
           {clientMembers.length > 0 && (
             <div>
-              <label className="mb-1.5 block text-xs font-medium text-zinc-300">
+              <label className="mb-1.5 block text-xs font-medium text-zinc-700 dark:text-zinc-700 dark:text-zinc-300">
                 Assign to Client (optional)
               </label>
               <select
@@ -165,7 +165,7 @@ export default function CreateProjectButton({ clientMembers = [] }) {
                 onChange={(e) =>
                   setForm((f) => ({ ...f, clientUserId: e.target.value }))
                 }
-                className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-sm text-zinc-50 outline-none transition-all focus:border-brand-primary"
+                className="w-full rounded-xl border border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-4 py-3 text-sm text-zinc-900 dark:text-zinc-900 dark:text-zinc-50 outline-none transition-all focus:border-brand-primary"
               >
                 <option value="">No client assigned</option>
                 {clientMembers.map((c) => (
@@ -196,7 +196,7 @@ export default function CreateProjectButton({ clientMembers = [] }) {
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="flex-1 rounded-full border border-zinc-700 px-4 py-2.5 text-sm font-medium text-zinc-300 transition-colors hover:bg-zinc-800"
+              className="flex-1 rounded-full border border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 px-4 py-2.5 text-sm font-medium text-zinc-700 dark:text-zinc-700 dark:text-zinc-300 transition-colors hover:bg-zinc-200 dark:bg-zinc-800"
             >
               Cancel
             </button>

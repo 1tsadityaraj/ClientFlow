@@ -12,6 +12,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { getPusherClient } from "@/lib/pusherClient";
+import { ThemeToggle } from "./ThemeToggle";
 
 export default function Sidebar({ org, session, projects: initialProjects = [] }) {
   const pathname = usePathname();
@@ -89,16 +90,16 @@ export default function Sidebar({ org, session, projects: initialProjects = [] }
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex h-screen w-64 flex-col border-r border-zinc-800/80 bg-zinc-950 transition-transform duration-250 ease-in-out lg:sticky lg:top-0 lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 flex h-screen w-64 flex-col border-r border-zinc-200 dark:border-zinc-800/80 bg-white dark:bg-zinc-950 transition-transform duration-250 ease-in-out lg:sticky lg:top-0 lg:translate-x-0 ${
           isMobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="flex items-center gap-3 border-b border-zinc-800/80 px-5 py-5">
+        <div className="flex items-center gap-3 border-b border-zinc-200 dark:border-zinc-800/80 px-5 py-5">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-primary text-xs font-bold text-white shadow-lg">
             CF
           </div>
           <div>
-            <p className="text-sm font-semibold text-zinc-50">
+            <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-900 dark:text-zinc-50">
               {org?.name || "ClientFlow"}
             </p>
             <p className="text-[10px] font-medium uppercase tracking-wider text-brand-primary">
@@ -150,8 +151,8 @@ export default function Sidebar({ org, session, projects: initialProjects = [] }
                       href={`/dashboard/projects/${project.id}`}
                       className={`group flex items-center gap-3 rounded-xl px-3 py-2 text-sm transition-all ${
                         pathname.includes(project.id)
-                          ? "bg-zinc-800/50 text-zinc-200"
-                          : "text-zinc-400 hover:bg-zinc-800/60 hover:text-zinc-200"
+                          ? "bg-zinc-200 dark:bg-zinc-800/50 text-zinc-800 dark:text-zinc-200"
+                          : "text-zinc-600 dark:text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:bg-zinc-800/60 hover:text-zinc-800 dark:text-zinc-200"
                       }`}
                     >
                       <span
@@ -164,7 +165,7 @@ export default function Sidebar({ org, session, projects: initialProjects = [] }
                   {projects.length > 5 && (
                     <Link
                       href="/dashboard"
-                      className="group flex items-center gap-2 rounded-xl px-3 py-2 text-xs text-brand-primary transition-all hover:bg-zinc-800/60 hover:text-brand-primary/80"
+                      className="group flex items-center gap-2 rounded-xl px-3 py-2 text-xs text-brand-primary transition-all hover:bg-zinc-200 dark:bg-zinc-800/60 hover:text-brand-primary/80"
                     >
                       View all
                       <ArrowRight className="h-3 w-3" />
@@ -176,7 +177,7 @@ export default function Sidebar({ org, session, projects: initialProjects = [] }
           </nav>
         </div>
 
-        <div className="border-t border-zinc-800/80 px-4 py-4">
+        <div className="border-t border-zinc-200 dark:border-zinc-800/80 px-4 py-4">
           <div className="flex items-center gap-3">
             <div
               className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-primary text-xs font-bold text-white shadow-lg"
@@ -184,13 +185,14 @@ export default function Sidebar({ org, session, projects: initialProjects = [] }
               {(session?.user?.name || "U").charAt(0).toUpperCase()}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-xs font-medium text-zinc-200">
+              <p className="truncate text-xs font-medium text-zinc-900 dark:text-zinc-200">
                 {session?.user?.name}
               </p>
               <p className="truncate text-[10px] text-zinc-500 capitalize">
                 {session?.user?.role}
               </p>
             </div>
+            <ThemeToggle />
           </div>
         </div>
       </aside>

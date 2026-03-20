@@ -16,7 +16,7 @@ const ROLE_BADGE = {
   admin: "bg-rose-500/15 text-rose-400 border-rose-500/30",
   manager: "bg-amber-500/15 text-amber-400 border-amber-500/30",
   member: "bg-sky-500/15 text-sky-400 border-sky-500/30",
-  client: "bg-zinc-500/15 text-zinc-400 border-zinc-500/30",
+  client: "bg-zinc-500/15 text-zinc-600 dark:text-zinc-600 dark:text-zinc-400 border-zinc-500/30",
 };
 
 export default function TeamProgressSection({ orgId }) {
@@ -63,14 +63,14 @@ export default function TeamProgressSection({ orgId }) {
 
   if (loading) {
     return (
-      <section className="rounded-2xl border border-zinc-800/80 bg-zinc-900/40 p-5">
-        <h3 className="flex items-center gap-2 text-sm font-medium text-zinc-200 mb-4">
+      <section className="rounded-2xl border border-zinc-200 dark:border-zinc-800/80 bg-zinc-50/80 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/40 p-5">
+        <h3 className="flex items-center gap-2 text-sm font-medium text-zinc-800 dark:text-zinc-200 mb-4">
           <BarChart3 className="h-4 w-4 text-violet-400" />
           Team Progress
         </h3>
         <div className="animate-pulse space-y-4">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-24 rounded-xl bg-zinc-800/50" />
+            <div key={i} className="h-24 rounded-xl bg-zinc-200 dark:bg-zinc-800/50" />
           ))}
         </div>
       </section>
@@ -80,9 +80,9 @@ export default function TeamProgressSection({ orgId }) {
   if (members.length === 0) return null;
 
   return (
-    <section className="rounded-2xl border border-zinc-800/80 bg-zinc-900/40 p-5">
+    <section className="rounded-2xl border border-zinc-200 dark:border-zinc-800/80 bg-zinc-50/80 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/40 p-5">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="flex items-center gap-2 text-sm font-medium text-zinc-200">
+        <h3 className="flex items-center gap-2 text-sm font-medium text-zinc-800 dark:text-zinc-200">
           <BarChart3 className="h-4 w-4 text-violet-400" />
           Team Progress
         </h3>
@@ -100,7 +100,7 @@ export default function TeamProgressSection({ orgId }) {
             <Link
               key={m.id}
               href={`/dashboard/members/${m.id}`}
-              className="block rounded-xl border border-zinc-800/50 bg-zinc-950/40 p-4 transition-all hover:border-zinc-700 hover:bg-zinc-900/60"
+              className="block rounded-xl border border-zinc-200 dark:border-zinc-800/50 bg-white dark:bg-zinc-950/40 p-4 transition-all hover:border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 hover:bg-zinc-50/90 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/60"
             >
               {/* Header row */}
               <div className="flex items-center justify-between">
@@ -116,7 +116,7 @@ export default function TeamProgressSection({ orgId }) {
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <p className="text-sm font-medium text-zinc-200">{m.name}</p>
+                      <p className="text-sm font-medium text-zinc-800 dark:text-zinc-200">{m.name}</p>
                       <span
                         className={`inline-flex rounded-full border px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide ${
                           ROLE_BADGE[m.role] || ROLE_BADGE.member
@@ -148,12 +148,12 @@ export default function TeamProgressSection({ orgId }) {
                 <div className="mt-3">
                   <div className="flex items-center justify-between mb-1.5">
                     <span className="text-[10px] text-zinc-500">Tasks</span>
-                    <span className="text-[10px] font-semibold text-zinc-300">
+                    <span className="text-[10px] font-semibold text-zinc-700 dark:text-zinc-700 dark:text-zinc-300">
                       {taskStats.done}/{taskStats.total} done ·{" "}
                       {taskStats.completionRate}%
                     </span>
                   </div>
-                  <div className="flex h-1.5 overflow-hidden rounded-full bg-zinc-800">
+                  <div className="flex h-1.5 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800">
                     {taskStats.done > 0 && (
                       <div
                         className="bg-emerald-500 transition-all duration-700"
@@ -193,7 +193,7 @@ export default function TeamProgressSection({ orgId }) {
                     <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
                     In Progress {taskStats.inProgress}
                   </span>
-                  <span className="flex items-center gap-1 text-zinc-400">
+                  <span className="flex items-center gap-1 text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">
                     <span className="h-1.5 w-1.5 rounded-full bg-zinc-500" />
                     Todo {taskStats.todo}
                   </span>

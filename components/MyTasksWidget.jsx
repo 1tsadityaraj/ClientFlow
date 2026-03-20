@@ -40,14 +40,14 @@ export default function MyTasksWidget() {
 
   if (loading) {
     return (
-      <section className="rounded-2xl border border-zinc-800/80 bg-zinc-900/40 p-5">
-        <h3 className="flex items-center gap-2 text-sm font-semibold text-zinc-200 mb-4">
+      <section className="rounded-2xl border border-zinc-200 dark:border-zinc-800/80 bg-zinc-50/80 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/40 p-5">
+        <h3 className="flex items-center gap-2 text-sm font-semibold text-zinc-800 dark:text-zinc-200 mb-4">
           <CheckCircle2 className="h-4 w-4 text-brand-primary" />
           My Tasks
         </h3>
         <div className="animate-pulse space-y-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-12 rounded-xl bg-zinc-800/50" />
+            <div key={i} className="h-12 rounded-xl bg-zinc-200 dark:bg-zinc-800/50" />
           ))}
         </div>
       </section>
@@ -55,9 +55,9 @@ export default function MyTasksWidget() {
   }
 
   return (
-    <section className="rounded-2xl border border-zinc-800/80 bg-zinc-900/40 p-5">
+    <section className="rounded-2xl border border-zinc-200 dark:border-zinc-800/80 bg-zinc-50/80 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/40 p-5">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="flex items-center gap-2 text-sm font-semibold text-zinc-200">
+        <h3 className="flex items-center gap-2 text-sm font-semibold text-zinc-800 dark:text-zinc-200">
           <CheckCircle2 className="h-4 w-4 text-brand-primary" />
           My Tasks
         </h3>
@@ -78,7 +78,7 @@ export default function MyTasksWidget() {
             <Link
               key={task.id}
               href={`/dashboard/projects/${task.projectId}`}
-              className="group flex items-start gap-3 rounded-xl border border-zinc-800/50 bg-zinc-900/30 p-3 transition-all hover:border-zinc-700 hover:bg-zinc-800/40"
+              className="group flex items-start gap-3 rounded-xl border border-zinc-200 dark:border-zinc-800/50 bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/30 p-3 transition-all hover:border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 hover:bg-zinc-200 dark:bg-zinc-800/40"
             >
               <span
                 className="mt-1 h-2 w-2 rounded-full flex-shrink-0"
@@ -87,7 +87,7 @@ export default function MyTasksWidget() {
                 }}
               />
               <div className="min-w-0 flex-1">
-                <p className="truncate text-xs font-medium text-zinc-200 group-hover:text-white">
+                <p className="truncate text-xs font-medium text-zinc-800 dark:text-zinc-200 group-hover:text-white">
                   {task.title}
                 </p>
                 <p className="mt-0.5 text-[10px] text-zinc-500">

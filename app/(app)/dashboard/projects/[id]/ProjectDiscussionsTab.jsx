@@ -43,7 +43,7 @@ function formatTime(dateStr) {
 
 function DiscussionSkeleton() {
   return (
-    <div className="animate-pulse rounded-xl border border-zinc-800 p-4">
+    <div className="animate-pulse rounded-xl border border-zinc-200 dark:border-zinc-800 p-4">
       <div className="flex gap-3">
         <div className="h-8 w-8 rounded-full bg-zinc-700" />
         <div className="flex-1 space-y-2">
@@ -164,7 +164,7 @@ export default function ProjectDiscussionsTab({ projectId }) {
     <div className="space-y-5">
       <div className="flex items-center gap-2">
         <MessageSquare className="h-4 w-4 text-brand-primary" />
-        <h2 className="text-sm font-medium text-zinc-300">
+        <h2 className="text-sm font-medium text-zinc-700 dark:text-zinc-700 dark:text-zinc-300">
           Discussions
           <span className="ml-2 text-zinc-500">
             ({optimisticComments.length})
@@ -179,7 +179,7 @@ export default function ProjectDiscussionsTab({ projectId }) {
           return (
             <div
               key={c.id}
-              className={`group flex gap-3 rounded-xl border border-zinc-800/80 bg-zinc-900/60 p-4 transition-all hover:border-zinc-700/80 ${
+              className={`group flex gap-3 rounded-xl border border-zinc-200 dark:border-zinc-800/80 bg-zinc-50/90 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/60 p-4 transition-all hover:border-zinc-300 dark:border-zinc-300 dark:border-zinc-700/80 ${
                 c._sending ? "opacity-60" : ""
               }`}
             >
@@ -194,7 +194,7 @@ export default function ProjectDiscussionsTab({ projectId }) {
                 <div className="flex items-center gap-2 mb-1">
                   <span
                     className={`text-xs font-semibold ${
-                      isOwn ? "text-brand-primary" : "text-zinc-200"
+                      isOwn ? "text-brand-primary" : "text-zinc-800 dark:text-zinc-200"
                     }`}
                   >
                     {c.user?.name ?? "Unknown"}
@@ -215,7 +215,7 @@ export default function ProjectDiscussionsTab({ projectId }) {
                     )}
                   </span>
                 </div>
-                <p className="whitespace-pre-wrap text-sm leading-relaxed text-zinc-300 break-words">
+                <p className="whitespace-pre-wrap text-sm leading-relaxed text-zinc-700 dark:text-zinc-700 dark:text-zinc-300 break-words">
                   {c.body}
                 </p>
               </div>
@@ -224,9 +224,9 @@ export default function ProjectDiscussionsTab({ projectId }) {
         })}
 
         {optimisticComments.length === 0 && (
-          <div className="rounded-2xl border border-dashed border-zinc-700 p-8 text-center">
+          <div className="rounded-2xl border border-dashed border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 p-8 text-center">
             <MessageSquare className="mx-auto h-8 w-8 text-zinc-600" />
-            <p className="mt-2 text-sm text-zinc-400 font-medium">
+            <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-600 dark:text-zinc-400 font-medium">
               No discussions yet
             </p>
             <p className="mt-1 text-xs text-zinc-500">
@@ -241,7 +241,7 @@ export default function ProjectDiscussionsTab({ projectId }) {
       <Can permission="comment">
         <form
           onSubmit={handleSubmit}
-          className="flex items-end gap-3 rounded-2xl border border-zinc-800 bg-zinc-900/60 px-4 py-3 transition-colors focus-within:border-brand-primary/50 focus-within:shadow-lg focus-within:shadow-brand-primary/5"
+          className="flex items-end gap-3 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/90 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/60 px-4 py-3 transition-colors focus-within:border-brand-primary/50 focus-within:shadow-lg focus-within:shadow-brand-primary/5"
         >
           <textarea
             ref={inputRef}

@@ -68,12 +68,12 @@ export default function SignupPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-zinc-950 px-4">
-      <div className="w-full max-w-lg rounded-3xl border border-zinc-800 bg-zinc-900/60 p-8 shadow-xl shadow-black/50">
+    <main className="flex min-h-screen items-center justify-center bg-white dark:bg-zinc-950 px-4">
+      <div className="w-full max-w-lg rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/90 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/60 p-8 shadow-xl shadow-black/50">
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-zinc-500">
           Get started
         </p>
-        <h1 className="mt-2 text-xl font-semibold text-zinc-50">
+        <h1 className="mt-2 text-xl font-semibold text-zinc-900 dark:text-zinc-900 dark:text-zinc-50">
           Create your first workspace
         </h1>
         <form
@@ -83,7 +83,7 @@ export default function SignupPage() {
           {step === 1 && (
             <>
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-zinc-300">
+                <label className="text-xs font-medium text-zinc-700 dark:text-zinc-700 dark:text-zinc-300">
                   Agency name
                 </label>
                 <input
@@ -97,14 +97,14 @@ export default function SignupPage() {
                     setSlugAvailable(null);
                   }}
                   onBlur={() => checkSlug(form.orgSlug)}
-                  className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-zinc-50 outline-none focus:border-indigo-500"
+                  className="w-full rounded-lg border border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900 px-3 py-2 text-sm text-zinc-900 dark:text-zinc-900 dark:text-zinc-50 outline-none focus:border-indigo-500"
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-zinc-300">
+                <label className="text-xs font-medium text-zinc-700 dark:text-zinc-700 dark:text-zinc-300">
                   Workspace slug
                 </label>
-                <div className="flex items-center gap-2 rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-zinc-500">
+                <div className="flex items-center gap-2 rounded-lg border border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900 px-3 py-2 text-sm text-zinc-500">
                   <span className="hidden text-xs text-zinc-500 sm:inline">
                     clientflow.app/
                   </span>
@@ -120,9 +120,9 @@ export default function SignupPage() {
                       setSlugAvailable(null);
                     }}
                     onBlur={(e) => checkSlug(e.target.value)}
-                    className="flex-1 border-none bg-transparent text-sm text-zinc-50 outline-none"
+                    className="flex-1 border-none bg-transparent text-sm text-zinc-900 dark:text-zinc-900 dark:text-zinc-50 outline-none"
                   />
-                  {checkingSlug && <span className="text-xs text-zinc-400">checking...</span>}
+                  {checkingSlug && <span className="text-xs text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">checking...</span>}
                   {!checkingSlug && slugAvailable === true && <span className="text-xs text-emerald-500">✓ Available</span>}
                   {!checkingSlug && slugAvailable === false && <span className="text-xs text-rose-500">✗ Already taken</span>}
                 </div>
@@ -133,7 +133,7 @@ export default function SignupPage() {
           {step === 2 && (
             <>
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-zinc-300">
+                <label className="text-xs font-medium text-zinc-700 dark:text-zinc-700 dark:text-zinc-300">
                   Your name
                 </label>
                 <input
@@ -141,11 +141,11 @@ export default function SignupPage() {
                   required
                   value={form.name}
                   onChange={(e) => updateField("name", e.target.value)}
-                  className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-zinc-50 outline-none focus:border-indigo-500"
+                  className="w-full rounded-lg border border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900 px-3 py-2 text-sm text-zinc-900 dark:text-zinc-900 dark:text-zinc-50 outline-none focus:border-indigo-500"
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-zinc-300">
+                <label className="text-xs font-medium text-zinc-700 dark:text-zinc-700 dark:text-zinc-300">
                   Work email
                 </label>
                 <input
@@ -153,11 +153,11 @@ export default function SignupPage() {
                   required
                   value={form.email}
                   onChange={(e) => updateField("email", e.target.value)}
-                  className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-zinc-50 outline-none focus:border-indigo-500"
+                  className="w-full rounded-lg border border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900 px-3 py-2 text-sm text-zinc-900 dark:text-zinc-900 dark:text-zinc-50 outline-none focus:border-indigo-500"
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-zinc-300">
+                <label className="text-xs font-medium text-zinc-700 dark:text-zinc-700 dark:text-zinc-300">
                   Password
                 </label>
                 <input
@@ -166,7 +166,7 @@ export default function SignupPage() {
                   minLength={8}
                   value={form.password}
                   onChange={(e) => updateField("password", e.target.value)}
-                  className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-zinc-50 outline-none focus:border-indigo-500"
+                  className="w-full rounded-lg border border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900 px-3 py-2 text-sm text-zinc-900 dark:text-zinc-900 dark:text-zinc-50 outline-none focus:border-indigo-500"
                 />
               </div>
             </>
@@ -199,7 +199,7 @@ export default function SignupPage() {
               <button
                 type="button"
                 onClick={() => setStep(step - 1)}
-                className="text-xs text-zinc-400 hover:text-zinc-200"
+                className="text-xs text-zinc-600 dark:text-zinc-600 dark:text-zinc-400 hover:text-zinc-800 dark:text-zinc-200"
               >
                 Back
               </button>

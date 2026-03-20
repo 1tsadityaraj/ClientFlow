@@ -47,17 +47,17 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-zinc-950 px-4">
-      <div className="w-full max-w-md rounded-3xl border border-zinc-800 bg-zinc-900/60 p-8 shadow-xl shadow-black/50 transition-all hover:bg-zinc-900/70">
-        <h1 className="text-xl font-semibold text-zinc-50">Log in</h1>
-        <p className="mt-1 text-sm text-zinc-400">
+    <main className="flex min-h-screen items-center justify-center bg-white dark:bg-zinc-950 px-4">
+      <div className="w-full max-w-md rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/90 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/60 p-8 shadow-xl shadow-black/50 transition-all hover:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/70">
+        <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-900 dark:text-zinc-50">Log in</h1>
+        <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">
           Access your ClientFlow workspace.
         </p>
         
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
           <div>
             <div className="flex items-center justify-between">
-              <label className="text-xs font-medium text-zinc-300">
+              <label className="text-xs font-medium text-zinc-700 dark:text-zinc-700 dark:text-zinc-300">
                 Email
               </label>
             </div>
@@ -67,12 +67,12 @@ export default function LoginPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-50 placeholder:text-zinc-600 outline-none ring-0 focus:border-brand-primary"
+              className="mt-1.5 w-full rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-3 py-2 text-sm text-zinc-900 dark:text-zinc-900 dark:text-zinc-50 placeholder:text-zinc-600 outline-none ring-0 focus:border-brand-primary"
             />
           </div>
           <div>
             <div className="flex items-center justify-between">
-              <label className="text-xs font-medium text-zinc-300">
+              <label className="text-xs font-medium text-zinc-700 dark:text-zinc-700 dark:text-zinc-300">
                 Password
               </label>
               <Link 
@@ -88,7 +88,7 @@ export default function LoginPage() {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-50 placeholder:text-zinc-600 outline-none ring-0 focus:border-brand-primary"
+              className="mt-1.5 w-full rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-3 py-2 text-sm text-zinc-900 dark:text-zinc-900 dark:text-zinc-50 placeholder:text-zinc-600 outline-none ring-0 focus:border-brand-primary"
             />
           </div>
 

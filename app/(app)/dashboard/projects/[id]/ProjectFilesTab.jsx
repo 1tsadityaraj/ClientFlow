@@ -6,7 +6,7 @@ import { FileText, Download, Upload } from "lucide-react";
 
 function FileSkeleton() {
   return (
-    <div className="flex animate-pulse items-center gap-3 rounded-xl border border-zinc-800 p-3">
+    <div className="flex animate-pulse items-center gap-3 rounded-xl border border-zinc-200 dark:border-zinc-800 p-3">
       <div className="h-8 w-8 rounded bg-zinc-700" />
       <div className="h-4 flex-1 rounded bg-zinc-700" />
       <div className="h-4 w-16 rounded bg-zinc-700" />
@@ -130,13 +130,13 @@ export default function ProjectFilesTab({ projectId }) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-medium text-zinc-300">Files</h2>
+        <h2 className="text-sm font-medium text-zinc-700 dark:text-zinc-700 dark:text-zinc-300">Files</h2>
         <Can permission="uploadFiles">
           <label 
             title={!uploadsEnabled ? "File uploads require S3 configuration" : ""}
             className={`flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-medium text-white transition-opacity ${
               !uploadsEnabled 
-                ? "bg-zinc-800 text-zinc-500 cursor-not-allowed" 
+                ? "bg-zinc-200 dark:bg-zinc-800 text-zinc-500 cursor-not-allowed" 
                 : "bg-brand-primary cursor-pointer hover:opacity-90"
             }`}
           >
@@ -161,11 +161,11 @@ export default function ProjectFilesTab({ projectId }) {
         {files.map((f) => (
           <li
             key={f.id}
-            className="flex items-center gap-3 rounded-xl border border-zinc-800 bg-zinc-900/60 p-3"
+            className="flex items-center gap-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/90 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/60 p-3"
           >
             <FileText className="h-5 w-5 shrink-0 text-zinc-500" />
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium text-zinc-50">
+              <p className="truncate text-sm font-medium text-zinc-900 dark:text-zinc-900 dark:text-zinc-50">
                 {f.name}
               </p>
               <p className="text-xs text-zinc-500">
@@ -178,7 +178,7 @@ export default function ProjectFilesTab({ projectId }) {
                 href={f.downloadUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex shrink-0 items-center gap-1 rounded border border-zinc-700 px-2 py-1 text-xs text-zinc-300 hover:bg-zinc-800"
+                className="flex shrink-0 items-center gap-1 rounded border border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 px-2 py-1 text-xs text-zinc-700 dark:text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:bg-zinc-800"
               >
                 <Download className="h-3.5 w-3.5" />
                 Download
@@ -189,7 +189,7 @@ export default function ProjectFilesTab({ projectId }) {
           </li>
         ))}
         {files.length === 0 && (
-          <li className="rounded-xl border border-dashed border-zinc-700 p-6 text-center text-sm text-zinc-500">
+          <li className="rounded-xl border border-dashed border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 p-6 text-center text-sm text-zinc-500">
             No files yet.
           </li>
         )}
