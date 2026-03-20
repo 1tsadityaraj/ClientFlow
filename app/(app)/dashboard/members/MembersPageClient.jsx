@@ -7,6 +7,7 @@ import { manageMember } from "@/actions/member";
 import { useSession } from "next-auth/react";
 import { Shield, Trash2, UserCog, CheckCircle2 } from "lucide-react";
 import Modal from "../../../../components/Modal";
+import Breadcrumb from "../../../../components/Breadcrumb";
 
 const ROLES = ["admin", "manager", "member", "client"];
 
@@ -173,6 +174,7 @@ export default function MembersPageClient() {
   return (
     <main className="min-h-screen bg-zinc-950 text-zinc-50">
       <div className="mx-auto max-w-5xl px-6 py-10">
+        <Breadcrumb />
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-xl font-semibold">Members</h1>

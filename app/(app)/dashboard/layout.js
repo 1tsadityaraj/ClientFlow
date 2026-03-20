@@ -1,5 +1,6 @@
 import { auth } from "../../../lib/auth.js";
 import { prisma } from "../../../lib/prisma.js";
+import MobileHeader from "@/components/MobileHeader";
 
 export default async function DashboardLayout({ children }) {
   const session = await auth();
@@ -25,8 +26,11 @@ export default async function DashboardLayout({ children }) {
           --brand-primary: ${primaryColor};
         }
       `}</style>
-      <div className="brand-scoped">
-        {children}
+      <div className="brand-scoped flex-1 h-screen flex flex-col">
+        <MobileHeader user={session?.user} />
+        <div className="flex-1 relative overflow-auto">
+          {children}
+        </div>
       </div>
     </>
   );

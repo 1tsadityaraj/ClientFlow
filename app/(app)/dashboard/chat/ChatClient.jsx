@@ -14,6 +14,7 @@ import {
   User,
 } from "lucide-react";
 import { getPusherClient } from "@/lib/pusherClient";
+import Breadcrumb from "@/components/Breadcrumb";
 
 const MAX_CHAR_LIMIT = 2000;
 
@@ -265,6 +266,7 @@ export default function ChatClient({ currentUser }) {
 
       {/* Main Chat Area */}
       <div className="flex flex-1 flex-col min-w-0">
+        <Breadcrumb />
         <header className="flex h-16 shrink-0 items-center justify-between border-b border-zinc-800/80 bg-zinc-950/50 px-6 backdrop-blur-md">
           <div className="flex items-center gap-4">
             <Link

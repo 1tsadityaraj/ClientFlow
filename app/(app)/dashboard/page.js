@@ -22,6 +22,7 @@ import {
 import CreateProjectButton from "./CreateProjectButton";
 import Sidebar from "@/components/Sidebar";
 import DashboardActivityFeed from "./DashboardActivityFeed";
+import Breadcrumb from "@/components/Breadcrumb";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -151,6 +152,7 @@ export default async function DashboardPage() {
 
         {/* Main Content */}
         <div className="flex-1 overflow-auto">
+          <Breadcrumb />
           {/* Top Bar */}
           <header className="sticky top-0 z-10 flex items-center justify-between border-b border-zinc-800/80 bg-zinc-950/80 px-6 py-4 backdrop-blur-xl lg:px-8">
             <div>

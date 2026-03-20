@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Can } from "../../../../components/Can";
 import { getPlan } from "../../../../lib/plans.js";
+import Breadcrumb from "../../../../components/Breadcrumb";
 
 function SettingsSkeleton() {
   return (
@@ -134,6 +135,7 @@ export default function SettingsForm({ org }) {
   return (
     <main className="min-h-screen bg-zinc-950 text-zinc-50">
       <div className="mx-auto max-w-4xl space-y-8 px-6 py-10">
+        <Breadcrumb />
         {upgradedToast && (
           <div className="rounded-xl border border-emerald-800 bg-emerald-950/60 px-4 py-3 text-sm text-emerald-200 flex items-center justify-between">
             <span>You’ve been upgraded to Pro. Thanks!</span>

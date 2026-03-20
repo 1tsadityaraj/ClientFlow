@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { getActivityDescription, getActivityMeta } from "@/lib/activity";
 import Sidebar from "@/components/Sidebar";
+import Breadcrumb from "@/components/Breadcrumb";
 import { 
   Activity, 
   Filter, 
@@ -141,7 +142,8 @@ export default function ActivityLogPage() {
       {/* Assuming Sidebar handles its own if needed or we pass the projects we fetched */}
       <Sidebar session={session} projects={projects} org={{ name: session.user.orgName }} />
 
-      <div className="flex-1 overflow-auto">
+      <div className="flex-1 overflow-auto bg-zinc-950">
+        <Breadcrumb />
         <header className="sticky top-0 z-10 border-b border-zinc-800/80 bg-zinc-950/80 px-6 py-6 backdrop-blur-xl lg:px-10">
           <div className="flex items-center justify-between">
             <div>
@@ -285,8 +287,8 @@ export default function ActivityLogPage() {
             {!loading && logs.length === 0 && (
               <div className="py-20 text-center">
                 <Activity className="mx-auto h-10 w-10 text-zinc-700" />
-                <h3 className="mt-4 text-sm font-medium text-zinc-300">No activity found</h3>
-                <p className="mt-1 text-xs text-zinc-500">Try adjusting your filters</p>
+                <h3 className="mt-4 text-sm font-medium text-zinc-300">No activity yet</h3>
+                <p className="mt-1 text-xs text-zinc-500">Start by creating a project.</p>
               </div>
             )}
 

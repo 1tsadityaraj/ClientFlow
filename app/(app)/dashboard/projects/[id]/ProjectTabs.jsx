@@ -18,6 +18,7 @@ import {
   Users,
 } from "lucide-react";
 import Modal from "../../../../../components/Modal";
+import Breadcrumb from "../../../../../components/Breadcrumb";
 
 const TABS = [
   { id: "tasks", label: "Tasks", icon: CheckCircle2 },
@@ -63,6 +64,7 @@ export default function ProjectTabs({ project, userRole }) {
   return (
     <main className="min-h-screen bg-zinc-950 text-zinc-50">
       <div className="mx-auto max-w-5xl px-6 py-10">
+        <Breadcrumb project={project} />
         {/* Back link */}
         <Link
           href="/dashboard"
