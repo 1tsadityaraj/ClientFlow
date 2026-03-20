@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  Home,
   LayoutDashboard,
   Users,
   MessageCircle,
@@ -110,11 +109,6 @@ export default function Sidebar({ org, session, projects: initialProjects = [] }
 
         <div className="flex-1 overflow-y-auto overflow-x-hidden">
           <nav className="space-y-1 px-3 py-4">
-            <SidebarLink
-              href="/"
-              icon={<Home className="h-4 w-4" />}
-              label="Home"
-            />
             <SidebarLink
               href="/dashboard"
               icon={<LayoutDashboard className="h-4 w-4" />}
