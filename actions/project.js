@@ -6,6 +6,7 @@ import { assertPermission } from "../lib/permissions.js";
 import { logAudit, ACTIONS } from "../lib/audit.js";
 import { createProjectSchema, validate } from "../lib/validations.js";
 import { revalidatePath } from "next/cache";
+import { withOrgScope } from "../lib/orgScope.js";
 
 export async function createProject(formData) {
   console.log("[ACTION/PROJECT] createProject called with:", JSON.stringify(formData));
@@ -26,9 +27,12 @@ export async function createProject(formData) {
   }
 
   try {
-    const project = await prisma.project.create({
+    const scopedPrisma = !!withOrgScope ? withOrgScope(session.user.orgId) : prisma;
+    
+    // Instead of raw prisma.project, use scoped
+    const project = await scopedPrisma.project.create({
       data: {
-        orgId: session.user.orgId,
+        orgId: session.user.orgId, // needed because create withOrgScope only sets where not data
         name: data.name,
         description: data.description || null,
         color: data.color || "#6366f1",

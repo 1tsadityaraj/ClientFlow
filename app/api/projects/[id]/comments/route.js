@@ -5,6 +5,7 @@ import { assertPermission } from "@/lib/permissions.js";
 import { logAudit, ACTIONS } from "@/lib/audit.js";
 import { logActivity, ACTION_TYPES } from "@/lib/activity.js";
 import { createCommentSchema, validate } from "@/lib/validations.js";
+import { withOrgScope } from "@/lib/orgScope.js";
 
 export async function GET(_request, { params }) {
   const resolvedParams = await params;
@@ -14,8 +15,9 @@ export async function GET(_request, { params }) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const project = await prisma.project.findFirst({
-    where: { id: id, orgId: session.user.orgId },
+  const scopedPrisma = withOrgScope(session.user.orgId);
+  const project = await scopedPrisma.project.findFirst({
+    where: { id: id },
   });
 
   if (!project) {
@@ -29,9 +31,8 @@ export async function GET(_request, { params }) {
     return Response.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const comments = await prisma.comment.findMany({
+  const comments = await scopedPrisma.comment.findMany({
     where: {
-      orgId: session.user.orgId,
       projectId: id,
     },
     include: { user: { select: { name: true } } },
@@ -55,8 +56,9 @@ export async function POST(request, { params }) {
     return Response.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const project = await prisma.project.findFirst({
-    where: { id: id, orgId: session.user.orgId },
+  const scopedPrisma = withOrgScope(session.user.orgId);
+  const project = await scopedPrisma.project.findFirst({
+    where: { id: id },
   });
 
   if (!project) {
@@ -77,7 +79,7 @@ export async function POST(request, { params }) {
     return Response.json({ error }, { status: 422 });
   }
 
-  const comment = await prisma.comment.create({
+  const comment = await scopedPrisma.comment.create({
     data: {
       orgId: session.user.orgId,
       projectId: project.id,

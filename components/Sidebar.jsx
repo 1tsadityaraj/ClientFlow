@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { getPusherClient } from "@/lib/pusherClient";
 import { ThemeToggle } from "./ThemeToggle";
+import { Shield } from "./Shield";
 
 export default function Sidebar({ org, session, projects: initialProjects = [] }) {
   const pathname = usePathname();
@@ -115,11 +116,13 @@ export default function Sidebar({ org, session, projects: initialProjects = [] }
               icon={<LayoutDashboard className="h-4 w-4" />}
               label="Dashboard"
             />
-            <SidebarLink
-              href="/dashboard/members"
-              icon={<Users className="h-4 w-4" />}
-              label="Members"
-            />
+            <Shield blockRoles={["client"]}>
+              <SidebarLink
+                href="/dashboard/members"
+                icon={<Users className="h-4 w-4" />}
+                label="Members"
+              />
+            </Shield>
             {(role === "admin" || role === "manager") && (
               <SidebarLink
                 href="/dashboard/activity"

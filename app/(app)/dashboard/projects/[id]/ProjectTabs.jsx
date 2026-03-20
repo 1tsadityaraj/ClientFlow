@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Can } from "../../../../../components/Can";
+import { Shield } from "../../../../../components/Shield";
 import ProjectTasksTab from "./ProjectTasksTab";
 import ProjectFilesTab from "./ProjectFilesTab";
 import ProjectDiscussionsTab from "./ProjectDiscussionsTab";
@@ -119,7 +120,7 @@ export default function ProjectTabs({ project, userRole }) {
           </div>
 
           {/* Delete Project */}
-          {canDelete && (
+          <Shield blockRoles={["client", "member", "manager"]}>
             <button
               type="button"
               onClick={() => setShowDeleteConfirm(true)}
@@ -128,7 +129,7 @@ export default function ProjectTabs({ project, userRole }) {
               <Trash2 className="h-3 w-3" />
               Delete
             </button>
-          )}
+          </Shield>
         </div>
 
         {/* Dynamic Progress Bar */}

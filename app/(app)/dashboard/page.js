@@ -26,6 +26,7 @@ import Breadcrumb from "@/components/Breadcrumb";
 import TeamProgressSection from "@/components/TeamProgressSection";
 import MyStatusWidget from "@/components/MyStatusWidget";
 import MyTasksWidget from "@/components/MyTasksWidget";
+import { Shield } from "@/components/Shield";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -67,10 +68,27 @@ export default async function DashboardPage() {
     prisma.org.findFirst({ where: { id: session.user.orgId } }),
   ]);
 
-  const activeCount = projects.filter((p) => p.status === "active").length;
-  const completedCount = projects.filter(
-    (p) => p.status === "completed"
-  ).length;
+  const orgId = session.user.orgId;
+
+  // --- Dashboard Intelligence Stats ---
+  // Total Projects
+  const totalProjects = await prisma.project.count({
+    where: { orgId },
+  });
+  const activeCount = await prisma.project.count({
+    where: { orgId, status: "active" },
+  });
+
+  // Active Tasks
+  const activeTasksCount = await prisma.task.count({
+    where: {
+      orgId,
+      status: { in: ["TODO", "IN_PROGRESS", "IN_REVIEW"] }
+    },
+  });
+
+  // Team Size
+  const teamSize = members.length;
   const clientCount = members.filter((m) => m.role === "client").length;
 
   const totalTasks = tasks.length;
@@ -177,13 +195,15 @@ export default async function DashboardPage() {
                 <MessageCircle className="h-3.5 w-3.5" />
                 Team Chat
               </Link>
-              <Link
-                href="/dashboard/members"
-                className="flex items-center gap-2 rounded-full border border-zinc-300 dark:border-zinc-300 dark:border-zinc-700/80 px-4 py-2 text-xs font-medium text-zinc-700 dark:text-zinc-700 dark:text-zinc-300 transition-all hover:border-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800/50 hover:text-white lg:hidden"
-              >
-                <Users className="h-3.5 w-3.5" />
-                Members
-              </Link>
+              <Shield blockRoles={["client"]}>
+                <Link
+                  href="/dashboard/members"
+                  className="flex items-center gap-2 rounded-full border border-zinc-300 dark:border-zinc-300 dark:border-zinc-700/80 px-4 py-2 text-xs font-medium text-zinc-700 dark:text-zinc-700 dark:text-zinc-300 transition-all hover:border-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800/50 hover:text-white lg:hidden"
+                >
+                  <Users className="h-3.5 w-3.5" />
+                  Members
+                </Link>
+              </Shield>
               <Link
                 href="/dashboard/settings"
                 className="flex items-center gap-2 rounded-full border border-zinc-300 dark:border-zinc-300 dark:border-zinc-700/80 px-4 py-2 text-xs font-medium text-zinc-700 dark:text-zinc-700 dark:text-zinc-300 transition-all hover:border-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800/50 hover:text-white lg:hidden"
@@ -199,25 +219,25 @@ export default async function DashboardPage() {
             <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
               <StatCard
                 icon={<FolderKanban className="h-5 w-5" />}
-                label="Active Projects"
-                value={activeCount}
-                detail={`${completedCount} completed`}
+                label="Total Projects"
+                value={totalProjects}
+                detail={`${activeCount} active`}
                 gradient="from-brand-primary/20 to-brand-primary/5"
                 iconColor="text-brand-primary"
               />
               <StatCard
-                icon={<CheckCircle2 className="h-5 w-5" />}
-                label="Tasks Done"
-                value={doneTasks}
-                detail={`${totalTasks} total`}
-                gradient="from-emerald-500/20 to-teal-500/20"
-                iconColor="text-emerald-400"
+                icon={<Activity className="h-5 w-5" />}
+                label="Active Tasks"
+                value={activeTasksCount}
+                detail="Across workspace"
+                gradient="from-amber-500/20 to-orange-500/20"
+                iconColor="text-amber-400"
               />
               <StatCard
                 icon={<Users className="h-5 w-5" />}
-                label="Team Members"
-                value={members.length}
-                detail={`${clientCount} clients`}
+                label="Team Size"
+                value={teamSize}
+                detail="Workspace members"
                 gradient="from-sky-500/20 to-blue-500/20"
                 iconColor="text-sky-400"
               />
@@ -392,12 +412,17 @@ export default async function DashboardPage() {
                   {projects.length === 0 && (
                     <div className="col-span-2 rounded-2xl border border-dashed border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 p-8 text-center">
                       <FolderKanban className="mx-auto h-8 w-8 text-zinc-600" />
-                      <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">
-                        No projects yet
+                      <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-600 dark:text-zinc-400 font-medium">
+                        No projects found
                       </p>
-                      <p className="mt-1 text-xs text-zinc-500">
-                        Create your first project to get started
+                      <p className="mt-1 text-xs text-zinc-500 mb-4">
+                        Add your first project to get started
                       </p>
+                      {canCreateProject && (
+                        <div className="flex justify-center">
+                          <CreateProjectButton clientMembers={clientMembers} />
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Can } from "../../../../components/Can";
 import { manageMember } from "@/actions/member";
 import { useSession } from "next-auth/react";
-import { Shield, Trash2, UserCog, CheckCircle2, LayoutGrid, Table2 } from "lucide-react";
+import { Shield, Trash2, UserCog, CheckCircle2, LayoutGrid, Table2, MoreVertical, Edit2 } from "lucide-react";
 import Modal from "../../../../components/Modal";
 import Breadcrumb from "../../../../components/Breadcrumb";
 import WorkloadView from "../../../../components/WorkloadView";
@@ -272,89 +272,18 @@ export default function MembersPageClient() {
               </tr>
             </thead>
             <tbody>
-              {members.map((m) => {
-                const isSelf = m.id === currentUserId;
-                return (
-                  <tr
-                    key={m.id}
-                    className="border-b border-zinc-200 dark:border-zinc-800/80 last:border-0 transition-colors hover:bg-zinc-50/80 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/40"
-                  >
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-brand-primary/30 to-brand-primary/10 text-xs font-bold text-brand-primary">
-                          {m.name.charAt(0).toUpperCase()}
-                        </div>
-                        <div>
-                          <Link href={`/dashboard/members/${m.id}`} className="text-sm font-medium text-zinc-900 dark:text-zinc-900 dark:text-zinc-50 hover:text-brand-primary transition-colors">
-                            {m.name}
-                            {isSelf && (
-                              <span className="ml-1.5 text-[10px] text-zinc-500">
-                                (you)
-                              </span>
-                            )}
-                          </Link>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">{m.email}</td>
-                    <td className="px-4 py-3">
-                      {isAdmin && !isSelf ? (
-                        <select
-                          value={m.role}
-                          disabled={isPending}
-                          onChange={(e) =>
-                            handleRoleChange(m.id, e.target.value)
-                          }
-                          className="cursor-pointer rounded-lg border border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900 px-2.5 py-1.5 text-xs text-zinc-800 dark:text-zinc-200 outline-none transition-all hover:border-zinc-600 focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/50"
-                        >
-                          {ROLES.map((r) => (
-                            <option key={r} value={r}>
-                              {r.charAt(0).toUpperCase() + r.slice(1)}
-                            </option>
-                          ))}
-                        </select>
-                      ) : (
-                        <span
-                          className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
-                            ROLE_BADGE[m.role] || ROLE_BADGE.member
-                          }`}
-                        >
-                          {m.role === "admin" && (
-                            <Shield className="h-3 w-3" />
-                          )}
-                          {m.role}
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                      {m.id !== currentUserId ? (
-                        <Can permission="manageMembers">
-                          <button
-                            onClick={() => handleRemoveMember(m.id, m.name)}
-                            disabled={removingId === m.id}
-                            style={{
-                              padding: '5px 12px',
-                              borderRadius: 6,
-                              border: '1px solid rgba(239,68,68,0.3)',
-                              background: 'rgba(239,68,68,0.1)',
-                              color: removingId === m.id ? '#6b6b8a' : '#ef4444',
-                              cursor: removingId === m.id ? 'not-allowed' : 'pointer',
-                              fontSize: 12,
-                              fontWeight: 600,
-                              fontFamily: "'Syne', sans-serif",
-                              transition: 'all 0.15s',
-                            }}
-                          >
-                            {removingId === m.id ? 'Removing...' : 'Remove'}
-                          </button>
-                        </Can>
-                      ) : (
-                        <span className="text-zinc-600">—</span>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })}
+              {members.map((m) => (
+                <MemberRow
+                  key={m.id}
+                  m={m}
+                  currentUserId={currentUserId}
+                  isAdmin={isAdmin}
+                  isPending={isPending}
+                  handleRoleChange={handleRoleChange}
+                  handleRemoveMember={handleRemoveMember}
+                  removingId={removingId}
+                />
+              ))}
 
               {/* Pending Invites */}
               {invites.map((i) => (
@@ -442,6 +371,114 @@ export default function MembersPageClient() {
         )}
       </div>
     </main>
+  );
+}
+
+// ── Member Row ────────────────────────────────────────────
+function MemberRow({
+  m,
+  currentUserId,
+  isAdmin,
+  isPending,
+  handleRoleChange,
+  handleRemoveMember,
+  removingId,
+}) {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const isSelf = m.id === currentUserId;
+
+  return (
+    <tr className="border-b border-zinc-200 dark:border-zinc-800/80 last:border-0 transition-colors hover:bg-zinc-50/80 dark:bg-zinc-900/40 relative">
+      <td className="px-4 py-3">
+        <div className="flex items-center gap-3">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-brand-primary/30 to-brand-primary/10 text-xs font-bold text-brand-primary">
+            {m.name.charAt(0).toUpperCase()}
+          </div>
+          <div>
+            <Link
+              href={`/dashboard/members/${m.id}`}
+              className="text-sm font-medium text-zinc-900 dark:text-zinc-50 hover:text-brand-primary transition-colors"
+            >
+              {m.name}
+              {isSelf && (
+                <span className="ml-1.5 text-[10px] text-zinc-500">(you)</span>
+              )}
+            </Link>
+          </div>
+        </div>
+      </td>
+      <td className="px-4 py-3 text-zinc-600 dark:text-zinc-400">{m.email}</td>
+      <td className="px-4 py-3">
+        <span
+          className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
+            ROLE_BADGE[m.role] || ROLE_BADGE.member
+          }`}
+        >
+          {m.role === "admin" && <Shield className="h-3 w-3" />}
+          {m.role}
+        </span>
+      </td>
+      <td className="px-4 py-3 text-right">
+        {!isSelf ? (
+          <div className="relative inline-block text-left">
+            <button
+              onClick={() => setDropdownOpen(!dropdownOpen)}
+              className="rounded-lg p-1.5 text-zinc-500 hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors"
+            >
+              <MoreVertical className="h-4 w-4" />
+            </button>
+            {dropdownOpen && (
+              <>
+                <div
+                  className="fixed inset-0 z-10"
+                  onClick={() => setDropdownOpen(false)}
+                />
+                <div className="absolute right-0 z-20 mt-2 w-48 origin-top-right rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-1 shadow-lg backdrop-blur-md">
+                  {isAdmin && (
+                    <div className="px-2 py-1.5 text-xs text-zinc-500 font-medium border-b border-zinc-200 dark:border-zinc-800 mb-1">
+                      Edit Role
+                    </div>
+                  )}
+                  {isAdmin && ROLES.map((r) => (
+                    <button
+                      key={r}
+                      disabled={isPending}
+                      onClick={() => {
+                        handleRoleChange(m.id, r);
+                        setDropdownOpen(false);
+                      }}
+                      className={`w-full flex items-center justify-between rounded-lg px-2 py-2 text-xs transition-colors ${
+                        m.role === r
+                          ? "bg-brand-primary/10 text-brand-primary font-semibold"
+                          : "text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-900/60"
+                      }`}
+                    >
+                      <span className="capitalize">{r}</span>
+                      {m.role === r && <CheckCircle2 className="h-3 w-3" />}
+                    </button>
+                  ))}
+                  <Can permission="manageMembers">
+                    <button
+                      disabled={removingId === m.id}
+                      onClick={() => {
+                        handleRemoveMember(m.id, m.name);
+                        setDropdownOpen(false);
+                      }}
+                      className="mt-1 w-full flex items-center gap-2 rounded-lg px-2 py-2 text-xs font-semibold text-rose-500 hover:bg-rose-500/10 transition-colors"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                      {removingId === m.id ? "Removing..." : "Remove Member"}
+                    </button>
+                  </Can>
+                </div>
+              </>
+            )}
+          </div>
+        ) : (
+          <span className="text-zinc-600">—</span>
+        )}
+      </td>
+    </tr>
   );
 }
 
