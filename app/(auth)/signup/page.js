@@ -266,6 +266,7 @@ export default function SignupPage() {
                   <input
                     type="text"
                     required
+                    autoComplete="organization"
                     value={form.orgName}
                     onChange={(e) => {
                       updateField("orgName", e.target.value)
@@ -368,6 +369,7 @@ export default function SignupPage() {
                   <input
                     type="text"
                     required
+                    autoComplete="name"
                     value={form.name}
                     onChange={(e) => updateField("name", e.target.value)}
                     style={{
@@ -404,6 +406,7 @@ export default function SignupPage() {
                   <input
                     type="email"
                     required
+                    autoComplete="email"
                     value={form.email}
                     onChange={(e) => updateField("email", e.target.value)}
                     style={{
@@ -441,6 +444,7 @@ export default function SignupPage() {
                     type="password"
                     required
                     minLength={8}
+                    autoComplete="new-password"
                     value={form.password}
                     onChange={(e) => updateField("password", e.target.value)}
                     style={{
@@ -497,12 +501,15 @@ export default function SignupPage() {
                   padding: "12px 24px",
                   background: loading || (step === 1 && slugAvailable === false)
                     ? "var(--border)"
-                    : "var(--accent)",
+                    : "linear-gradient(to right, #6366f1, #8b5cf6)",
                   color: loading || (step === 1 && slugAvailable === false)
                     ? "var(--text-muted)"
                     : "#ffffff",
                   border: "none",
-                  borderRadius: 8,
+                  borderRadius: 9999,
+                  boxShadow: loading || (step === 1 && slugAvailable === false)
+                    ? "none"
+                    : "0 10px 15px -3px rgba(99, 102, 241, 0.3), 0 4px 6px -4px rgba(99, 102, 241, 0.3)",
                   fontSize: 14,
                   fontWeight: 700,
                   cursor: loading || (step === 1 && slugAvailable === false) ? "not-allowed" : "pointer",
@@ -537,7 +544,7 @@ export default function SignupPage() {
             background: "var(--surface)",
             color: "var(--text-primary)",
             border: "1px solid var(--border)",
-            borderRadius: 8,
+            borderRadius: 9999,
             fontSize: 14,
             fontWeight: 600,
             textAlign: "center",

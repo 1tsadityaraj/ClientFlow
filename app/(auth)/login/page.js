@@ -237,6 +237,7 @@ export default function LoginPage() {
               </label>
               <input
                 type="email"
+                autoComplete="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 placeholder="alice@pixel.co"
@@ -287,6 +288,7 @@ export default function LoginPage() {
               </div>
               <input
                 type="password"
+                autoComplete="current-password"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 placeholder="••••••••••"
@@ -318,12 +320,15 @@ export default function LoginPage() {
                 padding: "12px",
                 background: loading || !email || !password
                   ? "var(--border)"
-                  : "var(--accent)",
+                  : "linear-gradient(to right, #6366f1, #8b5cf6)",
                 color: loading || !email || !password
                   ? "var(--text-muted)"
                   : "#ffffff",
                 border: "none",
-                borderRadius: 8,
+                borderRadius: 9999,
+                boxShadow: loading || !email || !password
+                  ? "none"
+                  : "0 10px 15px -3px rgba(99, 102, 241, 0.3), 0 4px 6px -4px rgba(99, 102, 241, 0.3)",
                 fontSize: 14,
                 fontWeight: 700,
                 cursor: loading || !email || !password ? "not-allowed" : "pointer",
@@ -358,7 +363,7 @@ export default function LoginPage() {
             background: "var(--surface)",
             color: "var(--text-primary)",
             border: "1px solid var(--border)",
-            borderRadius: 8,
+            borderRadius: 9999,
             fontSize: 14,
             fontWeight: 600,
             textAlign: "center",
