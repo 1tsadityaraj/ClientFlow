@@ -22,6 +22,18 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                const theme = localStorage.getItem('clientflow-theme') || 'dark';
+                document.documentElement.setAttribute('data-theme', theme);
+              } catch(e) {}
+            `,
+          }}
+        />
+      </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`} style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
         <ThemeProvider>
           <Providers>

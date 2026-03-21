@@ -1,39 +1,62 @@
-"use client";
-
-import { useEffect } from "react";
-import Link from "next/link";
-import { AlertTriangle } from "lucide-react";
+"use client"
+import { useEffect } from "react"
 
 export default function Error({ error, reset }) {
   useEffect(() => {
-    // Log the error to an error reporting service
-    // @TODO: Swap for Sentry later
-    console.error("Error Boundary Caught:", error);
-  }, [error]);
+    console.error("Dashboard error:", error)
+  }, [error])
 
   return (
-    <div className="flex h-screen w-full flex-col items-center justify-center bg-gray-50 px-4 text-center">
-      <AlertTriangle className="mx-auto h-12 w-12 text-destructive mb-4" />
-      <h2 className="text-2xl font-bold text-gray-900 mb-2">
-        Something went wrong!
-      </h2>
-      <p className="text-muted-foreground mb-6 max-w-md">
-        An unexpected error has occurred. Our team has been notified.
+    <div style={{
+      minHeight: "100vh",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      background: "var(--bg-primary)",
+      color: "var(--text-primary)",
+      fontFamily: "sans-serif",
+      gap: 16,
+      padding: 20,
+    }}>
+      <div style={{ fontSize: 48 }}>⚠️</div>
+      <h2 style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Something went wrong</h2>
+      <p style={{ color: "var(--text-muted)", fontSize: 14, margin: 0, textAlign: "center" }}>
+        {error?.message || "An unexpected error occurred"}
       </p>
-      <div className="flex gap-4">
+      <div style={{ display: "flex", gap: 12, marginTop: 8 }}>
         <button
-          onClick={() => reset()}
-          className="rounded-md bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground hover:bg-secondary/80 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+          onClick={reset}
+          style={{
+            padding: "8px 20px",
+            background: "var(--accent)",
+            color: "#fff",
+            border: "none",
+            borderRadius: 8,
+            cursor: "pointer",
+            fontWeight: 600,
+            fontSize: 14,
+          }}
         >
           Try again
         </button>
-        <Link
+        
+        <a
           href="/dashboard"
-          className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+          style={{
+            padding: "8px 20px",
+            background: "var(--surface)",
+            color: "var(--text-primary)",
+            border: "1px solid var(--border)",
+            borderRadius: 8,
+            textDecoration: "none",
+            fontWeight: 600,
+            fontSize: 14,
+          }}
         >
           Go to dashboard
-        </Link>
+        </a>
       </div>
     </div>
-  );
+  )
 }
