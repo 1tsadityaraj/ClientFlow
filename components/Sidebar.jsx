@@ -91,19 +91,24 @@ export default function Sidebar({ org, session, projects: initialProjects = [] }
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex h-screen w-64 flex-col border-r border-zinc-200 dark:border-zinc-800/80 bg-white dark:bg-zinc-950 transition-transform duration-250 ease-in-out lg:sticky lg:top-0 lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 flex h-screen flex-col transition-transform duration-250 ease-in-out lg:sticky lg:top-0 lg:translate-x-0 ${
           isMobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
+        style={{
+          width: "240px",
+          background: "var(--surface)",
+          borderRight: "1px solid var(--border)",
+        }}
       >
-        <div className="flex items-center gap-3 border-b border-zinc-200 dark:border-zinc-800/80 px-5 py-5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-primary text-xs font-bold text-white shadow-lg">
+        <div style={{ padding: "20px", display: "flex", alignItems: "center", gap: "12px", borderBottom: "1px solid var(--border)" }}>
+          <div style={{ display: "flex", height: "36px", width: "36px", alignItems: "center", justifyContent: "center", borderRadius: "var(--radius-md)", background: "var(--accent)", fontSize: "12px", fontWeight: "bold", color: "white", boxShadow: "var(--shadow-md)" }}>
             CF
           </div>
           <div>
-            <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-900 dark:text-zinc-50">
+            <p style={{ fontSize: "14px", fontWeight: 600, color: "var(--text-primary)" }}>
               {org?.name || "ClientFlow"}
             </p>
-            <p className="text-[10px] font-medium uppercase tracking-wider text-brand-primary">
+            <p style={{ fontSize: "10px", fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--accent)" }}>
               {org?.plan || "starter"} plan
             </p>
           </div>
@@ -143,35 +148,57 @@ export default function Sidebar({ org, session, projects: initialProjects = [] }
             />
 
             {role !== "client" && projects.length > 0 && (
-              <div className="pt-4">
-                <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-widest text-zinc-500">
-                  Projects
+              <div style={{ paddingTop: "16px" }}>
+                <p style={{ marginBottom: "8px", padding: "0 12px", fontSize: "10px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--text-dim)" }}>
+                  PROJECTS
                 </p>
-                <div className="space-y-1">
+                <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
                   {projects.slice(0, 5).map((project) => (
                     <Link
                       key={project.id}
                       href={`/dashboard/projects/${project.id}`}
-                      className={`group flex items-center gap-3 rounded-xl px-3 py-2 text-sm transition-all ${
-                        pathname.includes(project.id)
-                          ? "bg-zinc-200 dark:bg-zinc-800/50 text-zinc-800 dark:text-zinc-200"
-                          : "text-zinc-600 dark:text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:bg-zinc-800/60 hover:text-zinc-800 dark:text-zinc-200"
-                      }`}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "12px",
+                        padding: "8px 12px",
+                        fontSize: "13px",
+                        textDecoration: "none",
+                        borderRadius: "var(--radius-md)",
+                        transition: "all 0.15s",
+                        background: pathname.includes(project.id) ? "var(--accent-light)" : "transparent",
+                        color: pathname.includes(project.id) ? "var(--text-primary)" : "var(--text-secondary)",
+                      }}
                     >
                       <span
-                        className="h-2 w-2 rounded-full flex-shrink-0"
-                        style={{ backgroundColor: project.color || "#6366f1" }}
+                        style={{
+                          height: "8px",
+                          width: "8px",
+                          borderRadius: "50%",
+                          flexShrink: 0,
+                          backgroundColor: project.color || "var(--accent)"
+                        }}
                       />
-                      <span className="truncate">{project.name}</span>
+                      <span style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{project.name}</span>
                     </Link>
                   ))}
                   {projects.length > 5 && (
                     <Link
                       href="/dashboard"
-                      className="group flex items-center gap-2 rounded-xl px-3 py-2 text-xs text-brand-primary transition-all hover:bg-zinc-200 dark:bg-zinc-800/60 hover:text-brand-primary/80"
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px",
+                        padding: "8px 12px",
+                        fontSize: "12px",
+                        textDecoration: "none",
+                        color: "var(--accent)",
+                        borderRadius: "var(--radius-md)",
+                        transition: "all 0.15s",
+                      }}
                     >
                       View all
-                      <ArrowRight className="h-3 w-3" />
+                      <ArrowRight size={14} />
                     </Link>
                   )}
                 </div>
@@ -180,18 +207,21 @@ export default function Sidebar({ org, session, projects: initialProjects = [] }
           </nav>
         </div>
 
-        <div className="border-t border-zinc-200 dark:border-zinc-800/80 px-4 py-4">
-          <div className="flex items-center gap-3">
+        <div style={{ borderTop: "1px solid var(--border)", padding: "16px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
             <div
-              className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-primary text-xs font-bold text-white shadow-lg"
+              style={{
+                display: "flex", height: "32px", width: "32px", alignItems: "center", justifyContent: "center",
+                borderRadius: "50%", background: "var(--accent)", fontSize: "12px", fontWeight: "bold", color: "white"
+              }}
             >
               {(session?.user?.name || "U").charAt(0).toUpperCase()}
             </div>
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-xs font-medium text-zinc-900 dark:text-zinc-200">
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <p style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", fontSize: "12px", fontWeight: 500, color: "var(--text-primary)" }}>
                 {session?.user?.name}
               </p>
-              <p className="truncate text-[10px] text-zinc-500 capitalize">
+              <p style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", fontSize: "10px", color: "var(--text-muted)", textTransform: "capitalize" }}>
                 {session?.user?.role}
               </p>
             </div>
@@ -229,12 +259,12 @@ function SidebarLink({ href, icon, label, badge = null }) {
         fontSize: "14px",
         fontWeight: 500,
         textDecoration: "none",
-        background: active ? "rgba(99,102,241,0.15)" : "transparent",
-        color: active ? "#6366f1" : "#9090b0",
-        borderLeft: active ? "2px solid #6366f1" : "2px solid transparent",
+        background: active ? "var(--accent-light)" : "transparent",
+        color: active ? "var(--accent)" : "var(--text-secondary)",
+        borderLeft: active ? "2px solid var(--accent)" : "2px solid transparent",
         transition: "all 0.15s",
         marginBottom: "4px",
-        borderRadius: "0 8px 8px 0",
+        borderRadius: "0 var(--radius-md) var(--radius-md) 0",
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
@@ -250,7 +280,7 @@ function SidebarLink({ href, icon, label, badge = null }) {
             height: "16px",
             minWidth: "16px",
             borderRadius: "9999px",
-            background: "#ef4444",
+            background: "var(--danger)",
             color: "white",
             fontSize: "10px",
             fontWeight: "bold",

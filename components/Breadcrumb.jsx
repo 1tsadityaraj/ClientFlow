@@ -28,14 +28,14 @@ export default function Breadcrumb({ project }) {
     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, padding: '0 24px', paddingTop: 16 }}>
       {crumbs.map((crumb, i) => (
         <span key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          {i > 0 && <span style={{ color: '#6b6b8a', fontSize: 12 }}>›</span>}
+          {i > 0 && <span style={{ color: 'var(--text-muted)', fontSize: '13px' }}>›</span>}
           {crumb.href ? (
             <Link href={crumb.href} 
-              style={{ color: '#6b6b8a', fontSize: 12, textDecoration: 'none' }}>
+              style={{ color: 'var(--text-muted)', fontSize: '13px', textDecoration: 'none' }}>
               {crumb.label}
             </Link>
           ) : (
-            <span style={{ color: '#9090b0', fontSize: 12, fontWeight: 600 }}>
+            <span style={{ color: 'var(--text-dim)', fontSize: '13px', fontWeight: 600 }}>
               {crumb.label}
             </span>
           )}

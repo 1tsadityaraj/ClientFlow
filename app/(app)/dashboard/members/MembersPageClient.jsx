@@ -13,10 +13,10 @@ import WorkloadView from "../../../../components/WorkloadView";
 const ROLES = ["admin", "manager", "member", "client"];
 
 const ROLE_BADGE = {
-  admin: "bg-rose-500/15 text-rose-400 border-rose-500/30",
-  manager: "bg-amber-500/15 text-amber-400 border-amber-500/30",
-  member: "bg-sky-500/15 text-sky-400 border-sky-500/30",
-  client: "bg-zinc-500/15 text-zinc-600 dark:text-zinc-600 dark:text-zinc-400 border-zinc-500/30",
+  admin: { bg: "var(--danger-light)", color: "var(--danger)" },
+  manager: { bg: "var(--warning-light)", color: "var(--warning)" },
+  member: { bg: "var(--accent-light)", color: "var(--accent)" },
+  client: { bg: "rgba(56,189,248,0.1)", color: "var(--info)" },
 };
 
 function TableSkeleton() {
@@ -144,10 +144,10 @@ export default function MembersPageClient() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-900 dark:text-zinc-50">
+      <main style={{ minHeight: "100vh", background: "var(--bg-primary)", color: "var(--text-primary)" }}>
         <div className="mx-auto max-w-5xl px-6 py-10">
           <h1 className="text-xl font-semibold">Members</h1>
-          <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">
+          <p style={{ marginTop: "4px", fontSize: "14px", color: "var(--text-secondary)" }}>
             Manage your workspace roles and invites.
           </p>
           <div className="mt-6">
@@ -174,13 +174,13 @@ export default function MembersPageClient() {
   const currentUserId = session?.user?.id;
 
   return (
-    <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-900 dark:text-zinc-50">
+    <main style={{ minHeight: "100vh", background: "var(--bg-primary)", color: "var(--text-primary)" }}>
       <div className="mx-auto max-w-5xl px-6 py-10">
         <Breadcrumb />
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-xl font-semibold">Members</h1>
-            <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">
+            <p style={{ marginTop: "4px", fontSize: "14px", color: "var(--text-secondary)" }}>
               Manage your workspace roles and invites.
             </p>
           </div>
@@ -261,14 +261,14 @@ export default function MembersPageClient() {
         ) : (
         <>
         {/* Members Table */}
-        <div className="mt-6 overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/90 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/60">
-          <table className="min-w-full text-left text-xs">
-            <thead className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/80 text-zinc-500">
+        <div style={{ marginTop: "24px", overflow: "hidden", borderRadius: "12px", border: "1px solid var(--border)", background: "var(--surface)" }}>
+          <table style={{ width: "100%", textAlign: "left", fontSize: "14px" }}>
+            <thead style={{ borderBottom: "1px solid var(--border)", fontSize: "11px", textTransform: "uppercase", color: "var(--text-muted)" }}>
               <tr>
-                <th className="px-4 py-3 font-medium">Member</th>
-                <th className="px-4 py-3 font-medium">Email</th>
-                <th className="px-4 py-3 font-medium">Role</th>
-                <th className="px-4 py-3 font-medium text-right">Actions</th>
+                <th style={{ padding: "12px 16px", fontWeight: 600, textAlign: "left" }}>Member</th>
+                <th style={{ padding: "12px 16px", fontWeight: 600, textAlign: "left" }}>Email</th>
+                <th style={{ padding: "12px 16px", fontWeight: 600, textAlign: "center" }}>Role</th>
+                <th style={{ padding: "12px 16px", fontWeight: 600, textAlign: "right" }}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -289,39 +289,43 @@ export default function MembersPageClient() {
               {invites.map((i) => (
                 <tr
                   key={i.id}
-                  className="border-b border-zinc-200 dark:border-zinc-800/80 last:border-0 bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/20"
+                  style={{ height: "52px", borderBottom: "1px solid var(--border)", transition: "background-color 0.15s" }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--surface-hover)"}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
                 >
-                  <td className="px-4 py-3">
+                  <td style={{ padding: "0 16px", textAlign: "left" }}>
                     <div className="flex items-center gap-3">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full border border-dashed border-amber-500/30 bg-amber-500/5 text-xs font-bold text-amber-500">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full border border-dashed text-xs font-bold" style={{ borderColor: "var(--warning)", color: "var(--warning)", background: "var(--warning-light)" }}>
                         ?
                       </div>
-                      <p className="text-sm italic text-zinc-500">
+                      <p style={{ fontSize: "13px", fontStyle: "italic", color: "var(--text-muted)" }}>
                         Pending invite...
                       </p>
                     </div>
                   </td>
-                  <td className="px-4 py-3">
-                    <span className="text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">{i.email}</span>
-                    <span className="ml-2 rounded-full bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-medium text-amber-500">
+                  <td style={{ padding: "0 16px", textAlign: "left", color: "var(--text-secondary)" }}>
+                    <span>{i.email}</span>
+                    <span style={{ marginLeft: "8px", borderRadius: "99px", padding: "2px 6px", fontSize: "10px", fontWeight: 600, color: "var(--warning)", background: "var(--warning-light)" }}>
                       Invited
                     </span>
                   </td>
-                  <td className="px-4 py-3">
+                  <td style={{ padding: "0 16px", textAlign: "center" }}>
                     <span
-                      className={`inline-flex rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
-                        ROLE_BADGE[i.role] || ROLE_BADGE.member
-                      }`}
+                      style={{
+                        display: "inline-flex", padding: "2px 8px", fontSize: "10px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", borderRadius: "4px",
+                        background: (ROLE_BADGE[i.role] || ROLE_BADGE.member).bg, color: (ROLE_BADGE[i.role] || ROLE_BADGE.member).color
+                      }}
                     >
                       {i.role}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-right">
+                  <td style={{ padding: "0 16px", textAlign: "right" }}>
                     <Can permission="inviteMembers">
                       <button
                         type="button"
                         onClick={() => handleCancelInvite(i.id)}
-                        className="text-xs text-zinc-500 hover:text-zinc-700 dark:text-zinc-700 dark:text-zinc-300 transition-colors"
+                        style={{ fontSize: "12px", color: "var(--text-muted)", cursor: "pointer", background: "none", border: "none" }}
+                        className="hover:text-[var(--text-primary)]"
                       >
                         Cancel
                       </button>
@@ -388,37 +392,43 @@ function MemberRow({
   const isSelf = m.id === currentUserId;
 
   return (
-    <tr className="border-b border-zinc-200 dark:border-zinc-800/80 last:border-0 transition-colors hover:bg-zinc-50/80 dark:bg-zinc-900/40 relative">
-      <td className="px-4 py-3">
-        <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-brand-primary/30 to-brand-primary/10 text-xs font-bold text-brand-primary">
+    <tr
+      style={{ height: "52px", borderBottom: "1px solid var(--border)", transition: "background-color 0.15s" }}
+      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--surface-hover)"}
+      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
+      className="last:border-b-0 relative"
+    >
+      <td style={{ padding: "0 16px", textAlign: "left" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <div style={{ display: "flex", height: "32px", width: "32px", alignItems: "center", justifyContent: "center", borderRadius: "50%", background: "var(--accent-light)", fontSize: "12px", fontWeight: "bold", color: "var(--accent)" }}>
             {m.name.charAt(0).toUpperCase()}
           </div>
           <div>
             <Link
               href={`/dashboard/members/${m.id}`}
-              className="text-sm font-medium text-zinc-900 dark:text-zinc-50 hover:text-brand-primary transition-colors"
+              style={{ fontSize: "14px", fontWeight: 500, color: "var(--text-primary)", textDecoration: "none" }}
             >
               {m.name}
               {isSelf && (
-                <span className="ml-1.5 text-[10px] text-zinc-500">(you)</span>
+                <span style={{ marginLeft: "6px", fontSize: "10px", color: "var(--text-muted)" }}>(you)</span>
               )}
             </Link>
           </div>
         </div>
       </td>
-      <td className="px-4 py-3 text-zinc-600 dark:text-zinc-400">{m.email}</td>
-      <td className="px-4 py-3">
+      <td style={{ padding: "0 16px", textAlign: "left", color: "var(--text-secondary)" }}>{m.email}</td>
+      <td style={{ padding: "0 16px", textAlign: "center" }}>
         <span
-          className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
-            ROLE_BADGE[m.role] || ROLE_BADGE.member
-          }`}
+          style={{
+            display: "inline-flex", alignItems: "center", gap: "4px", padding: "2px 8px", fontSize: "10px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", borderRadius: "4px",
+            background: (ROLE_BADGE[m.role] || ROLE_BADGE.member).bg, color: (ROLE_BADGE[m.role] || ROLE_BADGE.member).color
+          }}
         >
-          {m.role === "admin" && <Shield className="h-3 w-3" />}
+          {m.role === "admin" && <Shield size={12} />}
           {m.role}
         </span>
       </td>
-      <td className="px-4 py-3 text-right">
+      <td style={{ padding: "0 16px", textAlign: "right" }}>
         {!isSelf ? (
           <div className="relative inline-block text-left">
             <button

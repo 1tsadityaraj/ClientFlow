@@ -165,26 +165,24 @@ export default async function DashboardPage() {
   console.log("[DASHBOARD] canCreateProject:", canCreateProject, "canSendMessage:", canSendMessage);
 
   return (
-    <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-900 dark:text-zinc-50">
+    <main style={{ minHeight: "100vh", background: "var(--bg-primary)", color: "var(--text-primary)" }}>
       {/* Sidebar + Content Layout */}
       <div className="flex">
         {/* Sidebar */}
         <Sidebar org={org} session={session} projects={projects} />
 
-        {/* Main Content */}
-        <div className="flex-1 overflow-auto">
+        <div style={{ flex: 1, overflow: "auto" }}>
           <Breadcrumb />
           {/* Top Bar */}
-          <header className="sticky top-0 z-10 flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800/80 bg-white dark:bg-zinc-950/80 px-6 py-4 backdrop-blur-xl lg:px-8">
+          <header style={{ position: "sticky", top: 0, zIndex: 10, display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid var(--border)", background: "var(--bg-primary)", padding: "16px 32px" }}>
             <div>
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-zinc-500">
-                Overview
+              <p style={{ fontSize: "10px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--text-muted)" }}>
               </p>
-              <h1 className="text-xl font-semibold tracking-tight">
+              <h1 style={{ fontSize: "24px", fontWeight: 700, color: "var(--text-primary)" }}>
                 Dashboard
               </h1>
             </div>
-            <div className="flex items-center gap-3">
+            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
               {canCreateProject && (
                 <CreateProjectButton clientMembers={clientMembers} />
               )}
@@ -214,9 +212,9 @@ export default async function DashboardPage() {
             </div>
           </header>
 
-          <div className="mx-auto max-w-7xl space-y-6 px-6 py-6 lg:px-8">
+          <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "32px", display: "flex", flexDirection: "column", gap: "24px" }}>
             {/* Stats Grid */}
-            <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <section style={{ display: "grid", gap: "16px", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))" }}>
               <StatCard
                 icon={<FolderKanban className="h-5 w-5" />}
                 label="Total Projects"
@@ -242,47 +240,47 @@ export default async function DashboardPage() {
                 iconColor="text-sky-400"
               />
               <StatCard
-                icon={<TrendingUp className="h-5 w-5" />}
+                icon={<TrendingUp size={20} />}
                 label="Completion Rate"
                 value={`${completionRate}%`}
                 detail={`${inProgressTasks} in progress`}
-                gradient="from-amber-500/20 to-orange-500/20"
-                iconColor="text-amber-400"
+                gradient="none"
+                iconColor="var(--warning)"
               />
             </section>
 
             {/* Task Progress Bar */}
-            <section className="rounded-2xl border border-zinc-200 dark:border-zinc-800/80 bg-zinc-50/80 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/40 p-5">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-medium text-zinc-800 dark:text-zinc-200 flex items-center gap-2">
-                  <Activity className="h-4 w-4 text-brand-primary" />
+            <section style={{ padding: "24px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--radius-lg)", boxShadow: "var(--shadow-sm)" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
+                <h3 style={{ fontSize: "15px", fontWeight: 600, color: "var(--text-primary)", display: "flex", alignItems: "center", gap: "8px" }}>
+                  <Activity size={16} color="var(--accent)" />
                   Task Progress Overview
                 </h3>
-                <span className="text-xs text-zinc-500">
+                <span style={{ fontSize: "12px", color: "var(--text-muted)" }}>
                   {totalTasks} total tasks
                 </span>
               </div>
-              <div className="flex h-3 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800">
+              <div style={{ display: "flex", height: "12px", borderRadius: "6px", overflow: "hidden", background: "var(--bg-secondary)" }}>
                 {doneTasks > 0 && (
                   <div
-                    className="bg-gradient-to-r from-emerald-500 to-emerald-400 transition-all duration-500"
                     style={{
+                      height: "100%", transition: "width 0.5s", background: "var(--success)",
                       width: `${(doneTasks / totalTasks) * 100}%`,
                     }}
                   />
                 )}
                 {inProgressTasks > 0 && (
                   <div
-                    className="bg-gradient-to-r from-amber-500 to-amber-400 transition-all duration-500"
                     style={{
+                      height: "100%", transition: "width 0.5s", background: "var(--warning)",
                       width: `${(inProgressTasks / totalTasks) * 100}%`,
                     }}
                   />
                 )}
                 {todoTasks > 0 && (
                   <div
-                    className="bg-gradient-to-r from-zinc-600 to-zinc-500 transition-all duration-500"
                     style={{
+                      height: "100%", transition: "width 0.5s", background: "var(--text-dim)",
                       width: `${(todoTasks / totalTasks) * 100}%`,
                     }}
                   />
@@ -317,12 +315,12 @@ export default async function DashboardPage() {
             <div className="grid gap-6 xl:grid-cols-3">
               {/* Projects Grid */}
               <section className="space-y-4 xl:col-span-2">
-                <div className="flex items-center justify-between">
-                  <h2 className="flex items-center gap-2 text-sm font-semibold text-zinc-800 dark:text-zinc-200">
-                    <FolderKanban className="h-4 w-4 text-brand-primary" />
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <h2 style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "18px", fontWeight: 700, color: "var(--text-primary)" }}>
+                    <FolderKanban size={20} color="var(--accent)" />
                     Projects
                   </h2>
-                  <span className="text-xs text-zinc-500">
+                  <span style={{ fontSize: "13px", color: "var(--text-muted)" }}>
                     {projects.length} total
                   </span>
                 </div>
@@ -337,74 +335,70 @@ export default async function DashboardPage() {
                     <Link
                       key={project.id}
                       href={`/dashboard/projects/${project.id}`}
-                      className="group relative overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800/80 bg-zinc-50/80 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/40 p-5 transition-all duration-300 hover:border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 hover:bg-zinc-50/90 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/60 hover:shadow-lg hover:shadow-black/20"
+                      style={{
+                        display: "flex", flexDirection: "column", justifyContent: "space-between",
+                        height: "160px", padding: "20px", background: "var(--surface)",
+                        border: "1px solid var(--border)", borderRadius: "var(--radius-lg)",
+                        textDecoration: "none", transition: "all 0.2s",
+                        boxShadow: "var(--shadow-sm)"
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = "scale(1.02)";
+                        e.currentTarget.style.boxShadow = "var(--shadow-md)";
+                        e.currentTarget.style.borderColor = "var(--border-light)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = "scale(1)";
+                        e.currentTarget.style.boxShadow = "var(--shadow-sm)";
+                        e.currentTarget.style.borderColor = "var(--border)";
+                      }}
                     >
-                      {/* Color accent */}
-                      <div
-                        className="absolute left-0 top-0 h-full w-1 rounded-l-2xl"
-                        style={{ backgroundColor: project.color }}
-                      />
-
-                      <div className="flex items-start justify-between">
-                        <div className="min-w-0 flex-1 pl-2">
-                          <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-900 dark:text-zinc-50 group-hover:text-white">
-                            {project.name}
-                          </h3>
-                          <p className="mt-0.5 text-[10px] text-zinc-500">
-                            Managed by{" "}
-                            {project.manager?.name || "—"}
-                          </p>
-                        </div>
-                        <span
-                          className={`shrink-0 ml-2 inline-flex rounded-full border px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider ${statusColor(
-                            project.status
-                          )}`}
-                        >
-                          {project.status}
-                        </span>
-                      </div>
-
-                      {project.description && (
-                        <p className="mt-2 line-clamp-2 pl-2 text-xs leading-relaxed text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">
-                          {project.description}
-                        </p>
-                      )}
-
-                      {/* Progress bar */}
-                      <div className="mt-4 pl-2">
-                        <div className="flex items-center justify-between mb-1.5">
-                          <span className="text-[10px] text-zinc-500">
-                            Progress
-                          </span>
-                          <span className="text-[10px] font-semibold text-zinc-700 dark:text-zinc-700 dark:text-zinc-300">
-                            {calculatedProgress}%
-                          </span>
-                        </div>
-                        <div className="h-1.5 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800">
-                          <div
-                            className="h-full rounded-full transition-all duration-500"
+                      <div>
+                        <div style={{ display: "flex", alignItems: "flex-start", justifyItems: "space-between", gap: "12px" }}>
+                          <span style={{ height: "10px", width: "10px", borderRadius: "50%", backgroundColor: project.color, flexShrink: 0, marginTop: "4px" }} />
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <h3 style={{ fontSize: "14px", fontWeight: 700, color: "var(--text-primary)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                              {project.name}
+                            </h3>
+                            <p style={{ marginTop: "2px", fontSize: "11px", color: "var(--text-muted)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                              Managed by {project.manager?.name || "—"}
+                            </p>
+                          </div>
+                          <span
                             style={{
-                              width: `${calculatedProgress}%`,
-                              backgroundColor: project.color,
+                              flexShrink: 0, display: "inline-flex", borderRadius: "99px", padding: "2px 8px", fontSize: "10px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em",
+                              ...(project.status === 'active' ? { background: "var(--success-light)", color: "var(--success)" } :
+                                  project.status === 'completed' ? { background: "var(--info-light)", color: "var(--info)" } :
+                                  project.status === 'on_hold' ? { background: "var(--warning-light)", color: "var(--warning)" } :
+                                  { background: "var(--bg-secondary)", color: "var(--text-muted)" })
                             }}
-                          />
+                          >
+                            {project.status}
+                          </span>
                         </div>
                       </div>
 
-                      {/* Counts */}
-                      <div className="mt-3 flex gap-4 pl-2 text-[10px] text-zinc-500">
-                        <span className="flex items-center gap-1">
-                          <CheckCircle2 className="h-3 w-3" />
-                          {project._count.tasks} tasks
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <MessageSquare className="h-3 w-3" />
-                          {project._count.comments} discussions
-                        </span>
-                      </div>
+                      <div>
+                        {/* Progress bar */}
+                        <div style={{ marginBottom: "12px" }}>
+                          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "6px" }}>
+                            <span style={{ fontSize: "10px", color: "var(--text-muted)" }}>Progress</span>
+                            <span style={{ fontSize: "10px", fontWeight: 600, color: "var(--text-primary)" }}>{calculatedProgress}%</span>
+                          </div>
+                          <div style={{ height: "4px", borderRadius: "2px", background: "var(--bg-secondary)", overflow: "hidden" }}>
+                            <div style={{ height: "100%", borderRadius: "2px", transition: "width 0.5s", backgroundColor: project.color, width: `${calculatedProgress}%` }} />
+                          </div>
+                        </div>
 
-                      <div className="absolute bottom-4 right-4 opacity-0 transition-opacity group-hover:opacity-100">
-                        <ArrowRight className="h-4 w-4 text-zinc-600 dark:text-zinc-600 dark:text-zinc-400" />
+                        {/* Counts */}
+                        <div style={{ display: "flex", gap: "16px", fontSize: "11px", color: "var(--text-muted)" }}>
+                          <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                            <CheckCircle2 size={12} /> {project._count.tasks} tasks
+                          </span>
+                          <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                            <MessageSquare size={12} /> {project._count.comments} discussions
+                          </span>
+                        </div>
                       </div>
                     </Link>
                   )})}
@@ -437,12 +431,12 @@ export default async function DashboardPage() {
                 <MyTasksWidget />
 
                 {/* Upcoming Deadlines */}
-                <section className="rounded-2xl border border-zinc-200 dark:border-zinc-800/80 bg-zinc-50/80 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/40 p-5">
-                  <h3 className="flex items-center gap-2 text-sm font-semibold text-zinc-800 dark:text-zinc-200 mb-4">
-                    <Clock className="h-4 w-4 text-amber-400" />
+                <section style={{ padding: "24px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--radius-lg)", boxShadow: "var(--shadow-sm)" }}>
+                  <h3 style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "15px", fontWeight: 600, color: "var(--text-primary)", marginBottom: "16px" }}>
+                    <Clock size={16} color="var(--warning)" />
                     Upcoming Deadlines
                   </h3>
-                  <ul className="space-y-3">
+                  <ul style={{ display: "flex", flexDirection: "column", gap: "12px", listStyle: "none", padding: 0 }}>
                     {upcomingTasks.map((task) => (
                       <li
                         key={task.id}
@@ -482,15 +476,15 @@ export default async function DashboardPage() {
                 <DashboardActivityFeed />
 
                 {/* Team Members Quick View */}
-                <section className="rounded-2xl border border-zinc-200 dark:border-zinc-800/80 bg-zinc-50/80 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/40 p-5">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="flex items-center gap-2 text-sm font-semibold text-zinc-800 dark:text-zinc-200">
-                      <Users className="h-4 w-4 text-sky-400" />
+                <section style={{ padding: "24px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--radius-lg)", boxShadow: "var(--shadow-sm)" }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px" }}>
+                    <h3 style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "15px", fontWeight: 600, color: "var(--text-primary)" }}>
+                      <Users size={16} color="var(--info)" />
                       Team
                     </h3>
                     <Link
                       href="/dashboard/members"
-                      className="text-[10px] font-medium text-brand-primary hover:text-brand-primary/80"
+                      style={{ fontSize: "12px", fontWeight: 600, color: "var(--accent)", textDecoration: "none" }}
                     >
                       View all →
                     </Link>
@@ -529,23 +523,45 @@ export default async function DashboardPage() {
 }
 
 
-function StatCard({ icon, label, value, detail, gradient, iconColor }) {
+function StatCard({ icon, label, value, detail, iconColor }) {
   return (
     <div
-      className={`group relative overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800/80 bg-gradient-to-br ${gradient} p-5 transition-all hover:border-zinc-300 dark:border-zinc-300 dark:border-zinc-700`}
+      style={{
+        height: "120px",
+        padding: "24px",
+        background: "var(--surface)",
+        border: "1px solid var(--border)",
+        borderRadius: "var(--radius-lg)",
+        boxShadow: "var(--shadow-sm)",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        transition: "all 0.15s",
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.borderColor = "var(--border-light)";
+        e.currentTarget.style.boxShadow = "var(--shadow-md)";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.borderColor = "var(--border)";
+        e.currentTarget.style.boxShadow = "var(--shadow-sm)";
+      }}
     >
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-zinc-500">
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+          <p style={{ fontSize: "11px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--text-muted)" }}>
             {label}
           </p>
-          <p className="mt-2 text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-900 dark:text-zinc-50">
+          <p style={{ fontSize: "32px", fontWeight: 800, color: "var(--text-primary)", lineHeight: 1 }}>
             {value}
           </p>
-          <p className="mt-1 text-xs text-zinc-500">{detail}</p>
+          <p style={{ fontSize: "13px", color: "var(--text-muted)", marginTop: "4px" }}>{detail}</p>
         </div>
         <div
-          className={`flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-50/90 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/60 ${iconColor}`}
+          style={{
+            display: "flex", height: "40px", width: "40px", alignItems: "center", justifyContent: "center",
+            borderRadius: "12px", background: "var(--bg-secondary)", color: iconColor
+          }}
         >
           {icon}
         </div>

@@ -5,10 +5,10 @@ import Link from "next/link";
 import { getPusherClient } from "@/lib/pusherClient";
 
 const COLUMNS = [
-  { key: "available", label: "Available", color: "#22c55e" },
-  { key: "busy", label: "Busy", color: "#eab308" },
-  { key: "away", label: "Away", color: "#ef4444" },
-  { key: "offline", label: "Offline", color: "#6b7280" },
+  { key: "available", label: "Available", color: "var(--success)" },
+  { key: "busy", label: "Busy", color: "var(--warning)" },
+  { key: "away", label: "Away", color: "var(--danger)" },
+  { key: "offline", label: "Offline", color: "var(--text-dim)" },
 ];
 
 export default function WorkloadView({ orgId }) {
@@ -53,15 +53,15 @@ export default function WorkloadView({ orgId }) {
 
   if (loading) {
     return (
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div style={{ display: "grid", gap: "16px", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))" }}>
         {COLUMNS.map((col) => (
           <div
             key={col.key}
-            className="rounded-2xl border border-zinc-200 dark:border-zinc-800/80 bg-zinc-50/80 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/40 p-4 animate-pulse"
+            style={{ padding: "20px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--radius-lg)", boxShadow: "var(--shadow-sm)" }}
           >
-            <div className="h-6 w-20 rounded bg-zinc-200 dark:bg-zinc-800 mb-4" />
-            <div className="space-y-3">
-              <div className="h-20 rounded-xl bg-zinc-200 dark:bg-zinc-800/50" />
+            <div style={{ height: "24px", width: "80px", borderRadius: "4px", background: "var(--bg-secondary)", marginBottom: "16px" }} />
+            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+              <div style={{ height: "80px", borderRadius: "var(--radius-md)", background: "var(--bg-secondary)" }} />
             </div>
           </div>
         ))}
@@ -70,7 +70,7 @@ export default function WorkloadView({ orgId }) {
   }
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div style={{ display: "grid", gap: "16px", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))" }}>
       {COLUMNS.map((col) => {
         const colMembers = members.filter(
           (m) => (m.status?.status || "offline") === col.key
@@ -79,22 +79,21 @@ export default function WorkloadView({ orgId }) {
         return (
           <div
             key={col.key}
-            className="rounded-2xl border border-zinc-200 dark:border-zinc-800/80 bg-zinc-50/80 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/40 p-4"
+            style={{ padding: "20px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--radius-lg)", boxShadow: "var(--shadow-sm)" }}
           >
-            <div className="flex items-center gap-2 mb-4">
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "16px" }}>
               <span
-                className="h-2.5 w-2.5 rounded-full"
-                style={{ backgroundColor: col.color }}
+                style={{ height: "10px", width: "10px", borderRadius: "50%", backgroundColor: col.color }}
               />
-              <h3 className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">{col.label}</h3>
-              <span className="ml-auto text-[10px] text-zinc-500">
+              <h3 style={{ fontSize: "14px", fontWeight: 600, color: "var(--text-primary)" }}>{col.label}</h3>
+              <span style={{ marginLeft: "auto", fontSize: "10px", color: "var(--text-muted)", fontWeight: "bold" }}>
                 {colMembers.length}
               </span>
             </div>
 
-            <div className="space-y-2 min-h-[80px]">
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px", minHeight: "80px" }}>
               {colMembers.length === 0 && (
-                <p className="text-center text-[10px] text-zinc-600 py-6">
+                <p style={{ textAlign: "center", fontSize: "10px", color: "var(--text-muted)", padding: "24px 0" }}>
                   No members
                 </p>
               )}
@@ -102,27 +101,43 @@ export default function WorkloadView({ orgId }) {
                 <Link
                   key={m.id}
                   href={`/dashboard/members/${m.id}`}
-                  className="block rounded-xl border border-zinc-200 dark:border-zinc-800/50 bg-white dark:bg-zinc-950/40 p-3 transition-all hover:border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 hover:bg-zinc-50/90 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/60"
+                  style={{
+                    display: "block",
+                    padding: "12px",
+                    borderRadius: "var(--radius-md)",
+                    border: "1px solid var(--border)",
+                    background: "var(--surface)",
+                    transition: "all 0.15s",
+                    textDecoration: "none"
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = "var(--border-light)";
+                    e.currentTarget.style.boxShadow = "var(--shadow-sm)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = "var(--border)";
+                    e.currentTarget.style.boxShadow = "none";
+                  }}
                 >
-                  <div className="flex items-center gap-2.5">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-violet-500/30 to-purple-500/30 text-xs font-bold text-violet-300">
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                    <div style={{ display: "flex", height: "32px", width: "32px", alignItems: "center", justifyContent: "center", borderRadius: "50%", background: "var(--accent-light)", fontSize: "12px", fontWeight: "bold", color: "var(--accent)" }}>
                       {m.name.charAt(0).toUpperCase()}
                     </div>
-                    <div className="min-w-0">
-                      <p className="truncate text-xs font-medium text-zinc-800 dark:text-zinc-200">
+                    <div style={{ minWidth: 0 }}>
+                      <p style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", fontSize: "13px", fontWeight: 500, color: "var(--text-primary)" }}>
                         {m.name}
                       </p>
-                      <p className="truncate text-[10px] text-zinc-500 capitalize">
+                      <p style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", fontSize: "10px", color: "var(--text-muted)", textTransform: "capitalize" }}>
                         {m.role}
                       </p>
                     </div>
                   </div>
                   {m.status?.currentWork && (
-                    <p className="mt-2 text-[10px] italic text-zinc-500 line-clamp-2">
+                    <p style={{ marginTop: "8px", fontSize: "11px", fontStyle: "italic", color: "var(--text-muted)", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
                       "{m.status.currentWork}"
                     </p>
                   )}
-                  <div className="mt-2 flex gap-3 text-[10px] text-zinc-500">
+                  <div style={{ marginTop: "8px", display: "flex", gap: "12px", fontSize: "10px", color: "var(--text-muted)" }}>
                     <span>{m.taskStats?.total || 0} tasks</span>
                     <span>{m.activeProjects?.length || 0} projects</span>
                   </div>

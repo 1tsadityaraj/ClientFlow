@@ -22,11 +22,13 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white text-zinc-950 dark:bg-white dark:bg-zinc-950 dark:text-zinc-900 dark:text-zinc-900 dark:text-zinc-50 transition-colors duration-300`}
-      >
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <Providers>{children}</Providers>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`} style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
+        <ThemeProvider>
+          <Providers>
+            <main className="animate-in fade-in duration-300">
+              {children}
+            </main>
+          </Providers>
         </ThemeProvider>
       </body>
     </html>

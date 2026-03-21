@@ -15,7 +15,7 @@ import {
 
 export default function LandingPage() {
   return (
-    <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-900 dark:text-zinc-50 overflow-hidden">
+    <div className="min-h-screen overflow-hidden" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
       {/* Ambient gradient blobs */}
       <div className="pointer-events-none fixed inset-0 -z-10">
         <div className="absolute -top-48 left-1/3 h-96 w-96 rounded-full bg-indigo-500/10 blur-[120px]" />
@@ -111,8 +111,8 @@ export default function LandingPage() {
           </div>
 
           {/* Dashboard Preview Card */}
-          <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/90 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/60 p-5 shadow-2xl shadow-black/60 backdrop-blur">
-            <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-3">
+          <div className="rounded-3xl border p-5 shadow-2xl shadow-black/60 backdrop-blur" style={{ background: "var(--surface)", borderColor: "var(--border)" }}>
+            <div className="flex items-center justify-between border-b pb-3" style={{ borderColor: "var(--border)" }}>
               <span className="text-xs font-medium text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">
                 Client dashboard
               </span>
@@ -140,8 +140,8 @@ export default function LandingPage() {
                   </div>
                 ))}
               </div>
-              <div className="space-y-2.5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900 p-3">
-                <p className="text-[11px] font-semibold text-zinc-700 dark:text-zinc-700 dark:text-zinc-300">
+              <div className="space-y-2.5 rounded-2xl border p-3" style={{ background: "var(--bg-secondary)", borderColor: "var(--border)" }}>
+                <p className="text-[11px] font-semibold" style={{ color: "var(--text-primary)" }}>
                   Projects at a glance
                 </p>
                 <div className="space-y-2.5">
@@ -188,10 +188,11 @@ export default function LandingPage() {
         {/* Features Grid */}
         <section id="features" className="space-y-12">
           <div className="text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-indigo-400">
+            <p className="flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-indigo-400">
               Features
+              <span style={{ padding: "2px 6px", borderRadius: "999px", fontSize: "9px", letterSpacing: "normal", background: "var(--accent-light)", color: "var(--accent)" }}>NEW</span>
             </p>
-            <h2 className="mt-3 text-2xl font-bold tracking-tight sm:text-3xl">
+            <h2 className="mt-3 text-2xl font-bold tracking-tight sm:text-3xl" style={{ color: "var(--text-primary)" }}>
               Everything your agency needs
             </h2>
             <p className="mt-3 text-sm text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">
@@ -246,10 +247,12 @@ export default function LandingPage() {
             ].map((feature) => (
               <div
                 key={feature.title}
-                className={`group rounded-2xl border border-zinc-200 dark:border-zinc-800/80 bg-gradient-to-br ${feature.color} p-6 transition-all hover:border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 hover:shadow-lg hover:shadow-black/20`}
+                className={`group rounded-2xl border transition-all hover:shadow-lg hover:shadow-black/20`}
+                style={{ background: "var(--surface)", borderColor: "var(--border)", padding: "24px" }}
               >
                 <div
-                  className={`flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-50/90 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/60 ${feature.iconColor}`}
+                  className={`flex h-10 w-10 items-center justify-center rounded-xl ${feature.iconColor}`}
+                  style={{ background: "var(--bg-secondary)" }}
                 >
                   {feature.icon}
                 </div>
@@ -296,8 +299,8 @@ export default function LandingPage() {
           </div>
           <div className="relative">
             <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-indigo-500 to-violet-500 opacity-20 blur-xl" />
-            <div className="relative rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/80 p-6 backdrop-blur-xl">
-              <pre className="text-[10px] leading-relaxed text-indigo-300/80 overflow-x-auto">
+            <div className="relative rounded-3xl border p-6 backdrop-blur-xl" style={{ background: "var(--surface)", borderColor: "var(--border)" }}>
+              <pre className="text-[10px] leading-relaxed text-indigo-400 overflow-x-auto">
                 <code>{`// Org-scoped safety example
 export async function getProjects(session) {
   return await prisma.project.findMany({
@@ -313,7 +316,7 @@ export async function getProjects(session) {
         </section>
 
         {/* Tech Stack Banner */}
-        <section className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/80 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/40 p-8">
+        <section className="rounded-3xl border p-8" style={{ background: "var(--surface)", borderColor: "var(--border)" }}>
           <div className="text-center mb-8">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
               Built with
@@ -336,7 +339,8 @@ export async function getProjects(session) {
             ].map((tech) => (
               <span
                 key={tech}
-                className="rounded-full border border-zinc-200 dark:border-zinc-800 bg-zinc-50/90 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/60 px-4 py-2 text-xs font-medium text-zinc-700 dark:text-zinc-700 dark:text-zinc-300"
+                className="rounded-full border px-4 py-2 text-xs font-medium"
+                style={{ background: "var(--bg-secondary)", borderColor: "var(--border)", color: "var(--text-secondary)" }}
               >
                 {tech}
               </span>
@@ -361,7 +365,7 @@ export async function getProjects(session) {
             </p>
           </div>
           <div className="grid gap-6 sm:grid-cols-2 max-w-3xl mx-auto">
-            <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/80 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/40 p-8 space-y-6">
+            <div className="rounded-3xl border p-8 space-y-6" style={{ background: "var(--surface)", borderColor: "var(--border)" }}>
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">
                   Starter
@@ -445,8 +449,10 @@ export async function getProjects(session) {
         </section>
 
         {/* Demo Credentials Banner */}
-        <section className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-gradient-to-r from-indigo-500/10 via-violet-500/10 to-sky-500/10 p-8 text-center">
-          <h2 className="text-xl font-bold tracking-tight">
+        <section className="rounded-3xl border p-8 text-center relative overflow-hidden" style={{ background: "var(--surface)", borderColor: "var(--border)" }}>
+          <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 via-violet-500/10 to-sky-500/10 pointer-events-none" />
+          <div className="relative z-10">
+            <h2 className="text-xl font-bold tracking-tight">
             Try the live demo
           </h2>
           <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-600 dark:text-zinc-400 max-w-lg mx-auto">
@@ -501,17 +507,18 @@ export async function getProjects(session) {
           >
             Sign in to demo
             <ArrowRight className="h-4 w-4" />
-          </Link>
+            </Link>
+          </div>
         </section>
 
         {/* Footer */}
-        <footer className="border-t border-zinc-200 dark:border-zinc-800/80 py-8 text-center text-xs text-zinc-500">
+        <footer className="border-t py-8 text-center text-xs text-zinc-500" style={{ borderColor: "var(--border)" }}>
           <p>
             Built with Next.js, Prisma, NextAuth, Stripe & ❤️ by{" "}
-            <span className="text-zinc-700 dark:text-zinc-700 dark:text-zinc-300">Aditya Raj</span>
+            <span style={{ color: "var(--text-primary)" }}>Aditya Raj</span>
           </p>
         </footer>
       </div>
-    </main>
+    </div>
   );
 }

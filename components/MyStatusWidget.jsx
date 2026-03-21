@@ -3,10 +3,10 @@
 import { useState, useEffect } from "react";
 
 const STATUS_OPTIONS = [
-  { value: "available", label: "Available", color: "#22c55e", emoji: "🟢" },
-  { value: "busy", label: "Busy", color: "#eab308", emoji: "🟡" },
-  { value: "away", label: "Away", color: "#ef4444", emoji: "🔴" },
-  { value: "offline", label: "Offline", color: "#6b7280", emoji: "⚫" },
+  { value: "available", label: "Available", color: "var(--success)", emoji: "🟢" },
+  { value: "busy", label: "Busy", color: "var(--warning)", emoji: "🟡" },
+  { value: "away", label: "Away", color: "var(--danger)", emoji: "🔴" },
+  { value: "offline", label: "Offline", color: "var(--text-dim)", emoji: "⚫" },
 ];
 
 function timeAgo(date) {
@@ -91,27 +91,43 @@ export default function MyStatusWidget() {
     STATUS_OPTIONS.find((o) => o.value === status) || STATUS_OPTIONS[0];
 
   return (
-    <section className="rounded-2xl border border-zinc-200 dark:border-zinc-800/80 bg-zinc-50/80 dark:bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900/40 p-5">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">My Status</h3>
+    <section style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--radius-lg)", padding: "20px 24px", boxShadow: "var(--shadow-sm)" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px" }}>
+        <h3 style={{ fontSize: "15px", fontWeight: 600, color: "var(--text-primary)" }}>My Status</h3>
         {updatedAt && (
-          <span className="text-[10px] text-zinc-500">
+          <span style={{ fontSize: "11px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--text-muted)" }}>
             Updated {timeAgo(updatedAt)}
           </span>
         )}
       </div>
 
-      <div className="space-y-3">
+      <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
         {/* Status dropdown */}
-        <div className="flex items-center gap-3">
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
           <span
-            className="h-2.5 w-2.5 rounded-full flex-shrink-0"
-            style={{ backgroundColor: currentOption.color }}
+            style={{
+              height: "10px",
+              width: "10px",
+              borderRadius: "50%",
+              flexShrink: 0,
+              backgroundColor: currentOption.color
+            }}
           />
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value)}
-            className="flex-1 rounded-lg border border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-3 py-2 text-sm text-zinc-800 dark:text-zinc-200 outline-none transition-all focus:border-brand-primary"
+            style={{
+              flex: 1,
+              background: "var(--bg-primary)",
+              border: "1px solid var(--border)",
+              borderRadius: "var(--radius-md)",
+              padding: "9px 12px",
+              fontSize: "14px",
+              color: "var(--text-primary)",
+              outline: "none",
+            }}
+            onFocus={(e) => (e.target.style.borderColor = "var(--accent)")}
+            onBlur={(e) => (e.target.style.borderColor = "var(--border)")}
           >
             {STATUS_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>
@@ -123,7 +139,7 @@ export default function MyStatusWidget() {
 
         {/* Current work input */}
         <div>
-          <label className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">
+          <label style={{ fontSize: "11px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--text-muted)", display: "block", marginBottom: "6px" }}>
             What are you working on?
           </label>
           <input
@@ -131,7 +147,19 @@ export default function MyStatusWidget() {
             value={currentWork}
             onChange={(e) => setCurrentWork(e.target.value)}
             placeholder="e.g. Working on homepage design"
-            className="mt-1.5 w-full rounded-lg border border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-3 py-2 text-sm text-zinc-800 dark:text-zinc-200 placeholder:text-zinc-600 outline-none transition-all focus:border-brand-primary"
+            style={{
+              width: "100%",
+              boxSizing: "border-box",
+              background: "var(--bg-primary)",
+              border: "1px solid var(--border)",
+              borderRadius: "var(--radius-md)",
+              padding: "9px 12px",
+              fontSize: "14px",
+              color: "var(--text-primary)",
+              outline: "none",
+            }}
+            onFocus={(e) => (e.target.style.borderColor = "var(--accent)")}
+            onBlur={(e) => (e.target.style.borderColor = "var(--border)")}
             onKeyDown={(e) => {
               if (e.key === "Enter") handleUpdate();
             }}
@@ -142,11 +170,19 @@ export default function MyStatusWidget() {
         <button
           onClick={handleUpdate}
           disabled={saving}
-          className={`w-full rounded-xl px-4 py-2 text-xs font-semibold transition-all ${
-            saved
-              ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
-              : "bg-brand-primary/15 text-brand-primary border border-brand-primary/30 hover:bg-brand-primary/25"
-          } disabled:opacity-50`}
+          style={{
+            width: "100%",
+            borderRadius: "var(--radius-md)",
+            padding: "9px 12px",
+            fontSize: "13px",
+            fontWeight: 600,
+            transition: "all 0.15s",
+            background: saved ? "var(--success-light)" : "var(--accent)",
+            color: saved ? "var(--success)" : "#fff",
+            border: saved ? "1px solid var(--success-light)" : "1px solid var(--accent)",
+            opacity: saving ? 0.7 : 1,
+            cursor: "pointer",
+          }}
         >
           {saving ? "Saving..." : saved ? "✓ Updated" : "Update Status"}
         </button>
