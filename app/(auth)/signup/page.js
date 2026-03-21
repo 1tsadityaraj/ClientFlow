@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 
@@ -18,6 +18,20 @@ export default function SignupPage() {
   const [checkingSlug, setCheckingSlug] = useState(false)
   const [slugAvailable, setSlugAvailable] = useState(null)
   const [showLoginLink, setShowLoginLink] = useState(false)
+  const [theme, setTheme] = useState("dark")
+
+  useEffect(() => {
+    const saved = localStorage.getItem("clientflow-theme") || "dark"
+    setTheme(saved)
+    document.documentElement.setAttribute("data-theme", saved)
+  }, [])
+
+  const toggleTheme = () => {
+    const next = theme === "dark" ? "light" : "dark"
+    setTheme(next)
+    localStorage.setItem("clientflow-theme", next)
+    document.documentElement.setAttribute("data-theme", next)
+  }
 
   const checkSlug = async (currentSlug) => {
     if (!currentSlug) {
@@ -173,7 +187,26 @@ export default function SignupPage() {
         alignItems: "center",
         justifyContent: "center",
         padding: "40px 32px",
+        position: "relative",
       }}>
+        {/* Theme Toggle Button */}
+        <button
+          onClick={toggleTheme}
+          style={{
+            position: "absolute",
+            top: 20,
+            right: 20,
+            background: "var(--surface)",
+            border: "1px solid var(--border)",
+            borderRadius: 8,
+            padding: "6px 10px",
+            cursor: "pointer",
+            fontSize: 14,
+            color: "var(--text-muted)",
+          }}
+        >
+          {theme === "dark" ? "☀️" : "🌙"}
+        </button>
         {/* Mobile logo */}
         <div style={{
           display: "flex",

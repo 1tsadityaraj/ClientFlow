@@ -1,3 +1,5 @@
+"use client"
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   Shield,
@@ -14,6 +16,21 @@ import {
 } from "lucide-react";
 
 export default function LandingPage() {
+  const [theme, setTheme] = useState("dark");
+
+  useEffect(() => {
+    const saved = localStorage.getItem("clientflow-theme") || "dark";
+    setTheme(saved);
+    document.documentElement.setAttribute("data-theme", saved);
+  }, []);
+
+  const toggleTheme = () => {
+    const next = theme === "dark" ? "light" : "dark";
+    setTheme(next);
+    localStorage.setItem("clientflow-theme", next);
+    document.documentElement.setAttribute("data-theme", next);
+  };
+
   return (
     <div className="min-h-screen overflow-hidden" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
       {/* Ambient gradient blobs */}
@@ -33,21 +50,35 @@ export default function LandingPage() {
             <span className="tracking-tight">ClientFlow</span>
           </div>
           <div className="flex items-center gap-3 text-sm">
+            <button
+              onClick={toggleTheme}
+              style={{
+                background: "var(--surface)",
+                border: "1px solid var(--border)",
+                borderRadius: 8,
+                padding: "7px 10px",
+                cursor: "pointer",
+                fontSize: 16,
+                color: "var(--text-muted)",
+              }}
+            >
+              {theme === "dark" ? "☀️" : "🌙"}
+            </button>
             <Link
               href="#features"
-              className="hidden px-3 py-1.5 text-zinc-600 dark:text-zinc-600 dark:text-zinc-400 hover:text-white sm:block"
+              className="hidden px-3 py-1.5 text-[var(--text-muted)] hover:text-white sm:block"
             >
               Features
             </Link>
             <Link
               href="#pricing"
-              className="hidden px-3 py-1.5 text-zinc-600 dark:text-zinc-600 dark:text-zinc-400 hover:text-white sm:block"
+              className="hidden px-3 py-1.5 text-[var(--text-muted)] hover:text-white sm:block"
             >
               Pricing
             </Link>
             <Link
               href="/login"
-              className="rounded-full border border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 px-4 py-1.5 text-zinc-800 dark:text-zinc-200 transition-colors hover:border-zinc-500 hover:text-white"
+              className="rounded-full border border-[var(--border)] px-4 py-1.5 text-[var(--text-primary)] transition-colors hover:border-[var(--border)] hover:text-white"
             >
               Log in
             </Link>
@@ -74,7 +105,7 @@ export default function LandingPage() {
               </span>
               .
             </h1>
-            <p className="max-w-xl text-base leading-relaxed text-zinc-600 dark:text-zinc-600 dark:text-zinc-400 sm:text-lg">
+            <p className="max-w-xl text-base leading-relaxed text-[var(--text-muted)] sm:text-lg">
               Centralize projects, files, tasks, and feedback in a secure,
               role-based portal your clients will actually enjoy using.
             </p>
@@ -88,13 +119,13 @@ export default function LandingPage() {
               </Link>
               <Link
                 href="/login"
-                className="flex items-center gap-2 text-sm font-medium text-zinc-700 dark:text-zinc-700 dark:text-zinc-300 hover:text-white"
+                className="flex items-center gap-2 text-sm font-medium text-[var(--text-primary)] hover:text-white"
               >
                 Sign in to demo
                 <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </div>
-            <div className="flex flex-wrap gap-6 text-xs text-zinc-500">
+            <div className="flex flex-wrap gap-6 text-xs text-[var(--text-muted)]">
               <span className="flex items-center gap-1.5">
                 <CheckCircle2 className="h-3 w-3 text-emerald-500" />
                 4-tier RBAC system
@@ -111,9 +142,9 @@ export default function LandingPage() {
           </div>
 
           {/* Dashboard Preview Card */}
-          <div className="rounded-3xl border p-5 shadow-2xl shadow-black/60 backdrop-blur" style={{ background: "var(--surface)", borderColor: "var(--border)" }}>
+          <div className="rounded-3xl border p-5 shadow-2xl shadow-md dark:shadow-black/60 shadow-black/5 backdrop-blur" style={{ background: "var(--surface)", borderColor: "var(--border)" }}>
             <div className="flex items-center justify-between border-b pb-3" style={{ borderColor: "var(--border)" }}>
-              <span className="text-xs font-medium text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">
+              <span className="text-xs font-medium text-[var(--text-muted)]">
                 Client dashboard
               </span>
               <span className="flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-medium text-emerald-300">
@@ -131,9 +162,9 @@ export default function LandingPage() {
                 ].map((card) => (
                   <div
                     key={card.label}
-                    className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-100 dark:bg-zinc-900 px-3 py-3"
+                    className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-3 py-3"
                   >
-                    <p className="text-[10px] text-zinc-500">{card.label}</p>
+                    <p className="text-[10px] text-[var(--text-muted)]">{card.label}</p>
                     <p className={`mt-1 text-lg font-bold ${card.color}`}>
                       {card.value}
                     </p>
@@ -159,12 +190,12 @@ export default function LandingPage() {
                           className="h-2 w-2 shrink-0 rounded-full"
                           style={{ backgroundColor: p.color }}
                         />
-                        <span className="truncate text-xs text-zinc-800 dark:text-zinc-200">
+                        <span className="truncate text-xs text-[var(--text-primary)]">
                           {p.name}
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <div className="h-1.5 w-20 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800">
+                        <div className="h-1.5 w-20 overflow-hidden rounded-full bg-[var(--border)]">
                           <div
                             className="h-full rounded-full"
                             style={{
@@ -173,7 +204,7 @@ export default function LandingPage() {
                             }}
                           />
                         </div>
-                        <span className="w-7 text-right text-[10px] text-zinc-500">
+                        <span className="w-7 text-right text-[10px] text-[var(--text-muted)]">
                           {p.progress}%
                         </span>
                       </div>
@@ -195,7 +226,7 @@ export default function LandingPage() {
             <h2 className="mt-3 text-2xl font-bold tracking-tight sm:text-3xl" style={{ color: "var(--text-primary)" }}>
               Everything your agency needs
             </h2>
-            <p className="mt-3 text-sm text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">
+            <p className="mt-3 text-sm text-[var(--text-muted)]">
               Built for teams that manage multiple client relationships
               simultaneously.
             </p>
@@ -256,10 +287,10 @@ export default function LandingPage() {
                 >
                   {feature.icon}
                 </div>
-                <h3 className="mt-4 text-sm font-semibold text-zinc-100">
+                <h3 className="mt-4 text-sm font-semibold text-[var(--text-primary)]">
                   {feature.title}
                 </h3>
-                <p className="mt-2 text-xs leading-relaxed text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">
+                <p className="mt-2 text-xs leading-relaxed text-[var(--text-muted)]">
                   {feature.desc}
                 </p>
               </div>
@@ -274,7 +305,7 @@ export default function LandingPage() {
               Built for production, <br />
               <span className="text-indigo-400">architected for scale.</span>
             </h2>
-            <p className="text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">
+            <p className="text-[var(--text-muted)]">
               ClientFlow isn't just a UI—it's a complete infrastructure blueprint. 
               We've solved the hard problems of multitenancy and security so you can 
               focus on shipping features.
@@ -290,8 +321,8 @@ export default function LandingPage() {
                     <CheckCircle2 className="h-4 w-4" />
                   </div>
                   <div>
-                    <h4 className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">{item.title}</h4>
-                    <p className="text-xs text-zinc-500">{item.desc}</p>
+                    <h4 className="text-sm font-semibold text-[var(--text-primary)]">{item.title}</h4>
+                    <p className="text-xs text-[var(--text-muted)]">{item.desc}</p>
                   </div>
                 </div>
               ))}
@@ -318,7 +349,7 @@ export async function getProjects(session) {
         {/* Tech Stack Banner */}
         <section className="rounded-3xl border p-8" style={{ background: "var(--surface)", borderColor: "var(--border)" }}>
           <div className="text-center mb-8">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--text-muted)]">
               Built with
             </p>
             <h2 className="mt-3 text-xl font-bold tracking-tight">
@@ -360,42 +391,42 @@ export async function getProjects(session) {
             <h2 className="mt-3 text-2xl font-bold tracking-tight sm:text-3xl">
               Simple, transparent pricing
             </h2>
-            <p className="mt-3 text-sm text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">
+            <p className="mt-3 text-sm text-[var(--text-muted)]">
               Start free and scale as your agency grows.
             </p>
           </div>
           <div className="grid gap-6 sm:grid-cols-2 max-w-3xl mx-auto">
             <div className="rounded-3xl border p-8 space-y-6" style={{ background: "var(--surface)", borderColor: "var(--border)" }}>
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">
+                <p className="text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">
                   Starter
                 </p>
                 <div className="mt-4 flex items-baseline gap-1">
-                  <span className="text-4xl font-bold text-zinc-900 dark:text-zinc-900 dark:text-zinc-50">$29</span>
-                  <span className="text-sm text-zinc-500">/mo</span>
+                  <span className="text-4xl font-bold text-[var(--text-primary)]">$29</span>
+                  <span className="text-sm text-[var(--text-muted)]">/mo</span>
                 </div>
               </div>
-              <ul className="space-y-3 text-sm text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">
+              <ul className="space-y-3 text-sm text-[var(--text-muted)]">
                 <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-zinc-500" />
+                  <CheckCircle2 className="h-4 w-4 text-[var(--text-muted)]" />
                   Up to 5 team members
                 </li>
                 <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-zinc-500" />
+                  <CheckCircle2 className="h-4 w-4 text-[var(--text-muted)]" />
                   Unlimited client portals
                 </li>
                 <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-zinc-500" />
+                  <CheckCircle2 className="h-4 w-4 text-[var(--text-muted)]" />
                   Projects, tasks, files
                 </li>
                 <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-zinc-500" />
+                  <CheckCircle2 className="h-4 w-4 text-[var(--text-muted)]" />
                   Email notifications
                 </li>
               </ul>
               <Link
                 href="/signup"
-                className="block text-center rounded-full border border-zinc-600 px-6 py-3 text-sm font-semibold text-zinc-800 dark:text-zinc-200 transition-colors hover:bg-zinc-200 dark:bg-zinc-800"
+                className="block text-center rounded-full border border-[var(--border)] px-6 py-3 text-sm font-semibold text-[var(--text-primary)] transition-colors hover:bg-[var(--surface-hover)]"
               >
                 Get started
               </Link>
@@ -412,7 +443,7 @@ export async function getProjects(session) {
                   Pro
                 </p>
                 <div className="mt-4 flex items-baseline gap-1">
-                  <span className="text-4xl font-bold text-zinc-900 dark:text-zinc-900 dark:text-zinc-50">$99</span>
+                  <span className="text-4xl font-bold text-[var(--text-primary)]">$99</span>
                   <span className="text-sm text-indigo-300/70">/mo</span>
                 </div>
               </div>
@@ -455,7 +486,7 @@ export async function getProjects(session) {
             <h2 className="text-xl font-bold tracking-tight">
             Try the live demo
           </h2>
-          <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-600 dark:text-zinc-400 max-w-lg mx-auto">
+          <p className="mt-2 text-sm text-[var(--text-muted)] max-w-lg mx-auto">
             Two fully-seeded tenants with complete data isolation. Log into both
             in separate windows and try pasting URLs between them — the "Iron
             Curtain" blocks all cross-tenant access.
@@ -473,9 +504,9 @@ export async function getProjects(session) {
                   key={cred.role}
                   className={`rounded-2xl border ${cred.color} p-3`}
                 >
-                  <p className="font-semibold text-zinc-800 dark:text-zinc-200">{cred.role}</p>
-                  <p className="text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">{cred.email}</p>
-                  <p className="text-zinc-500">password123</p>
+                  <p className="font-semibold text-[var(--text-primary)]">{cred.role}</p>
+                  <p className="text-[var(--text-muted)]">{cred.email}</p>
+                  <p className="text-[var(--text-muted)]">password123</p>
                 </div>
               ))}
             </div>
@@ -490,14 +521,14 @@ export async function getProjects(session) {
                   key={cred.role}
                   className={`rounded-2xl border ${cred.color} p-3`}
                 >
-                  <p className="font-semibold text-zinc-800 dark:text-zinc-200">{cred.role}</p>
-                  <p className="text-zinc-600 dark:text-zinc-600 dark:text-zinc-400">{cred.email}</p>
-                  <p className="text-zinc-500">password123</p>
+                  <p className="font-semibold text-[var(--text-primary)]">{cred.role}</p>
+                  <p className="text-[var(--text-muted)]">{cred.email}</p>
+                  <p className="text-[var(--text-muted)]">password123</p>
                 </div>
               ))}
-              <div className="rounded-2xl border border-zinc-300 dark:border-zinc-300 dark:border-zinc-700 bg-zinc-200 dark:bg-zinc-800/50 p-3 mt-2">
+              <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-hover)] p-3 mt-2">
                 <p className="font-semibold text-yellow-300 text-[10px] uppercase tracking-wider">🔒 Leak Test</p>
-                <p className="text-zinc-600 dark:text-zinc-600 dark:text-zinc-400 mt-1">Copy a project URL from Pixel Agency and paste it in Nova Studio's session — it returns 403.</p>
+                <p className="text-[var(--text-muted)] mt-1">Copy a project URL from Pixel Agency and paste it in Nova Studio's session — it returns 403.</p>
               </div>
             </div>
           </div>
@@ -512,7 +543,7 @@ export async function getProjects(session) {
         </section>
 
         {/* Footer */}
-        <footer className="border-t py-8 text-center text-xs text-zinc-500" style={{ borderColor: "var(--border)" }}>
+        <footer className="border-t py-8 text-center text-xs text-[var(--text-muted)]" style={{ borderColor: "var(--border)" }}>
           <p>
             Built with Next.js, Prisma, NextAuth, Stripe & ❤️ by{" "}
             <span style={{ color: "var(--text-primary)" }}>Aditya Raj</span>

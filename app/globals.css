@@ -5,6 +5,8 @@
   --font-mono: var(--font-geist-mono);
 }
 
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 :root {
   /* Light mode */
   --bg-primary: #ffffff;
