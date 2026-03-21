@@ -273,7 +273,6 @@ export default function SignupPage() {
                       updateField("orgSlug", generated)
                       setSlugAvailable(null)
                     }}
-                    onBlur={() => checkSlug(form.orgSlug)}
                     style={{
                       width: "100%",
                       background: "var(--bg-secondary)",
@@ -288,7 +287,10 @@ export default function SignupPage() {
                       boxSizing: "border-box",
                     }}
                     onFocus={e => e.target.style.borderColor = "var(--accent)"}
-                    onBlur={e => e.target.style.borderColor = "var(--border)"}
+                    onBlur={e => {
+                      e.target.style.borderColor = "var(--border)"
+                      checkSlug(form.orgSlug)
+                    }}
                   />
                 </div>
 
