@@ -355,22 +355,13 @@ export default async function DashboardPage() {
                     <Link
                       key={project.id}
                       href={`/dashboard/projects/${project.id}`}
+                      className="group hover:scale-[1.02] hover:shadow-[var(--shadow-md)] hover:border-[var(--border-light)]"
                       style={{
                         display: "flex", flexDirection: "column", justifyContent: "space-between",
                         height: "160px", padding: "20px", background: "var(--surface)",
                         border: "1px solid var(--border)", borderRadius: "var(--radius-lg)",
                         textDecoration: "none", transition: "all 0.2s",
                         boxShadow: "var(--shadow-sm)"
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.transform = "scale(1.02)";
-                        e.currentTarget.style.boxShadow = "var(--shadow-md)";
-                        e.currentTarget.style.borderColor = "var(--border-light)";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.transform = "scale(1)";
-                        e.currentTarget.style.boxShadow = "var(--shadow-sm)";
-                        e.currentTarget.style.borderColor = "var(--border)";
                       }}
                     >
                       <div>
@@ -546,6 +537,7 @@ export default async function DashboardPage() {
 function StatCard({ icon, label, value, detail, iconColor }) {
   return (
     <div
+      className="group hover:border-[var(--border-light)] hover:shadow-md"
       style={{
         height: "120px",
         padding: "24px",
@@ -557,14 +549,6 @@ function StatCard({ icon, label, value, detail, iconColor }) {
         flexDirection: "column",
         justifyContent: "space-between",
         transition: "all 0.15s",
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.borderColor = "var(--border-light)";
-        e.currentTarget.style.boxShadow = "var(--shadow-md)";
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.borderColor = "var(--border)";
-        e.currentTarget.style.boxShadow = "var(--shadow-sm)";
       }}
     >
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
