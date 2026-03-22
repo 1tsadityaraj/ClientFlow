@@ -8,12 +8,16 @@ export default async function DashboardLayout({ children }) {
   let primaryColor = "#6366f1"; // Default indigo
 
   if (session?.user?.orgId) {
-    const org = await prisma.org.findUnique({
-      where: { id: session.user.orgId },
-      select: { primaryColor: true },
-    });
-    if (org?.primaryColor) {
-      primaryColor = org.primaryColor;
+    try {
+      const org = await prisma.org.findUnique({
+        where: { id: session.user.orgId },
+        select: { primaryColor: true },
+      });
+      if (org?.primaryColor) {
+        primaryColor = org.primaryColor;
+      }
+    } catch (error) {
+      console.error("[Layout] Failed to connect to DB:", error);
     }
   }
 

@@ -39,53 +39,73 @@ export default async function DashboardPage() {
     );
   }
 
-  const where = { orgId: session.user.orgId };
+  const orgId = session.user.orgId;
+  const where = { orgId };
   if (session.user.role === "client") {
     where.clientUserId = session.user.id;
   }
 
-  const [projects, members, tasks, org] = await Promise.all([
-    prisma.project.findMany({
-      where,
-      orderBy: { createdAt: "desc" },
-      include: {
-        _count: { select: { tasks: true, files: true, comments: true } },
-        manager: { select: { name: true } },
-        tasks: { select: { status: true } },
-      },
-    }),
-    prisma.user.findMany({
-      where: { orgId: session.user.orgId },
-      select: { id: true, name: true, email: true, role: true },
-    }),
-    prisma.task.findMany({
-      where: { orgId: session.user.orgId },
-      orderBy: { createdAt: "desc" },
-      include: {
-        assignee: { select: { id: true, name: true } },
-      },
-    }),
-    prisma.org.findFirst({ where: { id: session.user.orgId } }),
-  ]);
+  let projects, members, tasks, org, totalProjects, activeCount, activeTasksCount;
 
-  const orgId = session.user.orgId;
-
-  // --- Dashboard Intelligence Stats ---
-  // Total Projects
-  const totalProjects = await prisma.project.count({
-    where: { orgId },
-  });
-  const activeCount = await prisma.project.count({
-    where: { orgId, status: "active" },
-  });
-
-  // Active Tasks
-  const activeTasksCount = await prisma.task.count({
-    where: {
-      orgId,
-      status: { in: ["TODO", "IN_PROGRESS", "IN_REVIEW"] }
-    },
-  });
+  try {
+    [projects, members, tasks, org, totalProjects, activeCount, activeTasksCount] = await Promise.all([
+      prisma.project.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+        include: {
+          _count: { select: { tasks: true, files: true, comments: true } },
+          manager: { select: { name: true } },
+          tasks: { select: { status: true } },
+        },
+      }),
+      prisma.user.findMany({
+        where: { orgId: session.user.orgId },
+        select: { id: true, name: true, email: true, role: true },
+      }),
+      prisma.task.findMany({
+        where: { orgId: session.user.orgId },
+        orderBy: { createdAt: "desc" },
+        include: {
+          assignee: { select: { id: true, name: true } },
+        },
+      }),
+      prisma.org.findFirst({ where: { id: session.user.orgId } }),
+      prisma.project.count({
+        where: { orgId },
+      }),
+      prisma.project.count({
+        where: { orgId, status: "active" },
+      }),
+      prisma.task.count({
+        where: {
+          orgId,
+          status: { in: ["TODO", "IN_PROGRESS", "IN_REVIEW"] }
+        },
+      })
+    ]);
+  } catch (error) {
+    console.error("[Dashboard] Database connection error:", error);
+    return (
+      <main className="flex min-h-screen items-center justify-center p-6" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
+        <div className="rounded-3xl border p-12 text-center max-w-lg shadow-xl" style={{ background: "var(--surface)", borderColor: "var(--border)" }}>
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-rose-500/10 mb-6">
+            <Zap className="h-8 w-8 text-rose-500" />
+          </div>
+          <h2 className="text-2xl font-bold tracking-tight mb-3">Connecting to Database...</h2>
+          <p className="text-sm leading-relaxed mb-8" style={{ color: "var(--text-muted)" }}>
+            Our serverless database might be waking up from a cold start. This usually takes 3-5 seconds. Please try again.
+          </p>
+          <a
+            href="/dashboard"
+            className="inline-flex items-center justify-center rounded-full px-8 py-3 text-sm font-semibold text-white transition-all shadow-lg hover:opacity-90"
+            style={{ background: "var(--accent)", boxShadow: "var(--shadow-md)" }}
+          >
+            Try again
+          </a>
+        </div>
+      </main>
+    );
+  }
 
   // Team Size
   const teamSize = members.length;
