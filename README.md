@@ -6,9 +6,47 @@
 
 ---
 
+## 🎯 For Recruiters & Hiring Managers
+
+**ClientFlow** is a comprehensive demonstration of my ability to architect, build, and deploy complex full-stack applications. It goes far beyond a typical CRUD app by addressing hard, real-world engineering challenges:
+
+- **Complex Data Architecture:** Engineered a rock-solid multitenant PostgreSQL database schema where user data is strictly cordoned off by their Organization ID.
+- **Enterprise Security:** Implemented an implicit "Iron Curtain" data-access proxy to prevent cross-tenant data leaks—backed by robust integration tests.
+- **Modern React Paradigms:** Extensively leverages Next.js 15 React Server Components (RSC) to minimize client-side javascript while delivering blazing fast edge performance.
+- **Production Resilience:** Solved database cold-start timeouts and connection scaling limits characteristic of serverless environments by implementing robust singleton connection pooling and intuitive React Error Boundaries.
+- **Polished UX:** Designed a premium, agency-quality interface demonstrating advanced knowledge of CSS variables, dynamic theming (dark/light mode), and subtle micro-interactions.
+
+---
+
+## 📸 Product Preview
+
+<div align="center">
+  <img src="public/screenshots/landing.png" alt="Landing Page" width="800" style="border-radius: 8px; border: 1px solid #444;" />
+  <br/>
+  <em>Modern, conversion-optimized landing page built with Tailwind CSS v4 and dynamic theming.</em>
+</div>
+
+<br/>
+
+<div align="center">
+  <img src="public/screenshots/dashboard.png" alt="ClientFlow Dashboard" width="800" style="border-radius: 8px; border: 1px solid #444;" />
+  <br/>
+  <em>Agency Dashboard featuring real-time activity feeds, live task metrics, and role-based access controls.</em>
+</div>
+
+<br/>
+
+<div align="center">
+  <img src="public/screenshots/login.png" alt="Login Flow" width="800" style="border-radius: 8px; border: 1px solid #444;" />
+  <br/>
+  <em>Seamless, themeable authentication flow handling multitenant session management.</em>
+</div>
+
+---
+
 ## 🔑 Demo Credentials
 
-Two fully-seeded tenants are available to demonstrate **complete data isolation**. Log into both in separate browser windows to verify the "Iron Curtain" — no cross-tenant data leakage.
+To experience the **complete data isolation** first-hand, log into these two tenants in separate browser windows to verify the "Iron Curtain" — there is absolutely no cross-tenant data leakage.
 
 | Tenant | Role | Email | Password |
 | :--- | :--- | :--- | :--- |
@@ -20,7 +58,7 @@ Two fully-seeded tenants are available to demonstrate **complete data isolation*
 | | Manager | `grace@nova.co` | `password123` |
 | | Client | `henry@startup.io` | `password123` |
 
-> **Leak Test:** Log into Pixel Agency in one tab and Nova Studio in an incognito window. Copy a project URL from one and paste it into the other — you'll hit a `403 Forbidden` or `404`. That's the org-scoped isolation working.
+> **Leak Test:** Log into Pixel Agency in one tab and Nova Studio in an incognito window. Copy a project URL from one and paste it into the other — you'll hit a `403 Forbidden` or `404`. That's the org-scoped isolation natively working.
 
 ---
 
