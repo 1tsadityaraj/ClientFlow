@@ -1,5 +1,11 @@
 # ClientFlow
 
+![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Neon-blue?logo=postgresql)
+![Prisma](https://img.shields.io/badge/Prisma-6-2D3748?logo=prisma)
+![Vercel](https://img.shields.io/badge/Deployed-Vercel-black?logo=vercel)
+![License](https://img.shields.io/badge/License-MIT-green)
+
 **A production-grade, multitenant B2B SaaS platform with 4-tier RBAC, org-scoped data isolation, and a white-label client portal — engineered for modern digital agencies.**
 
 > **[🚀 Live Demo → client-flow-sooty.vercel.app](https://client-flow-sooty.vercel.app)**
@@ -54,9 +60,7 @@ To experience the **complete data isolation** first-hand, log into these two ten
 | | Manager | `bob@pixel.co` | `password123` |
 | | Member | `carol@pixel.co` | `password123` |
 | | Client | `dave@acme.com` | `password123` |
-| **Nova Studio** (Starter) | Admin | `frank@nova.co` | `password123` |
-| | Manager | `grace@nova.co` | `password123` |
-| | Client | `henry@startup.io` | `password123` |
+| **Nova Studio** (Starter) | Admin | `admin@nova.io` | `password123` |
 
 > **Leak Test:** Log into Pixel Agency in one tab and Nova Studio in an incognito window. Copy a project URL from one and paste it into the other — you'll hit a `403 Forbidden` or `404`. That's the org-scoped isolation natively working.
 
@@ -150,6 +154,20 @@ Permissions are enforced **twice**: on the server via `assertPermission()` in ev
 
 ---
 
+### 🌟 Key Features
+
+- **Multi-tenant isolation** — Every DB query scoped by orgId. Tenant A physically cannot access Tenant B's data.
+- **4-tier RBAC** — Admin, Manager, Member, Client with 15 granular permissions enforced server AND client side
+- **Real-time chat** — Pusher-powered instant messaging per organization with typing indicators
+- **Member workload tracking** — See what every team member is working on, their task completion rate, and availability status
+- **Activity log** — Immutable audit trail of every action
+- **File uploads** — Presigned Cloudflare R2 URLs, server never touches file bytes
+- **Invite system** — Token-based email invites via Resend, 48h expiry, role pre-assignment
+- **Light/Dark mode** — Full theme system with CSS variables, persisted via localStorage
+- **Graceful degradation** — App works without Stripe/S3/Email configured — services fail silently with helpful UI messages
+
+---
+
 ## 🧠 Technical Hurdles & Design Decisions
 
 ### Why a Monolith Over Microservices?
@@ -240,25 +258,45 @@ __tests__/
 
 ## 🚀 Quick Start
 
+### Prerequisites
+- Node.js 18+
+- PostgreSQL database (or use [Neon](https://neon.tech) free tier)
+- npm or yarn
+
+### Setup
 ```bash
 # 1. Clone and install
 git clone https://github.com/1tsadityaraj/ClientFlow.git
 cd ClientFlow
 npm install
 
-# 2. Setup environment
+# 2. Configure environment
 cp .env.example .env
-# Edit .env with your DATABASE_URL, NEXTAUTH_SECRET, etc.
+# Open .env and fill in required values:
+# - DATABASE_URL (from Neon or local PostgreSQL)
+# - NEXTAUTH_SECRET (run: openssl rand -base64 32)
+# - NEXTAUTH_URL=http://localhost:3000
 
-# 3. Push schema & seed database
-npx prisma db push
+# 3. Setup database
+npx prisma migrate dev
 npx prisma db seed
 
-# 4. Run development server
+# 4. Start development server
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open [http://localhost:3000](http://localhost:3000)
+
+**Instant demo login (after seeding):**
+- Admin: alice@pixel.co / password123
+- Client: dave@acme.com / password123
+
+### Optional Services
+These services enhance the app but it works without them:
+- **Pusher** — Real-time chat (falls back to polling)
+- **Resend** — Invite emails (logs to console in dev)
+- **Cloudflare R2** — File uploads (button disabled without it)
+- **Upstash Redis** — Rate limiting (skipped without it)
 
 ---
 
@@ -276,14 +314,14 @@ The test suite validates **multitenancy isolation** — ensuring that a user fro
 
 ## 📦 Deployment Checklist
 
-- [x] PostgreSQL database (Neon — serverless)
+- [x] PostgreSQL database (Neon)
 - [x] Environment variables on Vercel
-- [x] Prisma schema pushed to production DB
-- [x] Demo data seeded (2 tenants, 8 projects, 28 tasks, 20+ audit logs)
-- [ ] Upstash Redis for rate limiting (optional — gracefully degrades)
-- [ ] AWS S3 bucket for file storage
-- [ ] Stripe account with webhook endpoint
-- [ ] Resend account for transactional emails
+- [x] Prisma migrations deployed
+- [x] Demo data seeded (2 tenants, 6 users, 5 projects)
+- [x] Upstash Redis (rate limiting active)
+- [x] Cloudflare R2 (file storage active)
+- [x] Resend (invite emails active)
+- [ ] Stripe (India invite-only — pending)
 
 ---
 
@@ -301,6 +339,17 @@ The test suite validates **multitenancy isolation** — ensuring that a user fro
    git commit -m "feat: complete activity log and production setup"
    git push origin main
    ```
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please:
+1. Fork the repo
+2. Create a feature branch: git checkout -b feat/your-feature
+3. Commit your changes: git commit -m 'feat: add your feature'
+4. Push to branch: git push origin feat/your-feature
+5. Open a Pull Request
 
 ---
 
